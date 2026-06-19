@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { supabase } from "./supabase.js";
 import {
   User, Briefcase, Heart, Home, Users, Dumbbell, BookOpen,
   Library, Plus, Trash2, Check, Circle, ChevronLeft, ChevronRight, PenLine,
@@ -512,17 +513,23 @@ function statusOf(lastIso, imp) {
   return { key: "ok", label: "Al día", color: C.tranquilo };
 }
 
-/* ───────────────────────── storage (navegador) ───────────────────────── */
+/* ───────────────────────── storage (Supabase, por usuario) ───────────────────────── */
 async function loadState() {
   try {
-    const v = localStorage.getItem(STORE_KEY);
-    if (v) return JSON.parse(v);
-  } catch (e) { /* aún no existe */ }
-  return null;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+    const { data, error } = await supabase.from("app_state").select("data").eq("user_id", user.id).maybeSingle();
+    if (error) { console.error(error); return null; }
+    return data ? data.data : null;
+  } catch (e) { console.error(e); return null; }
 }
 async function saveState(s) {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
-  catch (e) { console.error("No se pudo guardar", e); }
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { error } = await supabase.from("app_state").upsert({ user_id: user.id, data: s, updated_at: new Date().toISOString() });
+    if (error) console.error(error);
+  } catch (e) { console.error("No se pudo guardar", e); }
 }
 
 /* ───────────────────────── plantita ───────────────────────── */
@@ -602,7 +609,7 @@ function Gauge({ health, days, color, size = 64 }) {
 }
 
 /* ───────────────────────── app ───────────────────────── */
-export default function Bitacora() {
+function BitacoraApp() {
   const [ready, setReady] = useState(false);
   const [areas, setAreas] = useState(DEFAULT_AREAS);
   const [items, setItems] = useState([]);
@@ -797,6 +804,10 @@ export default function Bitacora() {
           </button>
           <input ref={fileRef} type="file" accept="application/json,.json" style={{ display: "none" }}
             onChange={(e) => { importData(e.target.files[0]); e.target.value = ""; }} />
+          <button onClick={() => supabase.auth.signOut()} className="navbtn" title="Cerrar tu sesión"
+            style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "none", border: "none", color: C.onBgDim, fontSize: 12, cursor: "pointer", fontFamily: "'Spline Sans Mono', monospace" }}>
+            <Upload size={13} style={{ transform: "rotate(90deg)" }} /> cerrar sesión
+          </button>
         </div>
       </div>
       </div>
@@ -1808,3 +1819,88 @@ const makeCSS = (C) => `
 `;
 
 applyPalette("mint");
+
+/* ───────────────────────── Login + portero de sesión ───────────────────────── */
+function Login() {
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const [mode, setMode] = useState("in"); // "in" = entrar, "up" = crear cuenta
+  const [msg, setMsg] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const submit = async () => {
+    if (!email || !pass) { setMsg("Escribe tu correo y contraseña."); return; }
+    setMsg(""); setBusy(true);
+    try {
+      if (mode === "up") {
+        const { error } = await supabase.auth.signUp({ email, password: pass });
+        if (error) throw error;
+        setMsg("¡Cuenta creada! Si no entra sola, escribe tu correo y contraseña y entra.");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+        if (error) throw error;
+      }
+    } catch (e) {
+      const m = (e && e.message) || "";
+      if (/invalid login/i.test(m)) setMsg("Correo o contraseña incorrectos.");
+      else if (/already registered/i.test(m)) setMsg("Ese correo ya tiene cuenta. Cambia a 'Entrar'.");
+      else if (/at least 6/i.test(m)) setMsg("La contraseña debe tener al menos 6 caracteres.");
+      else setMsg(m || "Algo salió mal. Intenta de nuevo.");
+    } finally { setBusy(false); }
+  };
+
+  return (
+    <div style={{ ...S.root, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+      <Fonts /><style>{CSS}</style>
+      <div style={{ width: "100%", maxWidth: 360, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 18, padding: "30px 26px", boxShadow: "0 12px 40px -16px rgba(20,30,40,.25)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 18 }}>
+          <div style={S.logo}><Library size={22} color={C.onPrimary} strokeWidth={1.8} /></div>
+          <div>
+            <div style={{ fontFamily: "'Newsreader', serif", fontSize: 22, color: C.text, fontWeight: 600 }}>Bitácora</div>
+            <div style={{ fontSize: 12.5, color: C.textSoft }}>{mode === "up" ? "Crea tu cuenta" : "Inicia sesión"}</div>
+          </div>
+        </div>
+        <label style={{ fontSize: 12, color: C.textSoft }}>Correo</label>
+        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email"
+          style={{ width: "100%", margin: "5px 0 14px", padding: "10px 12px", borderRadius: 10, border: `1px solid ${C.border}`, fontSize: 14, fontFamily: "inherit", color: C.text, background: C.surface }} />
+        <label style={{ fontSize: 12, color: C.textSoft }}>Contraseña</label>
+        <input type="password" value={pass} onChange={(e) => setPass(e.target.value)} autoComplete="current-password"
+          onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
+          style={{ width: "100%", margin: "5px 0 18px", padding: "10px 12px", borderRadius: 10, border: `1px solid ${C.border}`, fontSize: 14, fontFamily: "inherit", color: C.text, background: C.surface }} />
+        <button onClick={submit} disabled={busy} className="primary"
+          style={{ width: "100%", padding: "11px 0", borderRadius: 10, border: "none", background: C.primary, color: C.onPrimary, fontSize: 14.5, fontWeight: 600, cursor: busy ? "default" : "pointer", fontFamily: "inherit", opacity: busy ? 0.7 : 1 }}>
+          {busy ? "Un momento…" : (mode === "up" ? "Crear cuenta" : "Entrar")}
+        </button>
+        {msg && <div style={{ marginTop: 12, fontSize: 12.5, color: C.textSoft, lineHeight: 1.4 }}>{msg}</div>}
+        <div style={{ marginTop: 16, fontSize: 12.5, color: C.textSoft, textAlign: "center" }}>
+          {mode === "up" ? "¿Ya tienes cuenta? " : "¿Primera vez? "}
+          <button onClick={() => { setMode(mode === "up" ? "in" : "up"); setMsg(""); }}
+            style={{ background: "none", border: "none", color: C.primary, cursor: "pointer", fontFamily: "inherit", fontSize: 12.5, textDecoration: "underline", padding: 0 }}>
+            {mode === "up" ? "Entrar" : "Crear una cuenta"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Root() {
+  const [session, setSession] = useState(undefined); // undefined = cargando
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSession(data.session ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  if (session === undefined) {
+    return (
+      <div style={{ ...S.root, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Fonts /><div style={{ color: C.textSoft, fontFamily: "'Hanken Grotesk', sans-serif" }}>Cargando…</div>
+      </div>
+    );
+  }
+  if (!session) return <Login />;
+  return <BitacoraApp key={session.user.id} />;
+}
+
+export default Root;
