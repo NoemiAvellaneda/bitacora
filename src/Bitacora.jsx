@@ -5,6 +5,7 @@ import {
   Library, Plus, Trash2, Check, Circle, ChevronLeft, ChevronRight, PenLine,
   Brain, Coins, BookMarked, Scale, Sparkles, FlaskConical, Leaf, RefreshCw,
   Film, Ticket, Plane, Feather, Landmark, SlidersHorizontal, Music, Sprout, Globe, Network, Map, Lightbulb, Bike, Download, Upload,
+  Wind, Droplet, Smile, Activity, Eye, Footprints,
 } from "lucide-react";
 
 /* ───────────────────────── paletas ───────────────────────── */
@@ -158,10 +159,20 @@ const COLLECTIONS = [
   { id: "teatro", name: "Teatro", icon: Ticket, areaId: "personal", statuses: ["Por ver", "Vista"], ph: "Obra de teatro…", meta: "Lugar o compañía (opcional)", note: "Qué te pareció…" },
   { id: "conciertos", name: "Conciertos", icon: Music, areaId: "personal", statuses: ["Por ir", "Fui"], ph: "Artista o concierto…", meta: "Lugar o fecha (opcional)", note: "Cómo estuvo…" },
   { id: "viajes", name: "Viajes", icon: Plane, areaId: "personal", statuses: ["Idea", "Planeado", "Hecho"], ph: "¿A dónde?", note: "Notas del viaje (opcional)…" },
-  { id: "notas", name: "Notas", icon: PenLine, areaId: null, statuses: [], ph: "Una idea, una cita, algo que no quieres perder…" },
   { id: "cuaderno", name: "Cuaderno", icon: Feather, areaId: "lectura", statuses: [], ph: "Título (opcional)", note: "Escribe aquí. Sin apuro, sin que tenga que ser bueno." },
 ];
 const COLL = Object.fromEntries(COLLECTIONS.map((c) => [c.id, c]));
+
+const HABITOS = [
+  { id: "respiracion", label: "Respiración fisiológica ×5", icon: Wind },
+  { id: "agua", label: "Un vaso de agua", icon: Droplet },
+  { id: "gratitud", label: "Agradecer algo bueno", icon: Heart },
+  { id: "mandibula", label: "Soltar la mandíbula", icon: Smile },
+  { id: "estirar", label: "Estirar / elongar el cuerpo", icon: Activity },
+  { id: "plantas", label: "Revisar mis plantas", icon: Sprout },
+  { id: "ojos", label: "Pausa para los ojos: mirar lejos", icon: Eye },
+  { id: "caminar", label: "Levantarse y caminar un poco", icon: Footprints },
+];
 const statusColor = (coll, status) => {
   if (!coll.statuses.length) return C.textMuted;
   const i = coll.statuses.indexOf(status);
@@ -314,6 +325,35 @@ const DATOS = [
   { cat: "critico", t: "El 'hombre de paja' es refutar una versión deformada del argumento ajeno, más fácil de tumbar." },
   { cat: "critico", t: "La falacia ad hominem ataca a quien habla en vez de a lo que dice." },
   { cat: "critico", t: "Efecto Dunning-Kruger: mientras menos sabemos de algo, más solemos sobrestimar lo que sabemos." },
+  { cat: "filosofia", t: "Para Descartes, la única certeza de la que partir es que, si dudo, pienso; y si pienso, existo." },
+  { cat: "filosofia", t: "Nietzsche llamó 'eterno retorno' a imaginar que vivirías tu vida idéntica, una y otra vez, para siempre." },
+  { cat: "filosofia", t: "La navaja de Ockham aconseja preferir, entre varias explicaciones, la más simple." },
+  { cat: "economia", t: "El dilema del prisionero muestra que dos personas racionales pueden terminar peor por no cooperar." },
+  { cat: "economia", t: "El interés compuesto hace crecer el dinero sobre lo ya ganado; por eso el tiempo importa tanto al ahorrar." },
+  { cat: "economia", t: "La inflación no encarece todo por igual: golpea más a quien no puede ajustar sus ingresos." },
+  { cat: "literatura", t: "Gabriela Mistral fue la primera persona latinoamericana en ganar el Nobel de Literatura, en 1945." },
+  { cat: "literatura", t: "El realismo mágico presenta lo extraordinario como algo cotidiano, sin asombro de los personajes." },
+  { cat: "poesia", t: "Pablo Neruda publicó 'Veinte poemas de amor y una canción desesperada' a los 19 años." },
+  { cat: "poesia", t: "El haiku japonés clásico tiene tres versos y suele evocar una estación del año." },
+  { cat: "ciencia", t: "La luz del Sol tarda unos ocho minutos en llegar a la Tierra." },
+  { cat: "ciencia", t: "El agua es rara: a diferencia de casi todo, su forma sólida —el hielo— flota sobre la líquida." },
+  { cat: "biologia", t: "Los pulpos tienen tres corazones y sangre azulada por el cobre que transporta su oxígeno." },
+  { cat: "biologia", t: "En tu cuerpo conviven billones de bacterias, casi tantas como tus propias células." },
+  { cat: "historia", t: "El Muro de Berlín cayó en 1989, tras 28 años dividiendo la ciudad." },
+  { cat: "historia", t: "La imprenta de Gutenberg, en el siglo XV, hizo que los libros dejaran de copiarse a mano uno por uno." },
+  { cat: "geografia", t: "Chile mide más de 4.000 km de norte a sur, pero en promedio apenas unos 180 km de ancho." },
+  { cat: "geografia", t: "El desierto de Atacama es el más árido del mundo; hay zonas donde casi nunca llueve." },
+  { cat: "rrii", t: "El 'poder blando' es influir por atracción cultural o por valores, no por la fuerza.", f: "Joseph Nye" },
+  { cat: "rrii", t: "La ONU se fundó en 1945, tras la Segunda Guerra Mundial, para tratar de evitar otro conflicto global." },
+  { cat: "genero", t: "Marie Curie fue la primera persona en ganar dos premios Nobel: en física y en química." },
+  { cat: "genero", t: "La 'doble jornada' nombra el trabajo remunerado más el doméstico que muchas mujeres asumen a la vez." },
+  { cat: "antropologia", t: "El estudio del 'don' muestra que regalar crea vínculos y obligaciones de reciprocidad.", f: "Marcel Mauss" },
+  { cat: "sociologia", t: "La 'profecía autocumplida' ocurre cuando una creencia, por sí sola, provoca que se haga realidad.", f: "Robert Merton" },
+  { cat: "plantas", t: "Muchas plantas se comunican bajo tierra mediante redes de hongos que conectan sus raíces." },
+  { cat: "plantas", t: "Regar de más mata más plantas de interior que la falta de agua." },
+  { cat: "cine", t: "El orden de los planos puede cambiar el sentido de una escena: es el 'efecto Kuleshov'." },
+  { cat: "critico", t: "El sesgo de confirmación nos lleva a buscar datos que nos dan la razón e ignorar los que no." },
+  { cat: "critico", t: "Correlación no es causalidad: que dos cosas ocurran juntas no significa que una cause la otra." },
 ];
 const dayOfYear = (d = new Date()) => Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000);
 
@@ -618,6 +658,7 @@ function BitacoraApp() {
   const [savings, setSavings] = useState({ depositos: [], afp: [], apv: [] });
   const [goals, setGoals] = useState([]);
   const [logros, setLogros] = useState(0);
+  const [habits, setHabits] = useState({});
   const [tab, setTab] = useState("semana");
   const [pal, setPal] = useState("mint");
   applyPalette(pal);
@@ -639,6 +680,7 @@ function BitacoraApp() {
         setSavings(s.savings || { depositos: [], afp: [], apv: [] });
         setGoals(s.goals || []);
         setLogros(s.logros || 0);
+        setHabits(s.habits || {});
         setPal(s.pal || "mint");
       } else {
         await saveState({ areas: DEFAULT_AREAS, items: [], tasks: [], finance: {}, savings: { depositos: [], afp: [], apv: [] }, goals: [], logros: 0, pal: "mint" });
@@ -647,7 +689,7 @@ function BitacoraApp() {
     })();
   }, []);
 
-  useEffect(() => { if (ready) saveState({ areas, items, tasks, finance, savings, goals, logros, pal }); }, [areas, items, tasks, finance, savings, goals, logros, pal, ready]);
+  useEffect(() => { if (ready) saveState({ areas, items, tasks, finance, savings, goals, logros, habits, pal }); }, [areas, items, tasks, finance, savings, goals, logros, habits, pal, ready]);
 
   const doneCount = useMemo(() => tasks.filter((t) => t.done).length + goals.filter((g) => g.done).length, [tasks, goals]);
   useEffect(() => { if (ready) setLogros((prev) => Math.max(prev, doneCount)); }, [doneCount, ready]);
@@ -686,6 +728,11 @@ function BitacoraApp() {
     setItems((p) => [{ id: rid(), coll, title: (title || "").trim(), meta: (meta || "").trim(), note: note || "", status: status ?? null, date: new Date().toISOString() }, ...p]), []);
   const updateItem = useCallback((id, patch) => setItems((p) => p.map((it) => it.id === id ? { ...it, ...patch } : it)), []);
   const delItem = useCallback((id) => setItems((p) => p.filter((it) => it.id !== id)), []);
+  const toggleHabit = useCallback((id) => setHabits((p) => {
+    const k = dateKey(now());
+    const cur = p[k] || [];
+    return { ...p, [k]: cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id] };
+  }), []);
   const setFinanceMonth = useCallback((key, data) => setFinance((p) => ({ ...p, [key]: data })), []);
   const savAdd = useCallback((k, row) => setSavings((p) => ({ ...p, [k]: [...(p[k] || []), { id: rid(), ...row }] })), []);
   const savEdit = useCallback((k, id, patch) => setSavings((p) => ({ ...p, [k]: (p[k] || []).map((r) => r.id === id ? { ...r, ...patch } : r) })), []);
@@ -709,7 +756,7 @@ function BitacoraApp() {
 
   const fileRef = useRef(null);
   const exportData = () => {
-    const data = { areas, items, tasks, finance, savings, goals, logros, pal, _v: 1 };
+    const data = { areas, items, tasks, finance, savings, goals, logros, habits, pal, _v: 1 };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -730,6 +777,7 @@ function BitacoraApp() {
         setSavings(s.savings || { depositos: [], afp: [], apv: [] });
         setGoals(s.goals || []);
         setLogros(s.logros || 0);
+        setHabits(s.habits || {});
         if (s.pal) setPal(s.pal);
         alert("Respaldo importado correctamente. ✔");
       } catch (e) { alert("No se pudo leer el archivo. ¿Es un respaldo de la Bitácora?"); }
@@ -780,7 +828,7 @@ function BitacoraApp() {
           ))}
         </nav>
 
-        {tab === "semana" && <Semana areas={areas} tasks={tasks} onAdd={addTask} onToggle={toggleTask} onDel={delTask} />}
+        {tab === "semana" && <Semana areas={areas} tasks={tasks} onAdd={addTask} onToggle={toggleTask} onDel={delTask} notes={items.filter((it) => it.coll === "notas")} onAddNote={(t) => addItem("notas", t, null, "")} onDelNote={delItem} habitsToday={habits[dateKey(now())] || []} onToggleHabit={toggleHabit} />}
         {tab === "registros" && <Registros items={items} onAdd={addItem} onUpdate={updateItem} onDel={delItem} />}
         {tab === "tablero" && <Tablero areas={areas} lastByArea={lastByArea} weekActivity={weekActivity}
           attention={attention} finance={finance} savings={savings} goals={goals} tasks={tasks} items={items} logros={logros} />}
@@ -789,9 +837,13 @@ function BitacoraApp() {
         {tab === "areas" && <AreasCfg areas={areas} onImp={setImportance} onKind={setAreaKind} onAdd={addArea} onDel={delArea} />}
 
         <Paleta />
+        <div aria-hidden="true" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5, margin: "30px 0 16px" }}>
+          <span style={{ display: "block", width: 72, height: 5, background: C.spark, borderRadius: 4 }} />
+          <span style={{ display: "block", width: 46, height: 3, background: C.primary, borderRadius: 4 }} />
+        </div>
         <footer style={S.footer}>
-          Bitácora — hecha para mi uso personal.<br />
-          Tus datos se guardan en este dispositivo. · Última actualización: {ACTUALIZADO}.
+          Bitácora — creada por @noemiavellaneda.<br />
+          Hecha con cariño para uso personal. · Última actualización: {ACTUALIZADO}.
         </footer>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginTop: 12, flexWrap: "wrap" }}>
           <button onClick={exportData} className="navbtn" title="Descargar una copia de seguridad de todos tus datos"
@@ -816,13 +868,20 @@ function BitacoraApp() {
 }
 
 /* ───────────────────────── SEMANA ───────────────────────── */
-function Semana({ areas, tasks, onAdd, onToggle, onDel }) {
+function Semana({ areas, tasks, onAdd, onToggle, onDel, notes, onAddNote, onDelNote, habitsToday, onToggleHabit }) {
   const [offset, setOffset] = useState(0);
   const [activeArea, setActiveArea] = useState(areas[0]?.id || "");
   const [drafts, setDrafts] = useState({});
   const [focus, setFocus] = useState("todo");
+  const [calRef, setCalRef] = useState(() => { const d = now(); return new Date(d.getFullYear(), d.getMonth(), 1); });
+  const [noteText, setNoteText] = useState("");
+  const addNote = () => { const t = noteText.trim(); if (!t) return; onAddNote(t); setNoteText(""); };
   const days = weekDays(offset);
-  const hidden = useMemo(() => focus === "vida" ? new Set(areas.filter((a) => a.kind === "trabajo").map((a) => a.id)) : new Set(), [focus, areas]);
+  const hidden = useMemo(() => {
+    if (focus === "vida") return new Set(areas.filter((a) => a.kind === "trabajo").map((a) => a.id));
+    if (focus === "trabajo" && areas.some((a) => a.kind === "trabajo")) return new Set(areas.filter((a) => a.kind !== "trabajo").map((a) => a.id));
+    return new Set();
+  }, [focus, areas]);
   const visibleAreas = areas.filter((a) => !hidden.has(a.id));
   const effArea = (hidden.has(activeArea) || !activeArea) ? (visibleAreas[0]?.id || "") : activeArea;
   const todayKey = dateKey(now());
@@ -831,6 +890,58 @@ function Semana({ areas, tasks, onAdd, onToggle, onDel }) {
   const s = days[0], e = days[6];
   const range = `${s.getDate()} ${s.toLocaleDateString("es-CL", { month: "short" })} – ${e.getDate()} ${e.toLocaleDateString("es-CL", { month: "short" })}`;
   const commit = (key) => { const txt = (drafts[key] || "").trim(); if (!txt || !effArea) return; onAdd(key, effArea, txt); setDrafts((p) => ({ ...p, [key]: "" })); };
+
+  const jumpToWeekOf = (d) => {
+    const monThis = startOfWeek(0).getTime();
+    const dd = new Date(d); const dow = (dd.getDay() + 6) % 7;
+    dd.setDate(dd.getDate() - dow); dd.setHours(0, 0, 0, 0);
+    setOffset(Math.round((dd.getTime() - monThis) / (7 * dayMs)));
+  };
+  const calYear = calRef.getFullYear(), calMonth = calRef.getMonth();
+  const CAL_DOW = ["lu", "ma", "mi", "ju", "vi", "sá", "do"];
+  const rowsFor = (ref) => {
+    const y = ref.getFullYear(), m = ref.getMonth();
+    const fdow = (new Date(y, m, 1).getDay() + 6) % 7;
+    const dim = new Date(y, m + 1, 0).getDate();
+    return Math.ceil((fdow + dim) / 7);
+  };
+  const calMonthsToShow = [new Date(calYear, calMonth - 1, 1), calRef, new Date(calYear, calMonth + 1, 1)];
+  const calRows = Math.max(...calMonthsToShow.map(rowsFor));
+  const renderMonth = (ref) => {
+    const y = ref.getFullYear(), m = ref.getMonth();
+    const tNow = now();
+    const isCurrentMonth = y === tNow.getFullYear() && m === tNow.getMonth();
+    const fdow = (new Date(y, m, 1).getDay() + 6) % 7;
+    const dim = new Date(y, m + 1, 0).getDate();
+    const cells = [];
+    for (let i = 0; i < fdow; i++) cells.push(null);
+    for (let dn = 1; dn <= dim; dn++) cells.push(new Date(y, m, dn));
+    while (cells.length < calRows * 7) cells.push(null);
+    return (
+      <div key={`${y}-${m}`} style={{ ...S.calMonth, ...(isCurrentMonth ? S.calMonthCur : S.calMonthOther) }}>
+        <div style={S.calMonthTitle}>{ref.toLocaleDateString("es-CL", { month: "long" })}</div>
+        <div style={S.calGrid}>
+          {CAL_DOW.map((d, i) => <span key={"h" + i} style={S.calDow}>{d}</span>)}
+          {cells.map((d, i) => {
+            if (!d) return <span key={"b" + i} style={{ aspectRatio: "1 / 1" }} />;
+            const key = dateKey(d);
+            const list = byDay[key] || [];
+            const total = list.length, done = list.filter((t) => t.done).length, has = total > 0;
+            const isToday = key === todayKey;
+            const inWeek = days.some((wd) => dateKey(wd) === key);
+            return (
+              <button key={key} onClick={() => jumpToWeekOf(d)} className="navbtn"
+                title={has ? `${done}/${total} hechas` : "sin actividad"}
+                style={{ ...S.calCell, ...(inWeek ? S.calCellWeek : {}), ...(isToday ? S.calCellToday : {}) }}>
+                {d.getDate()}
+                {has && <span style={{ ...S.calDot, background: done === total ? C.primary : C.spark }} />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="fade">
@@ -846,11 +957,15 @@ function Semana({ areas, tasks, onAdd, onToggle, onDel }) {
       <div style={S.focusRow}>
         <span style={S.smallLabel}>foco:</span>
         <div style={S.segment}>
-          {[["vida", "Vida personal"], ["todo", "Todo"]].map(([k, l]) => (
+          {(areas.some((a) => a.kind === "trabajo")
+            ? [["vida", "Vida personal"], ["trabajo", "Laboral"], ["todo", "Todo"]]
+            : [["vida", "Vida personal"], ["todo", "Todo"]]
+          ).map(([k, l]) => (
             <button key={k} onClick={() => setFocus(k)} className="navbtn" style={{ ...S.segBtn, ...(focus === k ? S.segBtnOn : {}) }}>{l}</button>
           ))}
         </div>
         {focus === "vida" && <span style={S.focusNote}>lo laboral está en pausa</span>}
+        {focus === "trabajo" && <span style={S.focusNote}>viendo solo lo laboral</span>}
       </div>
 
       <div style={{ marginBottom: 16 }}>
@@ -865,12 +980,13 @@ function Semana({ areas, tasks, onAdd, onToggle, onDel }) {
         </div>
       </div>
 
-      <div style={S.weekGrid}>
+      <div className="weekgrid">
         {days.map((d, i) => {
           const key = dateKey(d), isToday = key === todayKey;
           const list = (byDay[key] || []).filter((t) => !hidden.has(t.areaId)).slice().sort((a, b) => (a.done === b.done ? 0 : a.done ? 1 : -1));
           return (
-            <div key={key} style={{ ...S.dayCol, ...(isToday ? { borderColor: C.spark, background: C.sparkSoft } : {}) }}>
+            <React.Fragment key={key}>
+            <div className={i === 5 ? "daycol sat" : i === 6 ? "daycol sun" : "daycol"} style={{ ...S.dayCol, ...(isToday ? { borderColor: C.spark, background: C.sparkSoft } : {}) }}>
               <div style={S.dayHead}>
                 <span style={{ ...S.dayName, ...(isToday ? { color: C.text } : {}) }}>{DAY_NAMES[i]}</span>
                 <span style={S.dayDate}>{d.getDate()}</span>
@@ -892,10 +1008,69 @@ function Semana({ areas, tasks, onAdd, onToggle, onDel }) {
                 onKeyDown={(ev) => { if (ev.key === "Enter") commit(key); }}
                 placeholder="+ tarea" style={{ ...S.dayInput, borderColor: effArea ? tint(effArea) + "66" : C.border }} />
             </div>
+            </React.Fragment>
           );
         })}
       </div>
       <div style={S.hint}>Marca el círculo al completar: cuenta como energía de esa área y alimenta el Tablero.</div>
+
+      <div style={S.calWrap}>
+        <div style={S.calHead}>
+          <button className="iconbtn" style={S.iconBtn} onClick={() => setCalRef(new Date(calYear, calMonth - 1, 1))} aria-label="Meses anteriores"><ChevronLeft size={16} /></button>
+          <span style={S.calTitle}>{calYear}</span>
+          <button className="iconbtn" style={S.iconBtn} onClick={() => setCalRef(new Date(calYear, calMonth + 1, 1))} aria-label="Meses siguientes"><ChevronRight size={16} /></button>
+        </div>
+        <div style={S.calMonthsRow}>
+          {renderMonth(new Date(calYear, calMonth - 1, 1))}
+          {renderMonth(calRef)}
+          {renderMonth(new Date(calYear, calMonth + 1, 1))}
+        </div>
+        <div style={S.calLegend}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><span style={{ width: 6, height: 6, borderRadius: 6, background: C.spark }} /> con tareas</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><span style={{ width: 6, height: 6, borderRadius: 6, background: C.primary }} /> todo hecho</span>
+          <span style={{ color: C.textMuted }}>toca un día para ir a esa semana</span>
+        </div>
+      </div>
+
+      <div style={S.notesWrap}>
+        <div style={S.notesHead}><PenLine size={15} /> <span>Notas</span></div>
+        <div style={{ display: "flex", gap: 8, marginBottom: notes.length ? 12 : 0 }}>
+          <input value={noteText} onChange={(e) => setNoteText(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") addNote(); }}
+            placeholder="Una idea, una cita, algo que no quieres perder…" style={S.notesInput} />
+          <button className="navbtn" onClick={addNote} style={S.notesAdd}><Plus size={15} /> Agregar</button>
+        </div>
+        {notes.length === 0
+          ? <div style={S.notesEmpty}>Anota acá lo que se te ocurra al mirar tu semana.</div>
+          : <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {notes.map((n) => (
+                <div key={n.id} className="task" style={S.noteRow}>
+                  <span style={{ flex: 1, lineHeight: 1.45 }}>{n.title}</span>
+                  <button onClick={() => onDelNote(n.id)} className="del" style={{ ...S.del, padding: 3 }} aria-label="Borrar nota"><Trash2 size={13} /></button>
+                </div>
+              ))}
+            </div>}
+      </div>
+
+      <div style={S.habitsCard}>
+        <div style={S.habitsHead}>
+          <Heart size={15} /> <span>Cuidados de hoy</span>
+          <span style={S.habitsCount}>{habitsToday.length}/{HABITOS.length}</span>
+        </div>
+        <div style={S.habitsRow}>
+          {HABITOS.map((h) => {
+            const on = habitsToday.includes(h.id);
+            const Ic = h.icon;
+            return (
+              <button key={h.id} onClick={() => onToggleHabit(h.id)} className="chip"
+                style={{ ...S.habitChip, ...(on ? S.habitChipOn : {}) }}>
+                {on ? <Check size={14} strokeWidth={3} /> : <Ic size={14} />} {h.label}
+              </button>
+            );
+          })}
+        </div>
+        <div style={S.habitsHint}>Pequeños gestos para tu cuerpo y tu ánimo. Se reinician cada día.</div>
+      </div>
     </div>
   );
 }
@@ -1401,6 +1576,39 @@ function Evolucion({ finance }) {
   const mLabel = (k) => { const [y, mo] = k.split("-"); return new Date(y, mo - 1, 1).toLocaleDateString("es-CL", { month: "short" }); };
   if (!data.length) return <div className="fade"><div style={S.empty}>Aún no hay meses con datos. Llena al menos un mes en «Mes» y acá verás la evolución.</div></div>;
   const max = Math.max(1, ...data.map((d) => Math.max(d.ing, d.gas)));
+
+  // gastos por ítem a lo largo de los meses (egresos + pagos de deudas, agrupados por concepto)
+  const months = data.map((d) => d.k);
+  const itemMap = {};
+  months.forEach((k) => {
+    const mm = finance[k] || {};
+    (mm.egresos || []).forEach((e) => {
+      const c = (e.concepto || "Sin nombre").trim() || "Sin nombre";
+      (itemMap[c] = itemMap[c] || {})[k] = (itemMap[c][k] || 0) + (Number(e.monto) || 0);
+    });
+    (mm.deudas || []).forEach((e) => {
+      const c = (e.concepto || "Deuda").trim() || "Deuda";
+      (itemMap[c] = itemMap[c] || {})[k] = (itemMap[c][k] || 0) + (Number(e.pago) || 0);
+    });
+  });
+  let itemList = Object.keys(itemMap).map((c) => ({
+    name: c,
+    vals: months.map((k) => itemMap[c][k] || 0),
+    total: months.reduce((a, k) => a + (itemMap[c][k] || 0), 0),
+  })).filter((it) => it.total > 0).sort((a, b) => b.total - a.total);
+  const TOP = 7;
+  if (itemList.length > TOP) {
+    const rest = itemList.slice(TOP);
+    const otros = { name: "Otros", vals: months.map((_, i) => rest.reduce((a, it) => a + it.vals[i], 0)), total: rest.reduce((a, it) => a + it.total, 0) };
+    itemList = [...itemList.slice(0, TOP), otros];
+  }
+  const lineColors = ["#2F7E74", "#C2901F", "#BF512C", "#345A78", "#6F8A6F", "#9A7B43", "#3A5A74", "#A98E86"];
+  const itemMax = Math.max(1, ...itemList.flatMap((it) => it.vals));
+  const CW = Math.max(280, months.length * 64), CH = 180, padL = 10, padR = 10, padT = 12, padB = 26;
+  const plotW = CW - padL - padR, plotH = CH - padT - padB;
+  const xAt = (i) => padL + (months.length === 1 ? plotW / 2 : (i / (months.length - 1)) * plotW);
+  const yAt = (v) => padT + plotH - (v / itemMax) * plotH;
+
   return (
     <div className="fade">
       <Section label="Ingresos vs. gastos" accent={C.accent}>
@@ -1432,6 +1640,40 @@ function Evolucion({ finance }) {
           ))}
         </div>
       </Section>
+      {itemList.length > 0 && (
+        <Section label="Gastos por ítem" accent={C.accent}>
+          <div style={S.finCard}>
+            <div style={{ width: "100%", overflowX: "auto" }}>
+              <svg viewBox={`0 0 ${CW} ${CH}`} width="100%" style={{ maxWidth: CW, display: "block" }} preserveAspectRatio="xMidYMid meet">
+                {[0, 0.5, 1].map((f, gi) => (
+                  <line key={gi} x1={padL} y1={padT + plotH * f} x2={CW - padR} y2={padT + plotH * f} stroke={C.border} strokeWidth="1" />
+                ))}
+                {itemList.map((it, idx) => {
+                  const col = lineColors[idx % lineColors.length];
+                  const pts = it.vals.map((v, i) => `${xAt(i)},${yAt(v)}`).join(" ");
+                  return (
+                    <g key={it.name}>
+                      {months.length > 1 && <polyline points={pts} fill="none" stroke={col} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />}
+                      {it.vals.map((v, i) => <circle key={i} cx={xAt(i)} cy={yAt(v)} r="2.6" fill={col} />)}
+                    </g>
+                  );
+                })}
+                {months.map((k, i) => (
+                  <text key={k} x={xAt(i)} y={CH - 8} fontSize="10" fill={C.textMuted} textAnchor="middle" style={{ fontFamily: "'Spline Sans Mono', monospace" }}>{mLabel(k)}</text>
+                ))}
+              </svg>
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 16px", marginTop: 12, fontSize: 12, color: C.textSoft }}>
+              {itemList.map((it, idx) => (
+                <span key={it.name} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ width: 14, height: 3, borderRadius: 2, background: lineColors[idx % lineColors.length] }} /> {it.name}
+                </span>
+              ))}
+            </div>
+            {months.length === 1 && <div style={S.hint}>Con un solo mes se ven puntos; al tener dos o más meses aparecerán las líneas de tendencia.</div>}
+          </div>
+        </Section>
+      )}
     </div>
   );
 }
@@ -1720,7 +1962,7 @@ const makeS = (C) => ({
   weekRange: { fontFamily: "'Newsreader', serif", fontSize: 18, fontWeight: 600, color: C.onBg },
   linkBtn: { background: "none", border: "none", color: C.onBgDim, fontSize: 12, cursor: "pointer", fontFamily: "inherit", padding: "2px 0", textDecoration: "underline" },
   iconBtn: { background: C.surface, border: `1px solid ${C.border}`, color: C.textSoft, borderRadius: 8, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
-  weekGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10 },
+  weekGrid: { display: "grid", gridTemplateColumns: "repeat(7, minmax(118px, 1fr))", gap: 8, overflowX: "auto", paddingBottom: 2 },
   dayCol: { background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 10, padding: 10, minHeight: 120, display: "flex", flexDirection: "column" },
   dayHead: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8, paddingBottom: 6, borderBottom: `1px solid ${C.border}` },
   dayName: { fontFamily: "'Newsreader', serif", fontSize: 14, fontWeight: 600, color: C.text, textTransform: "capitalize" },
@@ -1731,6 +1973,37 @@ const makeS = (C) => ({
   taskText: { fontSize: 13, lineHeight: 1.35, color: C.text, flex: 1, minWidth: 0, wordBreak: "break-word" },
   dayInput: { width: "100%", marginTop: "auto", background: "#FFFFFFAA", border: "1px solid", borderRadius: 7, color: C.text, padding: "7px 9px", fontSize: 13, fontFamily: "inherit", outline: "none", boxSizing: "border-box" },
   hint: { marginTop: 14, color: C.onBgDim, fontSize: 12.5, fontStyle: "italic", fontFamily: "'Newsreader', serif" },
+
+  calWrap: { margin: "24px auto 0", maxWidth: 720 },
+  calMonthsRow: { display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 18 },
+  calMonth: { flex: "1 1 200px", maxWidth: 232, minWidth: 162, boxSizing: "border-box", border: `1px solid ${C.border}`, borderRadius: 12, padding: 11 },
+  calMonthCur: { background: "#FFFFFF", borderColor: C.spark },
+  calMonthOther: { background: C.primarySoft },
+  calMonthTitle: { textAlign: "center", fontFamily: "'Newsreader', serif", fontSize: 13, color: C.text, textTransform: "capitalize", fontWeight: 600, marginBottom: 6 },
+  calHead: { display: "flex", alignItems: "center", justifyContent: "center", gap: 22, marginBottom: 12 },
+  calTitle: { fontFamily: "'Newsreader', serif", fontSize: 13.5, color: C.text, textTransform: "capitalize", fontWeight: 600 },
+  calGrid: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 2, minWidth: 0 },
+  calDow: { textAlign: "center", fontSize: 9.5, color: C.textMuted, fontFamily: "'Spline Sans Mono', monospace", paddingBottom: 2 },
+  calCell: { position: "relative", aspectRatio: "1 / 1", minWidth: 0, boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center", background: "none", border: "1px solid transparent", borderRadius: 7, color: C.textSoft, fontSize: 11, fontFamily: "'Spline Sans Mono', monospace", cursor: "pointer" },
+  calCellWeek: { background: C.surfaceAlt, borderColor: C.border },
+  calCellToday: { borderColor: C.spark, color: C.text, fontWeight: 700 },
+  calDot: { position: "absolute", bottom: 2.5, left: "50%", transform: "translateX(-50%)", width: 4.5, height: 4.5, borderRadius: 5 },
+  calLegend: { display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "5px 12px", marginTop: 9, fontSize: 10, color: C.textSoft, fontFamily: "'Spline Sans Mono', monospace" },
+
+  habitsCard: { margin: "22px auto 0", maxWidth: 720, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "16px 18px" },
+  habitsHead: { display: "flex", alignItems: "center", justifyContent: "center", gap: 9, marginBottom: 12, color: C.text, fontFamily: "'Newsreader', serif", fontSize: 15, fontWeight: 600 },
+  habitsCount: { fontFamily: "'Spline Sans Mono', monospace", fontSize: 12.5, color: C.textSoft, fontWeight: 400 },
+  habitsRow: { display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8 },
+  habitChip: { display: "inline-flex", alignItems: "center", gap: 6, background: C.surfaceAlt, border: `1px solid ${C.border}`, color: C.textSoft, borderRadius: 9, padding: "8px 12px", fontSize: 13, cursor: "pointer", fontFamily: "inherit", transition: "all .15s" },
+  habitChipOn: { background: C.sparkSoft, borderColor: C.spark, color: C.text },
+  habitsHint: { marginTop: 12, textAlign: "center", color: C.onBgDim, fontSize: 12, fontStyle: "italic", fontFamily: "'Newsreader', serif" },
+
+  notesWrap: { margin: "22px auto 0", maxWidth: 720, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "16px 18px" },
+  notesHead: { display: "flex", alignItems: "center", gap: 7, marginBottom: 10, color: C.text, fontFamily: "'Newsreader', serif", fontSize: 15, fontWeight: 600 },
+  notesInput: { flex: 1, minWidth: 0, background: "#FFFFFFAA", border: `1px solid ${C.border}`, borderRadius: 9, color: C.text, padding: "10px 14px", fontSize: 14, fontFamily: "'Newsreader', serif", outline: "none", boxSizing: "border-box" },
+  notesAdd: { display: "inline-flex", alignItems: "center", gap: 5, background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 9, color: C.text, padding: "0 14px", fontSize: 13, fontFamily: "inherit", cursor: "pointer", whiteSpace: "nowrap" },
+  notesEmpty: { color: C.onBgDim, fontSize: 13, fontStyle: "italic", fontFamily: "'Newsreader', serif" },
+  noteRow: { display: "flex", alignItems: "flex-start", gap: 8, background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 9, padding: "9px 11px", fontSize: 14, color: C.text, fontFamily: "'Newsreader', serif" },
 
   summaryRow: { display: "flex", gap: 12, marginBottom: 26, flexWrap: "wrap" },
   stat: { flex: 1, minWidth: 140, border: `1px solid ${C.border}`, borderRadius: 10, padding: "16px 18px" },
@@ -1814,6 +2087,11 @@ const makeCSS = (C) => `
   textarea:focus, input:focus { border-color: ${C.primary} !important; }
   button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid ${C.primary}; outline-offset: 2px; }
   ::placeholder { color: ${C.textMuted}; }
+  .weekgrid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; padding-bottom: 2px; }
+  .weekgrid .daycol { grid-column: span 2; min-width: 0; box-sizing: border-box; }
+  .weekgrid .daycol.sat { grid-column: 4 / span 2; }
+  .weekgrid .daycol.sun { grid-column: 6 / span 2; }
+  @media (max-width: 640px) { .weekgrid { grid-template-columns: 1fr; } .weekgrid .daycol, .weekgrid .daycol.sat, .weekgrid .daycol.sun { grid-column: auto; } }
   @media (max-width: 720px) { .leftrail { display: none !important; } }
   @media (prefers-reduced-motion: reduce) { .fade { animation: none; } .panel { transition: none; } * { transition-duration: .01ms !important; } }
 `;
