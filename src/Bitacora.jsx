@@ -1216,6 +1216,12 @@ function Registros({ items, onAdd, onUpdate, onDel }) {
                           <input type="date" value={it.finished || ""} onChange={(e) => onUpdate(it.id, { finished: e.target.value })} style={S.dateInput} />
                         </span>
                       )}
+                      {(collId === "peliculas" || collId === "teatro") && (
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                          <span style={S.entryMeta}>· vista el</span>
+                          <input type="date" value={it.viewedDate || ""} onChange={(e) => onUpdate(it.id, { viewedDate: e.target.value })} style={S.dateInput} />
+                        </span>
+                      )}
                     </div>
                     {coll.note !== undefined && (
                       <NoteField value={it.note} placeholder={coll.note} onSave={(v) => onUpdate(it.id, { note: v })} />
