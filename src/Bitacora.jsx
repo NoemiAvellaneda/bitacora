@@ -1928,7 +1928,7 @@ function Decor() {
 
 function LeftRail() {
   return (
-    <div className="leftrail" aria-hidden="true" style={{ flexShrink: 0, width: 28, display: "flex", alignItems: "stretch", justifyContent: "flex-end" }}>
+    <div className="leftrail" aria-hidden="true" style={{ flexShrink: 0, width: 64, display: "flex", alignItems: "stretch", justifyContent: "flex-end" }}>
       <div style={{ display: "flex", gap: 4 }}>
         <div style={{ width: 11, background: C.spark, borderRadius: 4 }} />
         <div style={{ width: 7, background: C.primary, borderRadius: 4 }} />
