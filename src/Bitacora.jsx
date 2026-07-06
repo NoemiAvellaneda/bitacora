@@ -718,6 +718,195 @@ function Gauge({ health, days, color, size = 64 }) {
   );
 }
 
+/* ───────────────────────── datos ciclo ───────────────────────── */
+const DATOS_CICLO = [
+  { id: 1,   cat: "Ciclo",              texto: "El ciclo menstrual se cuenta desde el primer día de sangrado (día 1) hasta el día antes del siguiente sangrado." },
+  { id: 2,   cat: "Ciclo",              texto: "Un ciclo 'típico' dura en promedio 28 días, pero cualquier duración entre 21 y 35 días se considera normal en adultas." },
+  { id: 3,   cat: "Ciclo",              texto: "La menstruación suele durar entre 2 y 7 días; fuera de ese rango conviene consultar." },
+  { id: 4,   cat: "Ciclo",              texto: "La pérdida de sangre en una regla normal es de unos 30 a 50 ml en total: bastante menos de lo que parece." },
+  { id: 5,   cat: "Ciclo",              texto: "Perder más de 80 ml por regla, o tener que cambiar protección cada 1-2 horas, se considera sangrado abundante (menorragia) y merece revisión." },
+  { id: 6,   cat: "Ciclo",              texto: "Es normal que la duración de tu ciclo varíe algunos días de un mes a otro; la regularidad perfecta es la excepción, no la regla." },
+  { id: 7,   cat: "Ciclo",              texto: "La sangre menstrual está compuesta por sangre, tejido del endometrio, mucosa y células: no es 'sangre sucia' ni toxinas." },
+  { id: 8,   cat: "Ciclo",              texto: "El color de la sangre puede ir de rojo brillante a café oscuro según la velocidad del flujo; el café suele ser sangre más antigua, no algo malo." },
+  { id: 9,   cat: "Ciclo",              texto: "Pequeños coágulos ocasionales son normales; coágulos grandes y frecuentes pueden indicar un sangrado excesivo." },
+  { id: 10,  cat: "Ciclo",              texto: "La primera menstruación (menarquia) suele llegar entre los 10 y 15 años, con un promedio cercano a los 12." },
+  { id: 11,  cat: "Ciclo",              texto: "En los primeros años tras la menarquia los ciclos suelen ser irregulares mientras el sistema hormonal madura." },
+  { id: 12,  cat: "Ciclo",              texto: "La menopausia (12 meses seguidos sin regla) ocurre en promedio alrededor de los 51 años." },
+  { id: 13,  cat: "Ciclo",              texto: "La perimenopausia, con ciclos y síntomas cambiantes, puede empezar años antes, a veces ya en los 40." },
+  { id: 14,  cat: "Ciclo",              texto: "Una persona tiene aproximadamente 400 a 500 menstruaciones a lo largo de su vida fértil." },
+  { id: 15,  cat: "Ciclo",              texto: "El endometrio es el recubrimiento del útero que se engrosa cada ciclo y se desprende como menstruación si no hay embarazo." },
+  { id: 16,  cat: "Hormonas",           texto: "Cuatro hormonas dirigen el ciclo: estrógeno, progesterona, FSH y LH." },
+  { id: 17,  cat: "Hormonas",           texto: "La FSH (hormona folículo-estimulante) impulsa el crecimiento de los folículos en el ovario al inicio del ciclo." },
+  { id: 18,  cat: "Hormonas",           texto: "Un pico de LH (hormona luteinizante) desencadena la ovulación, unas 24 a 36 horas después de comenzar a subir." },
+  { id: 19,  cat: "Hormonas",           texto: "El estrógeno domina la primera mitad del ciclo y ayuda a engrosar el endometrio." },
+  { id: 20,  cat: "Hormonas",           texto: "La progesterona domina la segunda mitad y prepara al útero para un posible embarazo." },
+  { id: 21,  cat: "Hormonas",           texto: "Si no hay embarazo, el estrógeno y la progesterona caen, y esa caída dispara la menstruación." },
+  { id: 22,  cat: "Hormonas",           texto: "La caída hormonal premenstrual explica buena parte de los cambios de ánimo, energía y sueño de esos días." },
+  { id: 23,  cat: "Hormonas",           texto: "Las hormonas del ciclo también influyen en la piel, la libido, el apetito y la temperatura corporal." },
+  { id: 24,  cat: "Hormonas",           texto: "Los anticonceptivos hormonales funcionan, en general, suprimiendo la ovulación mediante hormonas sintéticas." },
+  { id: 25,  cat: "Hormonas",           texto: "El sangrado que aparece con muchas píldoras anticonceptivas es un 'sangrado por deprivación', no una menstruación real." },
+  { id: 26,  cat: "Fases",              texto: "El ciclo se divide en cuatro fases: menstrual, folicular, ovulatoria y lútea." },
+  { id: 27,  cat: "Fases",              texto: "Fase menstrual: los días de sangrado; suele coincidir con la energía más baja del ciclo." },
+  { id: 28,  cat: "Fases",              texto: "Fase folicular: tras la regla sube el estrógeno y muchas personas notan más energía y mejor ánimo." },
+  { id: 29,  cat: "Fases",              texto: "Fase ovulatoria: en torno a la ovulación, con un pico de estrógeno y a veces mayor libido." },
+  { id: 30,  cat: "Fases",              texto: "Fase lútea: tras ovular sube la progesterona; en sus últimos días aparecen los síntomas premenstruales." },
+  { id: 31,  cat: "Fases",              texto: "La fase folicular puede variar bastante en duración entre personas y entre ciclos." },
+  { id: 32,  cat: "Fases",              texto: "La fase lútea es más constante: suele durar entre 11 y 14 días." },
+  { id: 33,  cat: "Fases",              texto: "Saber en qué fase estás ayuda a anticipar tu energía y a planificar según eso." },
+  { id: 34,  cat: "Fertilidad",         texto: "La ovulación es la liberación de un óvulo por el ovario, normalmente una vez por ciclo." },
+  { id: 35,  cat: "Fertilidad",         texto: "La ovulación NO siempre cae en el día 14; ocurre unos 12 a 14 días antes de la SIGUIENTE regla, así que se mueve según tu ciclo." },
+  { id: 36,  cat: "Fertilidad",         texto: "El óvulo vive solo unas 12 a 24 horas tras la ovulación." },
+  { id: 37,  cat: "Fertilidad",         texto: "Los espermatozoides pueden sobrevivir hasta 5 días dentro del cuerpo en condiciones favorables." },
+  { id: 38,  cat: "Fertilidad",         texto: "La 'ventana fértil' abarca unos 6 días: los 5 previos a la ovulación más el día de la ovulación." },
+  { id: 39,  cat: "Fertilidad",         texto: "Cerca de la ovulación, el moco cervical se vuelve transparente, elástico y resbaloso, parecido a clara de huevo." },
+  { id: 40,  cat: "Fertilidad",         texto: "La temperatura basal del cuerpo sube levemente (unos 0,3 a 0,5 °C) después de ovular, por efecto de la progesterona." },
+  { id: 41,  cat: "Fertilidad",         texto: "Algunas personas sienten un leve dolor en un costado al ovular; se conoce como 'Mittelschmerz'." },
+  { id: 42,  cat: "Fertilidad",         texto: "Sí es posible quedar embarazada durante la regla, sobre todo con ciclos cortos: el semen puede seguir vivo cuando ovulas." },
+  { id: 43,  cat: "Fertilidad",         texto: "Existen ciclos 'anovulatorios' en que hay sangrado pero no hubo ovulación; son más comunes en la adolescencia y la perimenopausia." },
+  { id: 44,  cat: "Fertilidad",         texto: "Un tracker de ciclo es una guía de autoconocimiento, no un método anticonceptivo ni de fertilidad confiable por sí solo." },
+  { id: 45,  cat: "Fertilidad",         texto: "La fertilidad femenina desciende de forma gradual con la edad, más marcadamente después de los 35." },
+  { id: 46,  cat: "Síntomas",           texto: "El síndrome premenstrual (SPM) reúne síntomas físicos y emocionales en los días previos a la regla; es real y de base hormonal." },
+  { id: 47,  cat: "Síntomas",           texto: "Síntomas comunes del SPM: hinchazón, sensibilidad en las mamas, irritabilidad, cansancio, antojos y cambios de ánimo." },
+  { id: 48,  cat: "Síntomas",           texto: "El trastorno disfórico premenstrual (TDPM) es una forma severa del SPM, con síntomas emocionales intensos que afectan la vida diaria." },
+  { id: 49,  cat: "Síntomas",           texto: "El TDPM afecta a una minoría (alrededor del 3 a 8% de quienes menstrúan) y merece atención médica, no minimizarse." },
+  { id: 50,  cat: "Síntomas",           texto: "Los cólicos (dismenorrea) se deben a unas sustancias llamadas prostaglandinas que hacen contraerse al útero." },
+  { id: 51,  cat: "Síntomas",           texto: "El calor local, el movimiento suave y ciertos analgésicos ayudan con los cólicos; un dolor que te incapacita no es 'normal' y conviene consultarlo." },
+  { id: 52,  cat: "Síntomas",           texto: "Los dolores de cabeza o migrañas ligados a la caída de estrógeno son frecuentes justo antes o durante la regla." },
+  { id: 53,  cat: "Síntomas",           texto: "Es normal notar cambios en la digestión durante la regla, incluidas deposiciones más blandas, por efecto de las prostaglandinas." },
+  { id: 54,  cat: "Síntomas",           texto: "La libido puede subir o bajar según la fase; muchas personas notan un alza cerca de la ovulación." },
+  { id: 55,  cat: "Síntomas",           texto: "El sueño puede alterarse en la fase lútea por la progesterona y los cambios de temperatura corporal." },
+  { id: 56,  cat: "Síntomas",           texto: "Registrar tus síntomas por varios ciclos te ayuda, a ti y a tu médica, a distinguir lo habitual de lo que requiere estudio." },
+  { id: 57,  cat: "Salud",              texto: "La endometriosis, tejido similar al endometrio creciendo fuera del útero, afecta a alrededor del 10% de las mujeres en edad fértil." },
+  { id: 58,  cat: "Salud",              texto: "El dolor menstrual muy intenso puede ser señal de endometriosis y suele diagnosticarse con años de retraso: no lo normalices." },
+  { id: 59,  cat: "Salud",              texto: "El síndrome de ovario poliquístico (SOP) afecta a cerca del 8 a 13% y puede causar ciclos irregulares, acné y aumento de vello." },
+  { id: 60,  cat: "Salud",              texto: "Los miomas (fibromas) son tumores benignos del útero que pueden provocar sangrados abundantes." },
+  { id: 61,  cat: "Salud",              texto: "La amenorrea es la ausencia de menstruación; puede deberse a embarazo, estrés, cambios de peso, ejercicio intenso o causas médicas." },
+  { id: 62,  cat: "Salud",              texto: "Perder la regla por comer muy poco o entrenar en exceso (amenorrea hipotalámica) es una señal de alarma para la salud, no un logro." },
+  { id: 63,  cat: "Salud",              texto: "Los sangrados abundantes recurrentes son una causa frecuente de anemia por falta de hierro en mujeres." },
+  { id: 64,  cat: "Salud",              texto: "El sangrado entre reglas, después del sexo o tras la menopausia siempre debe consultarse." },
+  { id: 65,  cat: "Salud",              texto: "Algunas infecciones y desequilibrios de la tiroides pueden alterar el ciclo." },
+  { id: 66,  cat: "Salud",              texto: "El estrés crónico afecta al eje hormonal y puede atrasar o suprimir la ovulación." },
+  { id: 67,  cat: "Salud",              texto: "El Papanicolau y los controles ginecológicos periódicos son clave en la salud de la mujer, más allá del ciclo." },
+  { id: 68,  cat: "Salud",              texto: "El autoexamen y los controles de mama ayudan a detectar cambios a tiempo." },
+  { id: 69,  cat: "Salud",              texto: "Una regla que cambia bruscamente de patrón sin causa clara merece una consulta médica." },
+  { id: 70,  cat: "Salud",              texto: "Llevar registro de tus ciclos es información valiosa que puedes mostrar en la consulta para un mejor diagnóstico." },
+  { id: 71,  cat: "Mitos",              texto: "Mito: no puedes quedar embarazada durante la regla. Realidad: es menos probable, pero posible." },
+  { id: 72,  cat: "Mitos",              texto: "Mito: la ovulación siempre es el día 14. Realidad: depende del largo de tu ciclo y puede variar." },
+  { id: 73,  cat: "Mitos",              texto: "Mito: los ciclos de mujeres que conviven se 'sincronizan'. La evidencia sólida no respalda esa idea." },
+  { id: 74,  cat: "Mitos",              texto: "Mito: no deberías hacer ejercicio con la regla. Realidad: el movimiento suele aliviar los cólicos y mejorar el ánimo." },
+  { id: 75,  cat: "Mitos",              texto: "Mito: no puedes nadar con la regla. Realidad: con copa, tampón o disco puedes hacerlo sin problema." },
+  { id: 76,  cat: "Mitos",              texto: "Mito: usar tampón 'quita la virginidad'. Realidad: la virginidad no es un estado físico verificable y un tampón no la afecta." },
+  { id: 77,  cat: "Mitos",              texto: "Mito: la sangre menstrual es sucia o tóxica. Realidad: es tejido y sangre normales del cuerpo." },
+  { id: 78,  cat: "Mitos",              texto: "Mito: el SPM 'es puro invento' o exageración. Realidad: tiene base hormonal comprobada." },
+  { id: 79,  cat: "Mitos",              texto: "Mito: tener la regla te 'debilita' y no deberías esforzarte. Realidad: puedes seguir tu vida normal según cómo te sientas." },
+  { id: 80,  cat: "Mitos",              texto: "Mito: si tu ciclo no es de 28 días exactos, algo anda mal. Realidad: el rango normal es amplio." },
+  { id: 81,  cat: "Mitos",              texto: "Mito: el dolor menstrual severo es normal y hay que aguantarlo. Realidad: un dolor que te incapacita debe estudiarse." },
+  { id: 82,  cat: "Mitos",              texto: "Mito: la menstruación se puede 'aguantar' o retener a voluntad. Realidad: es un proceso involuntario." },
+  { id: 83,  cat: "Autocuidado",        texto: "Dormir bien regula las hormonas y suele suavizar los síntomas del ciclo." },
+  { id: 84,  cat: "Autocuidado",        texto: "La actividad física regular se asocia a cólicos más leves y mejor ánimo premenstrual." },
+  { id: 85,  cat: "Autocuidado",        texto: "Mantener una buena hidratación puede reducir la sensación de hinchazón." },
+  { id: 86,  cat: "Autocuidado",        texto: "Los alimentos ricos en hierro (legumbres, hojas verdes, carnes) ayudan a reponer lo que se pierde con el sangrado." },
+  { id: 87,  cat: "Autocuidado",        texto: "La vitamina C mejora la absorción del hierro de origen vegetal." },
+  { id: 88,  cat: "Autocuidado",        texto: "Reducir cafeína y alcohol en los días previos puede ayudar con la irritabilidad y el sueño de algunas personas." },
+  { id: 89,  cat: "Autocuidado",        texto: "El calor local (guatero o bolsa caliente) es de los remedios más efectivos y simples para los cólicos." },
+  { id: 90,  cat: "Autocuidado",        texto: "Técnicas de manejo del estrés, como la respiración o caminar, ayudan a regular el eje hormonal." },
+  { id: 91,  cat: "Autocuidado",        texto: "Registrar tu ánimo y energía por fase te permite planificar las tareas exigentes para cuando sueles tener más impulso." },
+  { id: 92,  cat: "Autocuidado",        texto: "No existe una 'dieta del ciclo' mágica: la constancia en sueño, movimiento y alimentación variada rinde más que las modas." },
+  { id: 93,  cat: "Productos",          texto: "Existen muchas opciones: toallas, tampones, copa menstrual, disco menstrual y ropa interior absorbente." },
+  { id: 94,  cat: "Productos",          texto: "La copa menstrual es reutilizable, puede durar años y se puede usar hasta unas 12 horas antes de vaciarla." },
+  { id: 95,  cat: "Productos",          texto: "Los tampones no deben dejarse más de 8 horas por el riesgo (raro pero serio) de síndrome de shock tóxico." },
+  { id: 96,  cat: "Productos",          texto: "Ante fiebre alta, vómitos y erupción usando tampón, retíralo y busca atención médica: pueden ser señales de shock tóxico." },
+  { id: 97,  cat: "Productos",          texto: "La ropa interior menstrual es cómoda y reutilizable, buena como respaldo o para flujo leve a medio." },
+  { id: 98,  cat: "Productos",          texto: "Elegir producto es personal: depende de tu flujo, comodidad, presupuesto y consideraciones ambientales." },
+  { id: 99,  cat: "Productos",          texto: "Las opciones reutilizables (copa, ropa interior) reducen los residuos frente a las desechables." },
+  { id: 100, cat: "Productos",          texto: "Cambiar la protección con regularidad y lavarse las manos previene irritaciones e infecciones." },
+  { id: 101, cat: "Cultura y derechos", texto: "La 'pobreza menstrual' es la falta de acceso a productos, higiene o información para menstruar con dignidad; afecta a millones en el mundo." },
+  { id: 102, cat: "Cultura y derechos", texto: "En muchos países se ha debatido eliminar el impuesto a los productos menstruales, conocido como 'impuesto rosa' o 'tampon tax'." },
+  { id: 103, cat: "Cultura y derechos", texto: "La equidad menstrual busca que menstruar no sea una barrera para estudiar, trabajar o participar." },
+  { id: 104, cat: "Cultura y derechos", texto: "Durante siglos, distintos tabúes culturales rodearon la menstruación con silencio y vergüenza." },
+  { id: 105, cat: "Cultura y derechos", texto: "Hablar abiertamente del ciclo es relativamente reciente y sigue siendo un tema de salud pública y de género." },
+  { id: 106, cat: "Cultura y derechos", texto: "La investigación médica históricamente excluyó a las mujeres de muchos estudios, dejando vacíos en la salud femenina." },
+  { id: 107, cat: "Cultura y derechos", texto: "El dolor de las mujeres ha sido subestimado por la medicina, lo que retrasa diagnósticos como el de la endometriosis." },
+  { id: 108, cat: "Cultura y derechos", texto: "La educación menstrual temprana, para todos los géneros, reduce el estigma y mejora la salud." },
+  { id: 109, cat: "Cultura y derechos", texto: "El acceso a información confiable sobre el propio cuerpo es un componente de la autonomía y los derechos de las mujeres." },
+  { id: 110, cat: "Cultura y derechos", texto: "Conocer tu ciclo es una forma de autoconocimiento y de recuperar el relato sobre tu propio cuerpo." },
+];
+const DATOS_CICLO_CATS = ["Todas", "Ciclo", "Hormonas", "Fases", "Fertilidad", "Síntomas", "Salud", "Mitos", "Autocuidado", "Productos", "Cultura y derechos"];
+
+/* ───────────────────────── ciclo constantes registro ───────────────────────── */
+const FLUJO_OPS = ["sin sangrado", "leve", "medio", "abundante"];
+const SINTOMAS_OPS = ["cólicos", "dolor de cabeza", "hinchazón", "sensibilidad mamaria", "fatiga", "irritabilidad", "náuseas", "lumbalgia", "manchado"];
+const ANIMO_LABELS = ["muy bajo", "bajo", "neutro", "bueno", "muy bueno"];
+const ENERGIA_LABELS = ["agotada", "baja", "normal", "buena", "alta"];
+
+const WHEEL_C = { menstrual: "#C25A7A", folicular: "#4BC4BC", ovulatoria: "#C8A24A", lutea: "#2C92B8", ring: "#B8CCC0" };
+const arcPath = (cx, cy, ro, ri, startDeg, endDeg) => {
+  const r = (d) => (d - 90) * Math.PI / 180;
+  const x1 = cx + ro * Math.cos(r(startDeg)), y1 = cy + ro * Math.sin(r(startDeg));
+  const x2 = cx + ro * Math.cos(r(endDeg)),   y2 = cy + ro * Math.sin(r(endDeg));
+  const x3 = cx + ri * Math.cos(r(endDeg)),   y3 = cy + ri * Math.sin(r(endDeg));
+  const x4 = cx + ri * Math.cos(r(startDeg)), y4 = cy + ri * Math.sin(r(startDeg));
+  const lg = (endDeg - startDeg) > 180 ? 1 : 0;
+  return `M ${x1} ${y1} A ${ro} ${ro} 0 ${lg} 1 ${x2} ${y2} L ${x3} ${y3} A ${ri} ${ri} 0 ${lg} 0 ${x4} ${y4} Z`;
+};
+
+/* ───────────────────────── ciclo helpers ───────────────────────── */
+const cicloAddDays = (isoDate, n) => {
+  const d = new Date(isoDate + "T12:00:00");
+  d.setDate(d.getDate() + n);
+  return dateKey(d);
+};
+const cicloPeriodStarts = (diasRegla) => {
+  if (!diasRegla || diasRegla.length === 0) return [];
+  const sorted = [...diasRegla].sort();
+  const starts = [sorted[0]];
+  for (let i = 1; i < sorted.length; i++) {
+    const diff = Math.round((new Date(sorted[i] + "T12:00:00") - new Date(sorted[i - 1] + "T12:00:00")) / 86400000);
+    if (diff > 1) starts.push(sorted[i]);
+  }
+  return starts;
+};
+const cicloAvgLen = (starts) => {
+  if (!starts || starts.length < 2) return null;
+  const recent = starts.slice(-Math.min(7, starts.length));
+  const diffs = [];
+  for (let i = 1; i < recent.length; i++)
+    diffs.push(Math.round((new Date(recent[i] + "T12:00:00") - new Date(recent[i - 1] + "T12:00:00")) / 86400000));
+  return Math.round(diffs.reduce((a, b) => a + b, 0) / diffs.length);
+};
+const cicloLastPeriodLen = (diasRegla, starts) => {
+  if (!starts || starts.length === 0 || !diasRegla || diasRegla.length === 0) return 5;
+  const lastStart = starts[starts.length - 1];
+  const sorted = [...diasRegla].filter((d) => d >= lastStart).sort();
+  let len = 0;
+  for (const d of sorted) {
+    const diff = Math.round((new Date(d + "T12:00:00") - new Date(lastStart + "T12:00:00")) / 86400000);
+    if (diff === len) len++; else break;
+  }
+  return Math.max(len, 1);
+};
+const cicloDayNum = (lastStart) => {
+  if (!lastStart) return null;
+  const diff = Math.round((new Date(dateKey(now()) + "T12:00:00") - new Date(lastStart + "T12:00:00")) / 86400000);
+  return diff >= 0 ? diff + 1 : null;
+};
+const FASES_CICLO = [
+  { id: "menstrual",  label: "Menstrual",  c: "#B8603A", desc: "Inicio del ciclo · energía más baja, introspección." },
+  { id: "folicular",  label: "Folicular",  c: "#3E7A5E", desc: "Sube el estrógeno · más energía, claridad y curiosidad." },
+  { id: "ovulatoria", label: "Ovulatoria", c: "#C8A24A", desc: "Pico de estrógeno · conexión, comunicación y fuerza." },
+  { id: "lutea",      label: "Lútea",      c: "#566285", desc: "Sube la progesterona · calma, introspección y detalle." },
+];
+const cicloPhase = (cycleDay, avgLen, lastPeriodLen) => {
+  if (!cycleDay || cycleDay < 1) return null;
+  const pLen = lastPeriodLen || 5;
+  const cLen = avgLen || 28;
+  const ovDay = cLen - 14;
+  if (cycleDay <= pLen) return "menstrual";
+  if (cycleDay < ovDay - 1) return "folicular";
+  if (cycleDay <= ovDay + 2) return "ovulatoria";
+  return "lutea";
+};
+
 /* ───────────────────────── app ───────────────────────── */
 function BitacoraApp() {
   const [ready, setReady] = useState(false);
@@ -732,6 +921,7 @@ function BitacoraApp() {
   const [tab, setTab] = useState("semana");
   const [pal, setPal] = useState("mint");
   const [plantStart, setPlantStart] = useState(() => new Date().toISOString());
+  const [ciclo, setCiclo] = useState({ diasRegla: [] });
   applyPalette(pal);
 
   useEffect(() => {
@@ -759,6 +949,7 @@ function BitacoraApp() {
         setHabits(s.habits || {});
         setPal(s.pal || "mint");
         setPlantStart(s.plantStart || new Date().toISOString());
+        setCiclo(s.ciclo || { diasRegla: [] });
       } else {
         await saveState({ areas: DEFAULT_AREAS, items: [], tasks: [], finance: {}, savings: { depositos: [], afp: [], apv: [] }, goals: [], logros: 0, pal: "mint", plantStart: new Date().toISOString() });
       }
@@ -766,7 +957,7 @@ function BitacoraApp() {
     })();
   }, []);
 
-  useEffect(() => { if (ready) saveState({ areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart }); }, [areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, ready]);
+  useEffect(() => { if (ready) saveState({ areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, ciclo }); }, [areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, ciclo, ready]);
 
   const doneCount = useMemo(() => tasks.filter((t) => t.done).length + goals.filter((g) => g.done).length, [tasks, goals]);
   useEffect(() => { if (ready) setLogros((prev) => Math.max(prev, doneCount)); }, [doneCount, ready]);
@@ -824,6 +1015,16 @@ function BitacoraApp() {
     setTasks((p) => p.map((t) => t.id === id ? { ...t, done: !t.done, doneAt: !t.done ? new Date().toISOString() : null } : t)), []);
   const delTask = useCallback((id) => setTasks((p) => p.filter((t) => t.id !== id)), []);
   const updateTask = useCallback((id, patch) => setTasks((p) => p.map((t) => t.id === id ? { ...t, ...patch } : t)), []);
+  const toggleCicloDay = useCallback((day) => setCiclo((p) => {
+    const dias = p.diasRegla || [];
+    return { ...p, diasRegla: dias.includes(day) ? dias.filter((d) => d !== day) : [...dias, day] };
+  }), []);
+  const updateCicloReg = useCallback((reg) => setCiclo((p) => {
+    const regs = p.registros || [];
+    const idx = regs.findIndex((r) => r.id === reg.id);
+    return { ...p, registros: idx >= 0 ? regs.map((r) => r.id === reg.id ? { ...r, ...reg } : r) : [...regs, reg] };
+  }), []);
+  const delCicloReg = useCallback((id) => setCiclo((p) => ({ ...p, registros: (p.registros || []).filter((r) => r.id !== id) })), []);
   const setImportance = useCallback((id, v) => setAreas((p) => p.map((a) => a.id === id ? { ...a, importance: v } : a)), []);
   const setAreaKind = useCallback((id, kind) => setAreas((p) => p.map((a) => a.id === id ? { ...a, kind } : a)), []);
   const addArea = useCallback((name) => setAreas((p) => {
@@ -834,7 +1035,7 @@ function BitacoraApp() {
 
   const fileRef = useRef(null);
   const exportData = () => {
-    const data = { areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, _v: 1 };
+    const data = { areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, ciclo, _v: 1 };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -858,6 +1059,7 @@ function BitacoraApp() {
         setHabits(s.habits || {});
         if (s.pal) setPal(s.pal);
         if (s.plantStart) setPlantStart(s.plantStart);
+        if (s.ciclo) setCiclo(s.ciclo);
         alert("Respaldo importado correctamente. ✔");
       } catch (e) { alert("No se pudo leer el archivo. ¿Es un respaldo de la Bitácora?"); }
     };
@@ -902,7 +1104,7 @@ function BitacoraApp() {
         <DailySpark />
 
         <nav style={S.nav}>
-          {[["semana", "Semana"], ["registros", "Registros"], ["finanzas", "Finanzas"], ["metas", "Metas"], ["tablero", "Tablero"]].map(([k, l]) => (
+          {[["semana", "Semana"], ["registros", "Registros"], ["ciclo", "Ciclo"], ["finanzas", "Finanzas"], ["metas", "Metas"], ["tablero", "Tablero"]].map(([k, l]) => (
             <button key={k} onClick={() => setTab(k)} className="navbtn" style={{ ...S.navBtn, ...(tab === k ? S.navBtnOn : {}) }}>{l}</button>
           ))}
         </nav>
@@ -913,6 +1115,7 @@ function BitacoraApp() {
           attention={attention} finance={finance} savings={savings} goals={goals} tasks={tasks} items={items} logros={logros} plantStart={plantStart} />}
         {tab === "finanzas" && <Finanzas finance={finance} onSetMonth={setFinanceMonth} savings={savings} onSavAdd={savAdd} onSavEdit={savEdit} onSavDel={savDel} />}
         {tab === "metas" && <Metas goals={goals} areas={areas} onAdd={addGoal} onPush={pushGoal} onDone={doneGoal} onDel={delGoal} />}
+        {tab === "ciclo" && <Ciclo ciclo={ciclo} onToggleDay={toggleCicloDay} onUpdateReg={updateCicloReg} onDelReg={delCicloReg} />}
         {tab === "areas" && <AreasCfg areas={areas} onImp={setImportance} onKind={setAreaKind} onAdd={addArea} onDel={delArea} />}
 
         <Paleta />
@@ -941,6 +1144,314 @@ function BitacoraApp() {
           </button>
         </div>
       </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── CICLO ───────────────────────── */
+function Ciclo({ ciclo, onToggleDay, onUpdateReg, onDelReg }) {
+  const [calRef, setCalRef] = useState(() => { const d = now(); return new Date(d.getFullYear(), d.getMonth(), 1); });
+  const [datosCat, setDatosCat] = useState("Todas");
+  const [datosOffset, setDatosOffset] = useState(0);
+  const [editReg, setEditReg] = useState(null);
+
+  const diasRegla = ciclo.diasRegla || [];
+  const registros = ciclo.registros || [];
+  const todayKey = dateKey(now());
+
+  const starts = cicloPeriodStarts(diasRegla);
+  const avgLen = cicloAvgLen(starts);
+  const lastStart = starts.length > 0 ? starts[starts.length - 1] : null;
+  const lastPeriodLen = cicloLastPeriodLen(diasRegla, starts);
+  const cycleDay = cicloDayNum(lastStart);
+  const phaseId = cicloPhase(cycleDay, avgLen, lastPeriodLen);
+  const phase = phaseId ? FASES_CICLO.find((f) => f.id === phaseId) : null;
+  const nextStart = lastStart && avgLen ? cicloAddDays(lastStart, avgLen) : null;
+  const ovDay = avgLen ? avgLen - 14 : null;
+  const fertileStart = lastStart && ovDay ? cicloAddDays(lastStart, ovDay - 5) : null;
+  const fertileEnd = lastStart && ovDay ? cicloAddDays(lastStart, ovDay + 1) : null;
+
+  const regHoy = registros.find((r) => r.fecha === todayKey) || null;
+  const newReg = () => setEditReg({ id: rid(), fecha: todayKey, flujo: null, sintomas: [], animo: null, energia: null });
+  const saveReg = () => { if (editReg) { onUpdateReg(editReg); setEditReg(null); } };
+
+  const CX = 110, CY = 110, RO = 95, RI = 58, RM = (RO + RI) / 2;
+  const cLen = avgLen || 28, pLen = lastPeriodLen || 5, ovD = cLen - 14;
+  const menEnd = Math.max((pLen / cLen) * 360, 8);
+  const folEnd = Math.max(((ovD - 2) / cLen) * 360, menEnd + 6);
+  const ovEnd  = Math.max(((ovD + 2) / cLen) * 360, folEnd + 6);
+  const wheelPhases = [
+    { key: "menstrual",  start: 0,       end: menEnd,  color: WHEEL_C.menstrual,  label: "Menstrual" },
+    { key: "folicular",  start: menEnd,  end: folEnd,  color: WHEEL_C.folicular,  label: "Folicular" },
+    { key: "ovulatoria", start: folEnd,  end: ovEnd,   color: WHEEL_C.ovulatoria, label: "Ovulatoria" },
+    { key: "lutea",      start: ovEnd,   end: 359.5,   color: WHEEL_C.lutea,      label: "Lútea" },
+  ];
+  const todayAngle = cycleDay ? ((Math.min(cycleDay - 1, cLen - 1)) / cLen) * 360 : null;
+  const wRad = (d) => (d - 90) * Math.PI / 180;
+
+  const calYear = calRef.getFullYear(), calMonth = calRef.getMonth();
+  const CAL_DOW = ["lu", "ma", "mi", "ju", "vi", "sá", "do"];
+  const rowsFor = (ref) => {
+    const y = ref.getFullYear(), m = ref.getMonth();
+    return Math.ceil(((new Date(y, m, 1).getDay() + 6) % 7 + new Date(y, m + 1, 0).getDate()) / 7);
+  };
+  const calRows = Math.max(...[new Date(calYear, calMonth - 1, 1), calRef, new Date(calYear, calMonth + 1, 1)].map(rowsFor));
+  const renderMonth = (ref) => {
+    const y = ref.getFullYear(), m = ref.getMonth();
+    const isCurrentMonth = y === now().getFullYear() && m === now().getMonth();
+    const fdow = (new Date(y, m, 1).getDay() + 6) % 7;
+    const cells = [];
+    for (let i = 0; i < fdow; i++) cells.push(null);
+    for (let dn = 1; dn <= new Date(y, m + 1, 0).getDate(); dn++) cells.push(new Date(y, m, dn));
+    while (cells.length < calRows * 7) cells.push(null);
+    return (
+      <div key={`${y}-${m}`} style={{ ...S.calMonth, ...(isCurrentMonth ? S.calMonthCur : S.calMonthOther) }}>
+        <div style={S.calMonthTitle}>{ref.toLocaleDateString("es-CL", { month: "long", year: "numeric" })}</div>
+        <div style={S.calGrid}>
+          {CAL_DOW.map((d, i) => <span key={"h" + i} style={S.calDow}>{d}</span>)}
+          {cells.map((d, i) => {
+            if (!d) return <span key={"b" + i} style={{ aspectRatio: "1 / 1" }} />;
+            const k = dateKey(d);
+            const isRegla = diasRegla.includes(k), isToday = k === todayKey, isFuture = k > todayKey;
+            const hasReg = registros.some((r) => r.fecha === k);
+            return (
+              <button key={k} onClick={() => !isFuture && onToggleDay(k)} className="navbtn" disabled={isFuture}
+                style={{ ...S.calCell, background: isRegla ? C.accent : isToday ? C.sparkSoft : "none",
+                  color: isRegla ? C.onPrimary : isFuture ? C.textMuted : isToday ? C.text : C.textSoft,
+                  border: isToday ? `1px solid ${C.spark}` : "1px solid transparent",
+                  fontWeight: isToday ? 700 : 400, cursor: isFuture ? "default" : "pointer", opacity: isFuture ? 0.25 : 1 }}>
+                {d.getDate()}
+                {hasReg && <span style={{ position: "absolute", bottom: 1, right: 2, width: 4, height: 4, borderRadius: 4, background: isRegla ? "#fff8" : WHEEL_C.folicular }} />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  const fmtDate = (iso) => iso ? new Date(iso + "T12:00:00").toLocaleDateString("es-CL", { day: "numeric", month: "long" }) : "—";
+  const fmtReg = (r) => {
+    const p = [];
+    if (r.flujo) p.push(r.flujo);
+    if (r.sintomas?.length) p.push(r.sintomas.join(", "));
+    if (r.animo) p.push(`ánimo ${r.animo}/5`);
+    if (r.energia) p.push(`energía ${r.energia}/5`);
+    return p.join(" · ") || "sin detalles";
+  };
+  const datosFiltrados = datosCat === "Todas" ? DATOS_CICLO : DATOS_CICLO.filter((d) => d.cat === datosCat);
+  const datoIdx = (dayOfYear() + datosOffset) % datosFiltrados.length;
+  const datoHoy = datosFiltrados[datoIdx];
+
+  return (
+    <div className="fade">
+      {/* ── Resumen ── */}
+      <div style={{ ...S.finCard, marginBottom: 16 }}>
+        {phase ? (
+          <div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 20, alignItems: "flex-start" }}>
+              <div style={{ textAlign: "center", minWidth: 64 }}>
+                <div style={{ fontSize: 44, fontWeight: 700, color: phase.c, fontFamily: "'Spline Sans Mono', monospace", lineHeight: 1 }}>{cycleDay}</div>
+                <div style={{ fontSize: 10, color: C.textMuted, fontFamily: "'Spline Sans Mono', monospace", textTransform: "uppercase", letterSpacing: 1, marginTop: 3 }}>día del ciclo</div>
+              </div>
+              <div style={{ flex: 1, minWidth: 120 }}>
+                <div style={{ display: "inline-block", background: phase.c + "22", borderRadius: 6, padding: "2px 10px", fontSize: 11, fontWeight: 700, color: phase.c, fontFamily: "'Spline Sans Mono', monospace", textTransform: "uppercase", letterSpacing: 1, marginBottom: 5 }}>{phase.label}</div>
+                <div style={{ fontSize: 13, color: C.textSoft, lineHeight: 1.4 }}>{phase.desc}</div>
+              </div>
+              <div style={{ textAlign: "right", minWidth: 130 }}>
+                <div style={{ fontSize: 10, color: C.textMuted, fontFamily: "'Spline Sans Mono', monospace", textTransform: "uppercase", letterSpacing: 0.8 }}>próximo inicio est.</div>
+                <div style={{ fontSize: 15, color: C.text, fontWeight: 600, marginTop: 3 }}>{nextStart ? fmtDate(nextStart) : "—"}</div>
+                {fertileStart && <div style={{ fontSize: 11, color: C.textMuted, marginTop: 7, lineHeight: 1.4 }}>ventana fértil est.<br />{fmtDate(fertileStart)} – {fmtDate(fertileEnd)}</div>}
+              </div>
+            </div>
+            <div style={{ ...S.entryMeta, marginTop: 10, lineHeight: 1.5 }}>
+              {avgLen ? <>Promedio de los últimos {Math.min(starts.length - 1, 6)} ciclos: <strong>{avgLen} días</strong>. Estimaciones orientativas.</> : <>Registra al menos dos ciclos completos para ver el promedio y las estimaciones.</>}
+            </div>
+          </div>
+        ) : (
+          <div style={{ color: C.textSoft, fontSize: 14, lineHeight: 1.6 }}>
+            Marca en el calendario los días en que tienes la regla para empezar a registrar tu ciclo. Con dos o más ciclos completos podrás ver la fase actual, el promedio y el próximo inicio estimado.
+          </div>
+        )}
+      </div>
+
+      {/* ── Rueda del ciclo ── */}
+      <Section label="rueda del ciclo" accent={C.primary}>
+        <div style={{ display: "flex", justifyContent: "center", padding: "6px 0 10px" }}>
+          <svg width={240} height={240} viewBox="0 0 220 220" style={{ overflow: "visible" }}>
+            <circle cx={CX} cy={CY} r={RM} fill="none" stroke={WHEEL_C.ring} strokeWidth={RO - RI} opacity={0.22} />
+            {wheelPhases.map((ph) => ph.end > ph.start + 1
+              ? <path key={ph.key} d={arcPath(CX, CY, RO - 1, RI + 1, ph.start, ph.end)} fill={ph.color} opacity={phaseId === ph.key ? 1 : 0.42} />
+              : null)}
+            <line x1={CX} y1={CY - RO + 3} x2={CX} y2={CY - RI - 3} stroke="#fff" strokeWidth={2} strokeLinecap="round" opacity={0.85} />
+            {todayAngle !== null && (
+              <circle cx={CX + RM * Math.cos(wRad(todayAngle))} cy={CY + RM * Math.sin(wRad(todayAngle))}
+                r={7} fill="white" stroke={phase?.c || WHEEL_C.ring} strokeWidth={2.5} />
+            )}
+            {cycleDay ? (
+              <>
+                <text x={CX} y={CY - 7} textAnchor="middle" dominantBaseline="middle"
+                  fontSize={30} fontWeight={700} fontFamily="'Spline Sans Mono', monospace" fill={phase?.c || "#888"}>{cycleDay}</text>
+                <text x={CX} y={CY + 14} textAnchor="middle" dominantBaseline="middle"
+                  fontSize={9} fontFamily="'Spline Sans Mono', monospace" fill="#888">{(phase?.label || "").toUpperCase()}</text>
+              </>
+            ) : (
+              <text x={CX} y={CY} textAnchor="middle" dominantBaseline="middle"
+                fontSize={11} fontFamily="'Newsreader', serif" fill="#aaa">marca días de regla</text>
+            )}
+          </svg>
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "5px 16px" }}>
+          {wheelPhases.map((ph) => (
+            <span key={ph.key} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11,
+              color: phaseId === ph.key ? ph.color : C.textMuted, fontWeight: phaseId === ph.key ? 700 : 400 }}>
+              <span style={{ width: 10, height: 10, borderRadius: 3, background: ph.color, opacity: phaseId === ph.key ? 1 : 0.42, display: "inline-block" }} />
+              {ph.label}
+            </span>
+          ))}
+        </div>
+      </Section>
+
+      {/* ── Registro del día ── */}
+      <Section label="registro del día" accent={C.tranquilo}>
+        {editReg ? (
+          <div style={S.finCard}>
+            <div style={{ fontSize: 11, color: C.textMuted, fontFamily: "'Spline Sans Mono', monospace", textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>
+              {new Date(editReg.fecha + "T12:00:00").toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" })}
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 11, color: C.textSoft, fontFamily: "'Spline Sans Mono', monospace", marginBottom: 6 }}>Flujo</div>
+              <div style={S.chips}>{FLUJO_OPS.map((f) => (
+                <button key={f} onClick={() => setEditReg((r) => ({ ...r, flujo: r.flujo === f ? null : f }))} className="chip"
+                  style={{ ...S.chip, ...(editReg.flujo === f ? { borderColor: C.accent, background: C.accentSoft, color: C.text } : {}) }}>{f}</button>
+              ))}</div>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 11, color: C.textSoft, fontFamily: "'Spline Sans Mono', monospace", marginBottom: 6 }}>Síntomas</div>
+              <div style={S.chips}>{SINTOMAS_OPS.map((s) => (
+                <button key={s} onClick={() => setEditReg((r) => ({ ...r, sintomas: r.sintomas.includes(s) ? r.sintomas.filter((x) => x !== s) : [...r.sintomas, s] }))} className="chip"
+                  style={{ ...S.chip, ...(editReg.sintomas.includes(s) ? { borderColor: C.primary, background: C.primarySoft, color: C.text } : {}) }}>{s}</button>
+              ))}</div>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 11, color: C.textSoft, fontFamily: "'Spline Sans Mono', monospace", marginBottom: 6 }}>Ánimo</div>
+              <div style={{ display: "flex", gap: 5 }}>
+                {ANIMO_LABELS.map((l, i) => { const v = i + 1, sel = editReg.animo === v; return (
+                  <button key={i} onClick={() => setEditReg((r) => ({ ...r, animo: r.animo === v ? null : v }))} className="navbtn"
+                    style={{ flex: 1, padding: "5px 2px", textAlign: "center", fontSize: 10, lineHeight: 1.3, borderRadius: 8,
+                      background: sel ? C.spark : C.surface, border: `1px solid ${sel ? C.spark : C.border}`,
+                      color: sel ? C.onSpark : C.textSoft, cursor: "pointer", fontFamily: "'Spline Sans Mono', monospace" }}>
+                    {v}<br />{l}</button>
+                );})}
+              </div>
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 11, color: C.textSoft, fontFamily: "'Spline Sans Mono', monospace", marginBottom: 6 }}>Energía</div>
+              <div style={{ display: "flex", gap: 5 }}>
+                {ENERGIA_LABELS.map((l, i) => { const v = i + 1, sel = editReg.energia === v; return (
+                  <button key={i} onClick={() => setEditReg((r) => ({ ...r, energia: r.energia === v ? null : v }))} className="navbtn"
+                    style={{ flex: 1, padding: "5px 2px", textAlign: "center", fontSize: 10, lineHeight: 1.3, borderRadius: 8,
+                      background: sel ? C.tranquilo : C.surface, border: `1px solid ${sel ? C.tranquilo : C.border}`,
+                      color: sel ? "#fff" : C.textSoft, cursor: "pointer", fontFamily: "'Spline Sans Mono', monospace" }}>
+                    {v}<br />{l}</button>
+                );})}
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={saveReg} className="navbtn" style={{ ...S.navBtn, ...S.navBtnOn }}>Guardar</button>
+              <button onClick={() => setEditReg(null)} className="navbtn" style={S.navBtn}>Cancelar</button>
+            </div>
+          </div>
+        ) : regHoy ? (
+          <div style={S.finCard}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div>
+                <div style={{ fontSize: 11, color: C.textMuted, fontFamily: "'Spline Sans Mono', monospace", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>hoy</div>
+                <div style={{ fontSize: 13, color: C.text, lineHeight: 1.6 }}>{fmtReg(regHoy)}</div>
+              </div>
+              <div style={{ display: "flex", gap: 6 }}>
+                <button onClick={() => setEditReg({ ...regHoy, sintomas: regHoy.sintomas || [] })} className="del" style={{ ...S.del, padding: 4 }}><PenLine size={13} /></button>
+                <button onClick={() => onDelReg(regHoy.id)} className="del" style={{ ...S.del, padding: 4 }}><Trash2 size={13} /></button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <button onClick={newReg} className="navbtn"
+            style={{ width: "100%", padding: "10px 14px", textAlign: "left", background: C.surface, border: `1px dashed ${C.border}`,
+              borderRadius: 10, color: C.textSoft, fontSize: 13, fontFamily: "'Newsreader', serif", cursor: "pointer" }}>
+            + Agregar registro de hoy (flujo, síntomas, ánimo, energía)
+          </button>
+        )}
+        {registros.filter((r) => r.fecha !== todayKey).sort((a, b) => b.fecha.localeCompare(a.fecha)).slice(0, 14).map((r) => (
+          <div key={r.id} style={{ ...S.finCard, marginTop: 8 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 11, color: C.textMuted, fontFamily: "'Spline Sans Mono', monospace", marginBottom: 3 }}>
+                  {new Date(r.fecha + "T12:00:00").toLocaleDateString("es-CL", { weekday: "short", day: "numeric", month: "short" })}
+                </div>
+                <div style={{ fontSize: 12, color: C.textSoft }}>{fmtReg(r)}</div>
+              </div>
+              <div style={{ display: "flex", gap: 6 }}>
+                <button onClick={() => setEditReg({ ...r, sintomas: r.sintomas || [] })} className="del" style={{ ...S.del, padding: 4 }}><PenLine size={12} /></button>
+                <button onClick={() => onDelReg(r.id)} className="del" style={{ ...S.del, padding: 4 }}><Trash2 size={12} /></button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </Section>
+
+      {/* ── Calendario 3 meses ── */}
+      <div style={S.calWrap}>
+        <div style={S.calHead}>
+          <button className="iconbtn" style={S.iconBtn} onClick={() => setCalRef(new Date(calYear, calMonth - 1, 1))} aria-label="Meses anteriores"><ChevronLeft size={16} /></button>
+          <span style={S.calTitle}>{calYear}</span>
+          <button className="iconbtn" style={S.iconBtn} onClick={() => setCalRef(new Date(calYear, calMonth + 1, 1))} aria-label="Meses siguientes"><ChevronRight size={16} /></button>
+        </div>
+        <div style={S.calMonthsRow}>
+          {renderMonth(new Date(calYear, calMonth - 1, 1))}
+          {renderMonth(calRef)}
+          {renderMonth(new Date(calYear, calMonth + 1, 1))}
+        </div>
+        <div style={S.calLegend}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+            <span style={{ width: 8, height: 8, borderRadius: 3, background: C.accent, display: "inline-block" }} /> regla
+          </span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+            <span style={{ width: 8, height: 8, borderRadius: 3, border: `1.5px solid ${C.spark}`, display: "inline-block" }} /> hoy
+          </span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+            <span style={{ width: 5, height: 5, borderRadius: 5, background: WHEEL_C.folicular, display: "inline-block" }} /> con registro
+          </span>
+          <span style={{ color: C.textMuted }}>toca un día para marcarlo</span>
+        </div>
+      </div>
+
+      <div style={{ ...S.hint, marginTop: 14 }}>
+        Módulo de autoconocimiento. No es un dispositivo médico ni método anticonceptivo. Consulta a tu médica o matrona ante síntomas que te preocupen.
+      </div>
+
+      {/* ── Dato de salud del día ── */}
+      <div style={{ marginTop: 32 }}>
+      <Section label="dato de salud del día" accent={C.spark}>
+        <div style={{ ...S.chips, marginBottom: 10 }}>
+          {DATOS_CICLO_CATS.map((cat) => (
+            <button key={cat} onClick={() => { setDatosCat(cat); setDatosOffset(0); }} className="chip"
+              style={{ ...S.chip, ...(datosCat === cat ? { borderColor: C.spark, background: C.sparkSoft, color: C.text } : {}) }}>{cat}</button>
+          ))}
+        </div>
+        <div style={S.finCard}>
+          <div style={{ fontSize: 10, fontFamily: "'Spline Sans Mono', monospace", color: C.textMuted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>
+            {datoHoy.cat} · {datoIdx + 1} / {datosFiltrados.length}
+          </div>
+          <div style={{ fontSize: 14, color: C.text, lineHeight: 1.65, fontFamily: "'Newsreader', serif" }}>{datoHoy.texto}</div>
+        </div>
+        <button onClick={() => setDatosOffset((o) => o + 1)} className="navbtn"
+          style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 10, color: C.textSoft, fontSize: 12, fontFamily: "'Spline Sans Mono', monospace", background: "none", border: "none", cursor: "pointer" }}>
+          <RefreshCw size={11} /> otro dato
+        </button>
+        <div style={{ ...S.hint, marginTop: 4 }}>Contenido educativo — no es consejo médico ni reemplaza a un profesional de salud.</div>
+      </Section>
       </div>
     </div>
   );
