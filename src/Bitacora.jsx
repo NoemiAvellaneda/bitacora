@@ -1927,13 +1927,9 @@ function Decor() {
 }
 
 function LeftRail() {
-  const icons = [Map, BookOpen, Feather, Sprout, Bike, Music, Film, Coins, Heart, Lightbulb];
   return (
-    <div className="leftrail" aria-hidden="true" style={{ flexShrink: 0, width: 64, display: "flex", alignItems: "stretch" }}>
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 46, paddingTop: 46 }}>
-        {icons.map((Ic, i) => <Ic key={i} size={21} color={C.text} strokeWidth={1.5} style={{ opacity: 0.5 }} />)}
-      </div>
-      <div style={{ display: "flex", gap: 3 }}>
+    <div className="leftrail" aria-hidden="true" style={{ flexShrink: 0, width: 18, display: "flex", alignItems: "stretch" }}>
+      <div style={{ display: "flex", gap: 3, flex: 1 }}>
         <div style={{ width: 8, background: C.spark, borderRadius: 3 }} />
         <div style={{ width: 5, background: C.primary, borderRadius: 3 }} />
       </div>
