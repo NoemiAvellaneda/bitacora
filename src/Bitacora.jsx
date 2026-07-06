@@ -1928,10 +1928,10 @@ function Decor() {
 
 function LeftRail() {
   return (
-    <div className="leftrail" aria-hidden="true" style={{ flexShrink: 0, width: 18, display: "flex", alignItems: "stretch" }}>
-      <div style={{ display: "flex", gap: 3, flex: 1 }}>
-        <div style={{ width: 8, background: C.spark, borderRadius: 3 }} />
-        <div style={{ width: 5, background: C.primary, borderRadius: 3 }} />
+    <div className="leftrail" aria-hidden="true" style={{ flexShrink: 0, width: 28, display: "flex", alignItems: "stretch", justifyContent: "flex-end" }}>
+      <div style={{ display: "flex", gap: 4 }}>
+        <div style={{ width: 11, background: C.spark, borderRadius: 4 }} />
+        <div style={{ width: 7, background: C.primary, borderRadius: 4 }} />
       </div>
     </div>
   );
