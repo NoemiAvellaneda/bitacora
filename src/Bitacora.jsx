@@ -641,38 +641,57 @@ const CITAS_PLANTA = [
   { t: "Quien siembra con paciencia, cosecha con alegría.", f: "Proverbio" },
 ];
 function Planta({ stage }) {
-  const green = "#347A5A", pot = "#BF512C", potDark = "#9A3F20", band = "#F2E6CF", soil = "#4A3526", bloom = "#DA9B2B", center = "#0C2C47", bud = "#E0B45E", rimHi = "#D77A56";
-  const leaf = (angle, len, key) => (
-    <g key={key} transform={`translate(60 95) rotate(${angle})`}>
-      <path d={`M0 0 Q ${len * 0.42} ${-len * 0.5} 0 ${-len} Q ${-len * 0.42} ${-len * 0.5} 0 0 Z`} fill={green} />
-      <path d={`M0 -2 L0 ${-len + 4}`} stroke="#28553F" strokeWidth="0.8" opacity="0.45" fill="none" />
-    </g>
-  );
-  const leaves = [];
-  if (stage >= 1) leaves.push(leaf(0, 20, "c"));
-  if (stage >= 2) { leaves.push(leaf(-32, 26, "l1")); leaves.push(leaf(32, 26, "r1")); }
-  if (stage >= 3) { leaves.push(leaf(-54, 30, "l2")); leaves.push(leaf(54, 30, "r2")); }
-  if (stage >= 4) leaves.push(leaf(0, 44, "tall"));
+  const leafA = C.tranquilo;
+  const leafB = C.primaryDark;
+  const pot = C.accent;
+  const potDk = C.primaryDark;
+  const band = C.sparkSoft;
+  const bloom = C.spark;
+  const bud = C.sparkSoft;
+  const bloomCtr = C.primary;
+
+  const leaf = (x, y, ang, h, key) => {
+    const w = h * 0.44;
+    return (
+      <g key={key} transform={`translate(${x} ${y}) rotate(${ang})`}>
+        <path d={`M0 0 C ${w} ${-h*0.38} ${w} ${-h*0.86} 0 ${-h} C ${-w} ${-h*0.86} ${-w} ${-h*0.38} 0 0 Z`} fill={leafA} />
+        <line x1="0" y1="-2" x2="0" y2={-(h-3)} stroke={leafB} strokeWidth="0.6" strokeOpacity="0.28" />
+      </g>
+    );
+  };
+
+  const stemTops = [94, 88, 80, 68, 58, 58];
+  const stemTop = stemTops[stage] ?? 94;
+  const allLeaves = [];
+  if (stage >= 1) allLeaves.push(leaf(60, 88, 0, 15, "c"));
+  if (stage >= 2) { allLeaves.push(leaf(51, 82, -30, 18, "l1")); allLeaves.push(leaf(69, 82, 30, 18, "r1")); }
+  if (stage >= 3) { allLeaves.push(leaf(43, 73, -50, 21, "l2")); allLeaves.push(leaf(77, 73, 50, 21, "r2")); }
+  if (stage >= 4) { allLeaves.push(leaf(60, 60, 0, 28, "top")); allLeaves.push(leaf(37, 67, -62, 19, "l3")); allLeaves.push(leaf(83, 67, 62, 19, "r3")); }
+
   return (
-    <svg viewBox="0 0 120 140" width="110" height="128" role="img" aria-label="Plantita de logros" style={{ display: "block", flexShrink: 0 }}>
-      {stage === 0 && <circle cx="60" cy="92" r="2.6" fill={green} />}
-      {leaves}
-      {stage === 4 && <circle cx="60" cy="51" r="5" fill={bud} />}
+    <svg viewBox="0 0 120 140" width="110" height="128" role="img" aria-label="Plantita" style={{ display: "block", flexShrink: 0 }}>
+      {stage === 0 && <ellipse cx="60" cy="92" rx="3.5" ry="2.2" fill={leafA} opacity="0.65" />}
+      {stage >= 1 && <line x1="60" y1="94" x2="60" y2={stemTop} stroke={leafA} strokeWidth="2.2" strokeLinecap="round" strokeOpacity="0.65" />}
+      {allLeaves}
+      {stage === 4 && <circle cx="60" cy={stemTop - 5} r="5.5" fill={bud} stroke={bloom} strokeWidth="1.2" />}
       {stage >= 5 && (
-        <g transform="translate(60 51)">
-          {[0, 72, 144, 216, 288].map((a) => <ellipse key={a} cx="0" cy="-7" rx="4.6" ry="7.2" fill={bloom} transform={`rotate(${a})`} />)}
-          <circle cx="0" cy="0" r="4.2" fill={center} />
+        <g transform={`translate(60 ${stemTop - 5})`}>
+          {[0, 72, 144, 216, 288].map((a) => (
+            <ellipse key={a} cx="0" cy="-8.5" rx="5.2" ry="8.5" fill={bloom} transform={`rotate(${a})`} opacity="0.92" />
+          ))}
+          <circle cx="0" cy="0" r="5" fill={bloomCtr} />
+          <circle cx="0" cy="0" r="2.2" fill={bloom} opacity="0.55" />
         </g>
       )}
-      <ellipse cx="60" cy="133" rx="25" ry="4.2" fill={potDark} opacity="0.4" />
+      <ellipse cx="60" cy="133" rx="25" ry="4" fill={potDk} opacity="0.25" />
       <path d="M45 103 L75 103 L71 129 Q71 133 67 133 L53 133 Q49 133 49 129 Z" fill={pot} />
-      <path d="M60 103 L75 103 L71 129 Q71 133 67 133 L60 133 Z" fill={potDark} opacity="0.16" />
-      <path d="M46.3 111 L73.7 111 L72.4 120 L47.6 120 Z" fill={band} />
-      {[0, 1, 2, 3, 4].map((i) => <circle key={i} cx={51 + i * 4.6} cy="115.5" r="1.5" fill={potDark} />)}
-      <rect x="42" y="96" width="36" height="10" rx="3" fill={pot} />
-      <rect x="42" y="96" width="36" height="3.4" rx="1.7" fill={rimHi} opacity="0.7" />
-      <rect x="42" y="103.5" width="36" height="2.4" fill={potDark} opacity="0.22" />
-      <ellipse cx="60" cy="97" rx="15" ry="3.3" fill={soil} />
+      <path d="M60 103 L75 103 L71 129 Q71 133 67 133 L60 133 Z" fill={potDk} opacity="0.12" />
+      <path d="M46.5 111 L73.5 111 L72.2 120 L47.8 120 Z" fill={band} opacity="0.88" />
+      {[0,1,2,3,4].map((i) => <circle key={i} cx={51+i*4.6} cy="115.5" r="1.4" fill={potDk} opacity="0.38" />)}
+      <rect x="42" y="96" width="36" height="10" rx="3.5" fill={pot} />
+      <rect x="42" y="96" width="36" height="3.5" rx="1.75" fill="#FFFFFF" opacity="0.2" />
+      <rect x="42" y="103.5" width="36" height="2.5" fill={potDk} opacity="0.15" />
+      <ellipse cx="60" cy="97" rx="15" ry="3.3" fill={potDk} opacity="0.72" />
     </svg>
   );
 }
@@ -712,6 +731,7 @@ function BitacoraApp() {
   const [habits, setHabits] = useState({});
   const [tab, setTab] = useState("semana");
   const [pal, setPal] = useState("mint");
+  const [plantStart, setPlantStart] = useState(() => new Date().toISOString());
   applyPalette(pal);
 
   useEffect(() => {
@@ -726,21 +746,27 @@ function BitacoraApp() {
           it = old.map((n) => ({ id: n.id || rid(), coll: "notas", title: n.text || "", meta: "", note: "", status: null, date: n.date || new Date().toISOString() }));
         }
         setItems(it);
-        setTasks(s.tasks || []);
+        const today = dateKey(now());
+        setTasks((s.tasks || []).map((t) =>
+          (!t.done && t.day < today)
+            ? { ...t, carriedFrom: t.carriedFrom || t.day, day: today }
+            : t
+        ));
         setFinance(s.finance || {});
         setSavings(s.savings || { depositos: [], afp: [], apv: [] });
         setGoals(s.goals || []);
         setLogros(s.logros || 0);
         setHabits(s.habits || {});
         setPal(s.pal || "mint");
+        setPlantStart(s.plantStart || new Date().toISOString());
       } else {
-        await saveState({ areas: DEFAULT_AREAS, items: [], tasks: [], finance: {}, savings: { depositos: [], afp: [], apv: [] }, goals: [], logros: 0, pal: "mint" });
+        await saveState({ areas: DEFAULT_AREAS, items: [], tasks: [], finance: {}, savings: { depositos: [], afp: [], apv: [] }, goals: [], logros: 0, pal: "mint", plantStart: new Date().toISOString() });
       }
       setReady(true);
     })();
   }, []);
 
-  useEffect(() => { if (ready) saveState({ areas, items, tasks, finance, savings, goals, logros, habits, pal }); }, [areas, items, tasks, finance, savings, goals, logros, habits, pal, ready]);
+  useEffect(() => { if (ready) saveState({ areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart }); }, [areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, ready]);
 
   const doneCount = useMemo(() => tasks.filter((t) => t.done).length + goals.filter((g) => g.done).length, [tasks, goals]);
   useEffect(() => { if (ready) setLogros((prev) => Math.max(prev, doneCount)); }, [doneCount, ready]);
@@ -797,6 +823,7 @@ function BitacoraApp() {
   const toggleTask = useCallback((id) =>
     setTasks((p) => p.map((t) => t.id === id ? { ...t, done: !t.done, doneAt: !t.done ? new Date().toISOString() : null } : t)), []);
   const delTask = useCallback((id) => setTasks((p) => p.filter((t) => t.id !== id)), []);
+  const updateTask = useCallback((id, patch) => setTasks((p) => p.map((t) => t.id === id ? { ...t, ...patch } : t)), []);
   const setImportance = useCallback((id, v) => setAreas((p) => p.map((a) => a.id === id ? { ...a, importance: v } : a)), []);
   const setAreaKind = useCallback((id, kind) => setAreas((p) => p.map((a) => a.id === id ? { ...a, kind } : a)), []);
   const addArea = useCallback((name) => setAreas((p) => {
@@ -807,7 +834,7 @@ function BitacoraApp() {
 
   const fileRef = useRef(null);
   const exportData = () => {
-    const data = { areas, items, tasks, finance, savings, goals, logros, habits, pal, _v: 1 };
+    const data = { areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, _v: 1 };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -830,6 +857,7 @@ function BitacoraApp() {
         setLogros(s.logros || 0);
         setHabits(s.habits || {});
         if (s.pal) setPal(s.pal);
+        if (s.plantStart) setPlantStart(s.plantStart);
         alert("Respaldo importado correctamente. ✔");
       } catch (e) { alert("No se pudo leer el archivo. ¿Es un respaldo de la Bitácora?"); }
     };
@@ -879,10 +907,10 @@ function BitacoraApp() {
           ))}
         </nav>
 
-        {tab === "semana" && <Semana areas={areas} tasks={tasks} onAdd={addTask} onToggle={toggleTask} onDel={delTask} notes={items.filter((it) => it.coll === "notas")} onAddNote={(t) => addItem("notas", t, null, "")} onDelNote={delItem} habitsToday={habits[dateKey(now())] || []} onToggleHabit={toggleHabit} />}
+        {tab === "semana" && <Semana areas={areas} tasks={tasks} onAdd={addTask} onToggle={toggleTask} onDel={delTask} onUpdate={updateTask} notes={items.filter((it) => it.coll === "notas")} onAddNote={(t) => addItem("notas", t, null, "")} onDelNote={delItem} habitsToday={habits[dateKey(now())] || []} onToggleHabit={toggleHabit} />}
         {tab === "registros" && <Registros items={items} onAdd={addItem} onUpdate={updateItem} onDel={delItem} />}
         {tab === "tablero" && <Tablero areas={areas} lastByArea={lastByArea} weekActivity={weekActivity}
-          attention={attention} finance={finance} savings={savings} goals={goals} tasks={tasks} items={items} logros={logros} />}
+          attention={attention} finance={finance} savings={savings} goals={goals} tasks={tasks} items={items} logros={logros} plantStart={plantStart} />}
         {tab === "finanzas" && <Finanzas finance={finance} onSetMonth={setFinanceMonth} savings={savings} onSavAdd={savAdd} onSavEdit={savEdit} onSavDel={savDel} />}
         {tab === "metas" && <Metas goals={goals} areas={areas} onAdd={addGoal} onPush={pushGoal} onDone={doneGoal} onDel={delGoal} />}
         {tab === "areas" && <AreasCfg areas={areas} onImp={setImportance} onKind={setAreaKind} onAdd={addArea} onDel={delArea} />}
@@ -919,11 +947,13 @@ function BitacoraApp() {
 }
 
 /* ───────────────────────── SEMANA ───────────────────────── */
-function Semana({ areas, tasks, onAdd, onToggle, onDel, notes, onAddNote, onDelNote, habitsToday, onToggleHabit }) {
+function Semana({ areas, tasks, onAdd, onToggle, onDel, onUpdate, notes, onAddNote, onDelNote, habitsToday, onToggleHabit }) {
   const [offset, setOffset] = useState(0);
   const [activeArea, setActiveArea] = useState(areas[0]?.id || "");
   const [drafts, setDrafts] = useState({});
   const [focus, setFocus] = useState("todo");
+  const [editTaskId, setEditTaskId] = useState(null);
+  const [editTaskText, setEditTaskText] = useState("");
   const [calRef, setCalRef] = useState(() => { const d = now(); return new Date(d.getFullYear(), d.getMonth(), 1); });
   const [noteText, setNoteText] = useState("");
   const addNote = () => { const t = noteText.trim(); if (!t) return; onAddNote(t); setNoteText(""); };
@@ -1050,7 +1080,28 @@ function Semana({ areas, tasks, onAdd, onToggle, onDel, notes, onAddNote, onDelN
                       style={{ ...S.check, borderColor: tint(t.areaId), background: t.done ? tint(t.areaId) : "transparent" }}>
                       {t.done && <Check size={11} color={C.onPrimary} strokeWidth={3} />}
                     </button>
-                    <span style={{ ...S.taskText, ...(t.done ? { color: C.textMuted, textDecoration: "line-through" } : {}) }}>{t.text}</span>
+                    {editTaskId === t.id ? (
+                      <input autoFocus value={editTaskText}
+                        onChange={(e) => setEditTaskText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") { if (editTaskText.trim()) onUpdate(t.id, { text: editTaskText.trim() }); setEditTaskId(null); }
+                          if (e.key === "Escape") setEditTaskId(null);
+                        }}
+                        onBlur={() => { if (editTaskText.trim()) onUpdate(t.id, { text: editTaskText.trim() }); setEditTaskId(null); }}
+                        style={{ ...S.dayInput, flex: 1, margin: 0 }} />
+                    ) : (
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 13, lineHeight: 1.35, color: t.done ? C.textMuted : C.text, textDecoration: t.done ? "line-through" : "none", wordBreak: "break-word" }}>{t.text}</div>
+                        {t.carriedFrom && !t.done && (
+                          <div style={{ fontSize: 10, color: C.atencion, fontFamily: "'Spline Sans Mono', monospace", marginTop: 1 }}>
+                            ↑ desde el {new Date(t.carriedFrom + "T12:00:00").toLocaleDateString("es-CL", { weekday: "short", day: "numeric", month: "short" })}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {!t.done && editTaskId !== t.id && (
+                      <button onClick={() => { setEditTaskId(t.id); setEditTaskText(t.text); }} className="del" style={{ ...S.del, padding: 2 }} aria-label="Editar tarea"><PenLine size={12} /></button>
+                    )}
                     <button onClick={() => onDel(t.id)} className="del" style={{ ...S.del, padding: 2 }} aria-label="Borrar"><Trash2 size={12} /></button>
                   </div>
                 ))}
@@ -1134,11 +1185,15 @@ function Registros({ items, onAdd, onUpdate, onDel }) {
   const [body, setBody] = useState("");
   const [filter, setFilter] = useState("__all__");
   const [cIdx, setCIdx] = useState(dayOfYear() % CONSIGNAS.length);
+  const [editingId, setEditingId] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editMeta, setEditMeta] = useState("");
+  const [editBody, setEditBody] = useState("");
   const coll = COLL[collId];
   const Ic = coll.icon;
   const esCuaderno = collId === "cuaderno";
 
-  useEffect(() => { setFilter("__all__"); setTitle(""); setMeta(""); setBody(""); }, [collId]);
+  useEffect(() => { setFilter("__all__"); setTitle(""); setMeta(""); setBody(""); setEditingId(null); }, [collId]);
 
   const list = useMemo(() => items
     .filter((it) => it.coll === collId)
@@ -1234,6 +1289,35 @@ function Registros({ items, onAdd, onUpdate, onDel }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {list.map((it) => {
               const dt = new Date(it.date);
+              if (editingId === it.id) {
+                return (
+                  <div key={it.id} style={{ ...S.entry, borderLeft: `3px solid ${C.spark}`, flexDirection: "column", alignItems: "stretch" }}>
+                    <div style={{ fontFamily: "'Spline Sans Mono', monospace", fontSize: 11, color: C.textMuted, marginBottom: 8 }}>Editando…</div>
+                    {esCuaderno ? (
+                      <>
+                        <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} placeholder="Título (opcional)" style={S.input} />
+                        <textarea value={editBody} onChange={(e) => setEditBody(e.target.value)} rows={4}
+                          style={{ ...S.noteField, minHeight: 100, marginTop: 8 }} />
+                      </>
+                    ) : (
+                      <>
+                        <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} placeholder={coll.ph} style={S.input} />
+                        {coll.meta && <input value={editMeta} onChange={(e) => setEditMeta(e.target.value)} placeholder={coll.meta} style={{ ...S.input, marginTop: 8 }} />}
+                      </>
+                    )}
+                    <div style={{ display: "flex", gap: 8, marginTop: 10, alignItems: "center" }}>
+                      <button onClick={() => {
+                        if (esCuaderno) onUpdate(it.id, { title: editTitle, note: editBody });
+                        else onUpdate(it.id, { title: editTitle, meta: editMeta });
+                        setEditingId(null);
+                      }} className="primary" style={{ ...S.primary, padding: "7px 16px", fontSize: 13 }}>
+                        <Check size={14} /> Guardar
+                      </button>
+                      <button onClick={() => setEditingId(null)} className="link" style={S.linkBtn}>cancelar</button>
+                    </div>
+                  </div>
+                );
+              }
               return (
                 <div key={it.id} className="entry" style={{ ...S.entry, borderLeft: `3px solid ${C.accent}` }}>
                   <Ic size={15} color={C.accent} strokeWidth={1.9} style={{ flexShrink: 0, marginTop: 3 }} />
@@ -1278,6 +1362,8 @@ function Registros({ items, onAdd, onUpdate, onDel }) {
                       <NoteField value={it.note} placeholder={coll.note} onSave={(v) => onUpdate(it.id, { note: v })} />
                     )}
                   </div>
+                  <button onClick={() => { setEditingId(it.id); setEditTitle(it.title || ""); setEditMeta(it.meta || ""); setEditBody(it.note || ""); }}
+                    className="del" style={{ ...S.del, marginRight: 2 }} aria-label="Editar"><PenLine size={14} /></button>
                   <button onClick={() => onDel(it.id)} className="del" style={S.del} aria-label="Borrar"><Trash2 size={14} /></button>
                 </div>
               );
@@ -1362,8 +1448,9 @@ function Paleta() {
 }
 
 /* ───────────────────────── TABLERO ───────────────────────── */
-function Tablero({ areas, lastByArea, weekActivity: weekActivityAll, attention: attentionAll, finance, savings, goals, tasks, items, logros }) {
+function Tablero({ areas, lastByArea, weekActivity: weekActivityAll, attention: attentionAll, finance, savings, goals, tasks, items, logros, plantStart }) {
   const [focus, setFocus] = useState("vida");
+  const [mOffset, setMOffset] = useState(0);
   const work = focus === "trabajo";
   const inFocus = (areaId) => { const a = areas.find((x) => x.id === areaId); const k = a?.kind || "vida"; return work ? k === "trabajo" : k !== "trabajo"; };
   const areasF = areas.filter((a) => work ? a.kind === "trabajo" : a.kind !== "trabajo");
@@ -1389,6 +1476,24 @@ function Tablero({ areas, lastByArea, weekActivity: weekActivityAll, attention: 
     const ratio = d === null ? Infinity : d / toleranceDays(a.importance);
     return { a, last, d, ratio, st: statusOf(last, a.importance) };
   }).sort((x, y) => y.ratio - x.ratio);
+
+  const selMonthDate = addMonths(new Date(new Date().getFullYear(), new Date().getMonth(), 1), mOffset);
+  const selMonthKey = monthKeyOf(selMonthDate);
+  const selMonthLabel = selMonthDate.toLocaleDateString("es-CL", { month: "long", year: "numeric" });
+  const taskCountsByArea = {};
+  for (const t of tasks || []) {
+    if (t.day && t.day.startsWith(selMonthKey) && inFocus(t.areaId)) {
+      if (!taskCountsByArea[t.areaId]) taskCountsByArea[t.areaId] = { total: 0, done: 0 };
+      taskCountsByArea[t.areaId].total++;
+      if (t.done) taskCountsByArea[t.areaId].done++;
+    }
+  }
+  const sortedByTasks = areasF
+    .map((a) => ({ a, total: taskCountsByArea[a.id]?.total || 0, done: taskCountsByArea[a.id]?.done || 0 }))
+    .filter((x) => x.total > 0)
+    .sort((a, b) => b.total - a.total);
+  const maxTasks = Math.max(1, ...sortedByTasks.map((x) => x.total));
+
   return (
     <div className="fade">
       <div style={{ textAlign: "center", marginBottom: 20 }}>
@@ -1508,9 +1613,37 @@ function Tablero({ areas, lastByArea, weekActivity: weekActivityAll, attention: 
         )}
       </Section>
 
+      <Section label="Tareas por área y mes" accent={C.accent}>
+        <div style={S.weekNav}>
+          <button className="iconbtn" style={S.iconBtn} onClick={() => setMOffset((o) => o - 1)} aria-label="Mes anterior"><ChevronLeft size={16} /></button>
+          <span style={{ ...S.weekRange, textTransform: "capitalize" }}>{selMonthLabel}</span>
+          <button className="iconbtn" style={{ ...S.iconBtn, opacity: mOffset >= 0 ? 0.3 : 1 }} onClick={() => setMOffset((o) => Math.min(0, o + 1))} disabled={mOffset >= 0} aria-label="Mes siguiente"><ChevronRight size={16} /></button>
+        </div>
+        {sortedByTasks.length === 0
+          ? <div style={S.empty}>Sin tareas en este período para esta vista.</div>
+          : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 8 }}>
+              {sortedByTasks.map(({ a, total, done }) => (
+                <div key={a.id} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <span style={S.barLabel}>{a.name}</span>
+                  <div style={S.barTrack}>
+                    <div style={{ height: "100%", width: `${(total / maxTasks) * 100}%`, background: tint(a.id), borderRadius: 4, transition: "width .6s ease" }} />
+                  </div>
+                  <span style={{ ...S.barVal, minWidth: 38, textAlign: "right" }}>{done}/{total}</span>
+                </div>
+              ))}
+            </div>
+          )
+        }
+        <div style={{ ...S.entryMeta, marginTop: 12, lineHeight: 1.5 }}>Completadas / ingresadas. Usa el foco arriba para alternar entre vida personal y trabajo.</div>
+      </Section>
+
       <Section label="Tu plantita" accent={C.accent}>
         {(() => {
-          const stg = plantStage(logros || 0);
+          const ps = new Date(plantStart || new Date());
+          const n = now();
+          const months = (n.getFullYear() - ps.getFullYear()) * 12 + (n.getMonth() - ps.getMonth());
+          const stg = Math.min(5, Math.max(0, months));
           const cita = CITAS_PLANTA[dayOfYear() % CITAS_PLANTA.length];
           return (
             <div style={{ ...S.finCard, display: "flex", alignItems: "center", justifyContent: "center", gap: 18, flexWrap: "wrap" }}>
@@ -1518,7 +1651,7 @@ function Tablero({ areas, lastByArea, weekActivity: weekActivityAll, attention: 
               <div style={{ textAlign: "center", maxWidth: 250 }}>
                 <div style={{ fontFamily: "'Newsreader', serif", fontSize: 16, fontStyle: "italic", color: C.text, lineHeight: 1.45 }}>«{cita.t}»</div>
                 <div style={{ ...S.entryMeta, marginTop: 6 }}>— {cita.f}</div>
-                <div style={{ ...S.entryMeta, marginTop: 10 }}>{logros || 0} {(logros || 0) === 1 ? "logro" : "logros"} · {STAGE_WORDS[stg]}</div>
+                <div style={{ ...S.entryMeta, marginTop: 10 }}>{STAGE_WORDS[stg]} · {months === 0 ? "primer mes" : `${months} ${months === 1 ? "mes" : "meses"} juntas`}</div>
               </div>
             </div>
           );
