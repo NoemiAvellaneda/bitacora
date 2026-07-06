@@ -106,6 +106,31 @@ const C_CIELO = {
   urgente: "#C0674C",
 };
 
+const C_SALVIA = {
+  bg: "#D4E5DC",
+  bgDeep: "#2C4A3A",
+  surface: "#F4FAF6",
+  surfaceAlt: "#F4FAF6",
+  border: "#B8CCC0",
+  text: "#2A3D33",
+  textSoft: "#4A6055",
+  textMuted: "#7A9085",
+  onBg: "#2A3D33",
+  onBgDim: "#426050",
+  primary: "#2C4A3A",
+  primaryDark: "#1E3528",
+  primarySoft: "#D4E5DC",
+  accent: "#C07A5A",
+  accentSoft: "#F0DDD3",
+  spark: "#C8A24A",
+  sparkSoft: "#F0E6C8",
+  onPrimary: "#FFFFFF",
+  onSpark: "#2A3D33",
+  tranquilo: "#3E7A5E",
+  atencion: "#BE9040",
+  urgente: "#B8603A",
+};
+
 const AREA_MINT = {
   personal:  { color: "#0C2C47", soft: "#D7DEE6" },
   laboral:   { color: "#2E5749", soft: "#D5E0DB" },
@@ -146,6 +171,16 @@ const AREA_CIELO = {
   lectura:   { color: "#6E89A6", soft: "#DEE6EF" },
 };
 const FALLBACK_CIELO = { color: "#5E768E", soft: "#DEE6EE" };
+const AREA_SALVIA = {
+  personal:  { color: "#2C4A3A", soft: "#D4E5DC" },
+  laboral:   { color: "#4A6A57", soft: "#D8E6DE" },
+  pareja:    { color: "#C07A5A", soft: "#F0DDD3" },
+  familia:   { color: "#C8A24A", soft: "#F0E6C8" },
+  amigos:    { color: "#9A8878", soft: "#EDE5DE" },
+  ejercicio: { color: "#3A7A63", soft: "#D3E9E1" },
+  lectura:   { color: "#6A8A7A", soft: "#DEE9E3" },
+};
+const FALLBACK_SALVIA = { color: "#5A7A6A", soft: "#DEE9E3" };
 
 const ICONS = {
   personal: User, laboral: Briefcase, pareja: Heart, familia: Home,
@@ -491,14 +526,30 @@ const AREA_POOL_CIELO = [
   { color: "#6C90B0", soft: "#DEE8F1" },
 ];
 
+const AREA_POOL_SALVIA = [
+  { color: "#2C4A3A", soft: "#D4E5DC" },
+  { color: "#4A6A57", soft: "#D8E6DE" },
+  { color: "#C07A5A", soft: "#F0DDD3" },
+  { color: "#C8A24A", soft: "#F0E6C8" },
+  { color: "#9A8878", soft: "#EDE5DE" },
+  { color: "#3A7A63", soft: "#D3E9E1" },
+  { color: "#6A8A7A", soft: "#DEE9E3" },
+  { color: "#5A6A7A", soft: "#DDE4EC" },
+  { color: "#7A8A5A", soft: "#E6EBD8" },
+  { color: "#4A7A78", soft: "#D5E9E8" },
+  { color: "#A87060", soft: "#EEE0DB" },
+  { color: "#7A6A5A", soft: "#E8E2D9" },
+];
+
 // paletas disponibles + variables vivas (la raíz las reasigna según la elegida)
 const PALETTES = {
   mint:   { name: "Mint & Navy", C: C_MINT,   AREA: AREA_MINT,   FALLBACK: FALLBACK_MINT,   POOL: AREA_POOL_MINT },
   cactus: { name: "Cactus",      C: C_CACTUS, AREA: AREA_CACTUS, FALLBACK: FALLBACK_CACTUS, POOL: AREA_POOL_CACTUS },
   bruma:  { name: "Bruma",       C: C_BRUMA,  AREA: AREA_BRUMA,  FALLBACK: FALLBACK_BRUMA,  POOL: AREA_POOL_BRUMA },
   cielo:  { name: "Cielo",       C: C_CIELO,  AREA: AREA_CIELO,  FALLBACK: FALLBACK_CIELO,  POOL: AREA_POOL_CIELO },
+  salvia: { name: "Salvia",      C: C_SALVIA, AREA: AREA_SALVIA, FALLBACK: FALLBACK_SALVIA, POOL: AREA_POOL_SALVIA },
 };
-const PAL_ORDER = ["mint", "cactus", "bruma", "cielo"];
+const PAL_ORDER = ["mint", "cactus", "bruma", "cielo", "salvia"];
 let PAL_KEY = "mint";
 let C = C_MINT, AREA = AREA_MINT, FALLBACK = FALLBACK_MINT, AREA_POOL = AREA_POOL_MINT, S, CSS;
 function applyPalette(key) {
