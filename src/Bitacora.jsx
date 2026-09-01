@@ -5,7 +5,7 @@ import {
   Library, Plus, Trash2, Check, Circle, ChevronLeft, ChevronRight, PenLine,
   Brain, Coins, BookMarked, Scale, Sparkles, FlaskConical, Leaf, RefreshCw,
   Film, Ticket, Plane, Feather, Landmark, SlidersHorizontal, Music, Sprout, Globe, Network, Map, Lightbulb, Bike, Download, Upload,
-  Wind, Droplet, Smile, Activity, Eye, Footprints,
+  Wind, Droplet, Smile, Activity, Eye, Footprints, Image as ImageIcon,
 } from "lucide-react";
 
 /* ───────────────────────── paletas ───────────────────────── */
@@ -541,15 +541,103 @@ const AREA_POOL_SALVIA = [
   { color: "#7A6A5A", soft: "#E8E2D9" },
 ];
 
+
+/* ───────────────────────── temas V3 ─────────────────────────
+   Conservamos las claves internas históricas para que los respaldos y el
+   estado guardado en Supabase sigan siendo compatibles. Solo cambia su
+   identidad visual: mint→Atlántico, cielo→Bruma, cactus→Mostaza,
+   salvia→Verde Saúco y bruma→Orquídea.
+────────────────────────────────────────────────────────────── */
+const C_ATLANTICO = {
+  bg: "#DDE8EA", bgDeep: "#0E2C44", surface: "#F8FAFA", surfaceAlt: "#F4F7F7",
+  border: "#C8D6D7", text: "#102B42", textSoft: "#496173", textMuted: "#82939F",
+  onBg: "#102B42", onBgDim: "#526A79", primary: "#0E2C44", primaryDark: "#081F31",
+  primarySoft: "#D5E2E5", accent: "#E07A5F", accentSoft: "#F4DED7", spark: "#D29A32",
+  sparkSoft: "#F5ECD6", onPrimary: "#FFFFFF", onSpark: "#24313A", tranquilo: "#557868",
+  atencion: "#C28A28", urgente: "#C95F47",
+};
+const C_BRUMA_V3 = {
+  bg: "#F4F1F3", bgDeep: "#8BA8BF", surface: "#FFFFFF", surfaceAlt: "#FAFAFB",
+  border: "#DDDDE3", text: "#233849", textSoft: "#667787", textMuted: "#9AA5AE",
+  onBg: "#233849", onBgDim: "#70818F", primary: "#8BA8BF", primaryDark: "#6E8CA5",
+  primarySoft: "#E4EBF1", accent: "#CA5B86", accentSoft: "#F5E6EB", spark: "#D4A747",
+  sparkSoft: "#F5EBD5", onPrimary: "#FFFFFF", onSpark: "#3A311D", tranquilo: "#6C8F86",
+  atencion: "#B88E35", urgente: "#BE5C76",
+};
+const C_MOSTAZA = {
+  bg: "#F3E4B8", bgDeep: "#0F2B45", surface: "#FFFEFA", surfaceAlt: "#FBFAF3",
+  border: "#E6D9B8", text: "#153149", textSoft: "#5F6C6E", textMuted: "#9A9688",
+  onBg: "#153149", onBgDim: "#6B6F68", primary: "#0F2B45", primaryDark: "#091E32",
+  primarySoft: "#D9E1E6", accent: "#E3664A", accentSoft: "#F7DFCF", spark: "#D79B22",
+  sparkSoft: "#F6EBCB", onPrimary: "#FFFFFF", onSpark: "#302817", tranquilo: "#6A8073",
+  atencion: "#B98720", urgente: "#C95D43",
+};
+const C_SAUCO = {
+  bg: "#F7F3EC", bgDeep: "#627765", surface: "#FFFEFB", surfaceAlt: "#F3F5F0",
+  border: "#D9DED5", text: "#25362E", textSoft: "#5F6F65", textMuted: "#929D96",
+  onBg: "#25362E", onBgDim: "#6B776F", primary: "#627765", primaryDark: "#465B4A",
+  primarySoft: "#E5E9E1", accent: "#E06F5A", accentSoft: "#F4E2DC", spark: "#BFA14E",
+  sparkSoft: "#F1EBD6", onPrimary: "#FFFFFF", onSpark: "#36311F", tranquilo: "#6F8D7C",
+  atencion: "#B18E3F", urgente: "#C96450", lilac: "#B7A9C9", lilacSoft: "#E8E4EB",
+};
+const C_ORQUIDEA = {
+  bg: "#E9F1EF", bgDeep: "#4B1540", surface: "#FFFFFF", surfaceAlt: "#FBFAFA",
+  border: "#D6E1DE", text: "#40243A", textSoft: "#6D5868", textMuted: "#9A8C96",
+  onBg: "#40243A", onBgDim: "#75636F", primary: "#4B1540", primaryDark: "#35102E",
+  primarySoft: "#E9E4EB", accent: "#DA5A8D", accentSoft: "#F5DFE8", spark: "#B68BAE",
+  sparkSoft: "#EEE5EC", onPrimary: "#FFFFFF", onSpark: "#40243A", tranquilo: "#2E7C77",
+  atencion: "#B48642", urgente: "#C84E7D",
+};
+
+const mkArea = (p) => ({
+  personal:  { color: p.primary, soft: p.primarySoft },
+  laboral:   { color: p.tranquilo, soft: p.tranquilo === "#2E7C77" ? "#DCEBE9" : p.primarySoft },
+  pareja:    { color: p.accent, soft: p.accentSoft },
+  familia:   { color: p.spark, soft: p.sparkSoft },
+  amigos:    { color: p.accent, soft: p.accentSoft },
+  ejercicio: { color: p.tranquilo, soft: p.primarySoft },
+  lectura:   { color: p.primary, soft: p.primarySoft },
+});
+const poolFrom = (p, extras=[]) => [
+  { color: p.primary, soft: p.primarySoft }, { color: p.tranquilo, soft: p.primarySoft },
+  { color: p.accent, soft: p.accentSoft }, { color: p.spark, soft: p.sparkSoft }, ...extras,
+  { color: p.textSoft, soft: p.surfaceAlt }, { color: p.primaryDark, soft: p.primarySoft },
+  { color: p.accent, soft: p.accentSoft }, { color: p.tranquilo, soft: p.primarySoft },
+];
+const AREA_ATLANTICO = mkArea(C_ATLANTICO);
+const AREA_BRUMA_V3 = mkArea(C_BRUMA_V3);
+const AREA_MOSTAZA = mkArea(C_MOSTAZA);
+const AREA_SAUCO = {
+  ...mkArea(C_SAUCO),
+  pareja: { color: "#B7A9C9", soft: "#E8E4EB" },
+  lectura: { color: "#748D78", soft: "#E5E9E1" },
+};
+const AREA_ORQUIDEA = {
+  ...mkArea(C_ORQUIDEA),
+  laboral: { color: "#2E7C77", soft: "#DCEBE9" },
+  ejercicio: { color: "#2E7C77", soft: "#DCEBE9" },
+  lectura: { color: "#8F6998", soft: "#E9E4EB" },
+};
+const FALLBACK_ATLANTICO = { color: "#557868", soft: "#E2EBE7" };
+const FALLBACK_BRUMA_V3 = { color: "#7393AA", soft: "#E4EBF1" };
+const FALLBACK_MOSTAZA = { color: "#6A8073", soft: "#E3E7DD" };
+const FALLBACK_SAUCO = { color: "#748D78", soft: "#E5E9E1" };
+const FALLBACK_ORQUIDEA = { color: "#2E7C77", soft: "#DCEBE9" };
+const POOL_ATLANTICO = poolFrom(C_ATLANTICO, [{color:"#557868",soft:"#E2EBE7"},{color:"#9A8178",soft:"#EFE6E2"}]);
+const POOL_BRUMA_V3 = poolFrom(C_BRUMA_V3, [{color:"#7C91A4",soft:"#E4EBF1"},{color:"#B48A9B",soft:"#F0E6EA"}]);
+const POOL_MOSTAZA = poolFrom(C_MOSTAZA, [{color:"#6A8073",soft:"#E3E7DD"},{color:"#A77F45",soft:"#F3E6C9"}]);
+const POOL_SAUCO = poolFrom(C_SAUCO, [{color:"#B7A9C9",soft:"#E8E4EB"},{color:"#748D78",soft:"#E5E9E1"}]);
+const POOL_ORQUIDEA = poolFrom(C_ORQUIDEA, [{color:"#2E7C77",soft:"#DCEBE9"},{color:"#B7A9C9",soft:"#E9E4EB"}]);
+
 // paletas disponibles + variables vivas (la raíz las reasigna según la elegida)
 const PALETTES = {
-  mint:   { name: "Mint & Navy", C: C_MINT,   AREA: AREA_MINT,   FALLBACK: FALLBACK_MINT,   POOL: AREA_POOL_MINT },
-  cactus: { name: "Cactus",      C: C_CACTUS, AREA: AREA_CACTUS, FALLBACK: FALLBACK_CACTUS, POOL: AREA_POOL_CACTUS },
-  bruma:  { name: "Bruma",       C: C_BRUMA,  AREA: AREA_BRUMA,  FALLBACK: FALLBACK_BRUMA,  POOL: AREA_POOL_BRUMA },
-  cielo:  { name: "Cielo",       C: C_CIELO,  AREA: AREA_CIELO,  FALLBACK: FALLBACK_CIELO,  POOL: AREA_POOL_CIELO },
-  salvia: { name: "Salvia",      C: C_SALVIA, AREA: AREA_SALVIA, FALLBACK: FALLBACK_SALVIA, POOL: AREA_POOL_SALVIA },
+  mint:   { name: "Atlántico",    C: C_ATLANTICO, AREA: AREA_ATLANTICO, FALLBACK: FALLBACK_ATLANTICO, POOL: POOL_ATLANTICO },
+  cielo:  { name: "Bruma",        C: C_BRUMA_V3, AREA: AREA_BRUMA_V3, FALLBACK: FALLBACK_BRUMA_V3, POOL: POOL_BRUMA_V3 },
+  cactus: { name: "Mostaza",      C: C_MOSTAZA, AREA: AREA_MOSTAZA, FALLBACK: FALLBACK_MOSTAZA, POOL: POOL_MOSTAZA },
+  salvia: { name: "Verde Saúco",  C: C_SAUCO, AREA: AREA_SAUCO, FALLBACK: FALLBACK_SAUCO, POOL: POOL_SAUCO },
+  bruma:  { name: "Orquídea",     C: C_ORQUIDEA, AREA: AREA_ORQUIDEA, FALLBACK: FALLBACK_ORQUIDEA, POOL: POOL_ORQUIDEA },
 };
-const PAL_ORDER = ["mint", "cactus", "bruma", "cielo", "salvia"];
+const PAL_ORDER = ["mint", "cielo", "cactus", "salvia", "bruma"];
 let PAL_KEY = "mint";
 let C = C_MINT, AREA = AREA_MINT, FALLBACK = FALLBACK_MINT, AREA_POOL = AREA_POOL_MINT, S, CSS;
 function applyPalette(key) {
@@ -707,11 +795,11 @@ function Gauge({ health, days, color, size = 64 }) {
         transform={`rotate(-90 ${size / 2} ${size / 2})`}
         style={{ transition: "stroke-dashoffset .7s cubic-bezier(.4,0,.2,1)" }} />
       <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle"
-        fontFamily="'Spline Sans Mono', monospace" fontSize="17" fontWeight="500" fill={C.text}>
+        fontFamily="'IBM Plex Mono', monospace" fontSize="17" fontWeight="500" fill={C.text}>
         {days === null ? "—" : days}
       </text>
       <text x="50%" y="66%" textAnchor="middle" dominantBaseline="middle"
-        fontFamily="'Spline Sans Mono', monospace" fontSize="8" fill={C.textSoft} letterSpacing="1">
+        fontFamily="'IBM Plex Mono', monospace" fontSize="8" fill={C.textSoft} letterSpacing="1">
         {days === null ? "" : days === 1 ? "DÍA" : "DÍAS"}
       </text>
     </svg>
@@ -992,8 +1080,8 @@ function BitacoraApp() {
       .filter((x) => x.st.key !== "ok").sort((x, y) => y.area.importance - x.area.importance),
     [areas, lastByArea]);
 
-  const addItem = useCallback((coll, title, status, meta, note) =>
-    setItems((p) => [{ id: rid(), coll, title: (title || "").trim(), meta: (meta || "").trim(), note: note || "", status: status ?? null, date: new Date().toISOString() }, ...p]), []);
+  const addItem = useCallback((coll, title, status, meta, note, extra = {}) =>
+    setItems((p) => [{ id: rid(), coll, title: (title || "").trim(), meta: (meta || "").trim(), note: note || "", status: status ?? null, date: new Date().toISOString(), ...extra }, ...p]), []);
   const updateItem = useCallback((id, patch) => setItems((p) => p.map((it) => it.id === id ? { ...it, ...patch } : it)), []);
   const delItem = useCallback((id) => setItems((p) => p.filter((it) => it.id !== id)), []);
   const toggleHabit = useCallback((id) => setHabits((p) => {
@@ -1002,7 +1090,7 @@ function BitacoraApp() {
     return { ...p, [k]: cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id] };
   }), []);
   const setFinanceMonth = useCallback((key, data) => setFinance((p) => ({ ...p, [key]: data })), []);
-  const savAdd = useCallback((k, row) => setSavings((p) => ({ ...p, [k]: [...(p[k] || []), { id: rid(), ...row }] })), []);
+  const savAdd = useCallback((k, row) => setSavings((p) => ({ ...p, [k]: [...(p[k] || []), { id: rid(), createdAt: new Date().toISOString(), ...row }] })), []);
   const savEdit = useCallback((k, id, patch) => setSavings((p) => ({ ...p, [k]: (p[k] || []).map((r) => r.id === id ? { ...r, ...patch } : r) })), []);
   const savDel = useCallback((k, id) => setSavings((p) => ({ ...p, [k]: (p[k] || []).filter((r) => r.id !== id) })), []);
   const addGoal = useCallback((title, areaId, cadence) => setGoals((p) => [{ id: rid(), title: title.trim(), areaId, cadence, lastPush: null, done: false, createdAt: new Date().toISOString() }, ...p]), []);
@@ -1071,7 +1159,7 @@ function BitacoraApp() {
   if (!ready) {
     return (
       <div style={{ ...S.root, display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
-        <Fonts /><div style={{ color: C.textSoft, fontFamily: "'Spline Sans Mono', monospace", fontSize: 13 }}>cargando bitácora…</div>
+        <Fonts /><div style={{ color: C.textSoft, fontFamily: "'IBM Plex Mono', monospace", fontSize: 13 }}>cargando bitácora…</div>
       </div>
     );
   }
@@ -1079,46 +1167,31 @@ function BitacoraApp() {
   return (
     <div style={S.root}>
       <Fonts /><style>{CSS}</style>
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "stretch", position: "relative", zIndex: 1 }}>
-        <LeftRail />
-        <div style={S.wrap}>
-        <header style={S.header}>
-          <span style={S.logo}><Library size={22} color={C.onPrimary} strokeWidth={1.7} /></span>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <h1 style={S.title}>Bitácora</h1>
-            <Saludo />
-          </div>
-          <button onClick={() => setPal(PAL_ORDER[(PAL_ORDER.indexOf(pal) + 1) % PAL_ORDER.length])} className="navbtn"
-            title={`Paleta: ${PALETTES[pal].name} · tocar para cambiar`}
-            style={{ ...S.areasBtn, padding: "8px 12px", gap: 5 }}>
-            <span style={{ width: 13, height: 13, borderRadius: 13, background: C.primary, border: `1px solid ${C.surface}`, boxShadow: `0 0 0 1px ${C.border}` }} />
-            <span style={{ width: 13, height: 13, borderRadius: 13, background: C.accent, border: `1px solid ${C.surface}`, boxShadow: `0 0 0 1px ${C.border}`, marginLeft: -6 }} />
-            <span style={{ width: 13, height: 13, borderRadius: 13, background: C.spark, border: `1px solid ${C.surface}`, boxShadow: `0 0 0 1px ${C.border}`, marginLeft: -6 }} />
-          </button>
-          <button onClick={() => setTab("areas")} className="navbtn"
-            style={{ ...S.areasBtn, ...(tab === "areas" ? S.areasBtnOn : {}) }}>
-            <SlidersHorizontal size={14} strokeWidth={1.9} /> Áreas
-          </button>
-        </header>
+      <div className="app-shell" style={{ display: "flex", width: "100%", maxWidth: 1450, margin: "0 auto", alignItems: "stretch", position: "relative", zIndex: 1, background: C.bg }}>
+        <Sidebar tab={tab} setTab={setTab} pal={pal} setPal={setPal} onLogout={() => supabase.auth.signOut()} />
+        <main style={S.wrap}>
+          <header className="content-head" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, marginBottom: 22 }}>
+            <div>
+              <h1 style={{ ...S.title, fontSize: 30 }}>{({ semana: "Tu semana", registros: "Tus registros", finanzas: "Finanzas", ciclo: "Tu ciclo", metas: "Metas y proyectos", tablero: "Mis datos", areas: "Tus áreas" })[tab]}</h1>
+              <div style={{ marginTop: 5 }}><Saludo /></div>
+            </div>
+            <div className="mobile-theme" style={{ display: "none" }}>
+              <button onClick={() => setPal(PAL_ORDER[(PAL_ORDER.indexOf(pal) + 1) % PAL_ORDER.length])} className="navbtn" style={{ ...S.areasBtn, padding: "8px 11px" }}>{PALETTES[pal]?.name}</button>
+            </div>
+          </header>
 
-        <DailySpark />
-
-        <nav style={S.nav}>
-          {[["semana", "Semana"], ["registros", "Registros"], ["ciclo", "Ciclo"], ["finanzas", "Finanzas"], ["metas", "Metas"], ["tablero", "Tablero"]].map(([k, l]) => (
-            <button key={k} onClick={() => setTab(k)} className="navbtn" style={{ ...S.navBtn, ...(tab === k ? S.navBtnOn : {}) }}>{l}</button>
-          ))}
-        </nav>
-
-        {tab === "semana" && <Semana areas={areas} tasks={tasks} onAdd={addTask} onToggle={toggleTask} onDel={delTask} onUpdate={updateTask} notes={items.filter((it) => it.coll === "notas")} onAddNote={(t) => addItem("notas", t, null, "")} onDelNote={delItem} habitsToday={habits[dateKey(now())] || []} onToggleHabit={toggleHabit} />}
+        {tab === "semana" && <>
+          <InicioSemanaResumen items={items} habitsToday={habits[dateKey(now())] || []} onToggleHabit={toggleHabit} onGoRegistros={() => setTab("registros")} />
+          <Semana areas={areas} tasks={tasks} onAdd={addTask} onToggle={toggleTask} onDel={delTask} onUpdate={updateTask} notes={items.filter((it) => it.coll === "notas")} onAddNote={(t) => addItem("notas", t, null, "")} onDelNote={delItem} habitsToday={habits[dateKey(now())] || []} onToggleHabit={toggleHabit} showCare={false} />
+        </>}
         {tab === "registros" && <Registros items={items} onAdd={addItem} onUpdate={updateItem} onDel={delItem} />}
         {tab === "tablero" && <Tablero areas={areas} lastByArea={lastByArea} weekActivity={weekActivity}
-          attention={attention} finance={finance} savings={savings} goals={goals} tasks={tasks} items={items} logros={logros} plantStart={plantStart} />}
+          attention={attention} finance={finance} savings={savings} goals={goals} tasks={tasks} items={items} logros={logros} plantStart={plantStart} habits={habits} />}
         {tab === "finanzas" && <Finanzas finance={finance} onSetMonth={setFinanceMonth} savings={savings} onSavAdd={savAdd} onSavEdit={savEdit} onSavDel={savDel} />}
         {tab === "metas" && <Metas goals={goals} areas={areas} onAdd={addGoal} onPush={pushGoal} onDone={doneGoal} onDel={delGoal} />}
         {tab === "ciclo" && <Ciclo ciclo={ciclo} onToggleDay={toggleCicloDay} onUpdateReg={updateCicloReg} onDelReg={delCicloReg} />}
         {tab === "areas" && <AreasCfg areas={areas} onImp={setImportance} onKind={setAreaKind} onAdd={addArea} onDel={delArea} />}
 
-        <Paleta />
         <div aria-hidden="true" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5, margin: "30px 0 16px" }}>
           <span style={{ display: "block", width: 72, height: 5, background: C.spark, borderRadius: 4 }} />
           <span style={{ display: "block", width: 46, height: 3, background: C.primary, borderRadius: 4 }} />
@@ -1129,21 +1202,17 @@ function BitacoraApp() {
         </footer>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginTop: 12, flexWrap: "wrap" }}>
           <button onClick={exportData} className="navbtn" title="Descargar una copia de seguridad de todos tus datos"
-            style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "none", border: "none", color: C.onBgDim, fontSize: 12, cursor: "pointer", fontFamily: "'Spline Sans Mono', monospace" }}>
+            style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "none", border: "none", color: C.onBgDim, fontSize: 12, cursor: "pointer", fontFamily: "'IBM Plex Mono', monospace" }}>
             <Download size={13} /> exportar respaldo
           </button>
           <button onClick={() => fileRef.current && fileRef.current.click()} className="navbtn" title="Cargar tus datos desde un archivo de respaldo"
-            style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "none", border: "none", color: C.onBgDim, fontSize: 12, cursor: "pointer", fontFamily: "'Spline Sans Mono', monospace" }}>
+            style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "none", border: "none", color: C.onBgDim, fontSize: 12, cursor: "pointer", fontFamily: "'IBM Plex Mono', monospace" }}>
             <Upload size={13} /> importar respaldo
           </button>
           <input ref={fileRef} type="file" accept="application/json,.json" style={{ display: "none" }}
             onChange={(e) => { importData(e.target.files[0]); e.target.value = ""; }} />
-          <button onClick={() => supabase.auth.signOut()} className="navbtn" title="Cerrar tu sesión"
-            style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "none", border: "none", color: C.onBgDim, fontSize: 12, cursor: "pointer", fontFamily: "'Spline Sans Mono', monospace" }}>
-            <Upload size={13} style={{ transform: "rotate(90deg)" }} /> cerrar sesión
-          </button>
         </div>
-      </div>
+        </main>
       </div>
     </div>
   );
@@ -1168,6 +1237,15 @@ function Ciclo({ ciclo, onToggleDay, onUpdateReg, onDelReg }) {
   const phaseId = cicloPhase(cycleDay, avgLen, lastPeriodLen);
   const phase = phaseId ? FASES_CICLO.find((f) => f.id === phaseId) : null;
   const nextStart = lastStart && avgLen ? cicloAddDays(lastStart, avgLen) : null;
+  const nextStarts = nextStart && avgLen ? [0,1,2,3].map((i) => cicloAddDays(nextStart, avgLen * i)) : [];
+  const projectedStartKeys = new Set(nextStarts);
+  const projectedPeriodKeys = new Set(nextStarts.flatMap((start) =>
+    Array.from({ length: Math.max(1, lastPeriodLen || 5) }, (_, i) => cicloAddDays(start, i))
+  ));
+  const recentStarts = starts.slice(-Math.min(7, starts.length));
+  const cycleDiffs = recentStarts.slice(1).map((d, i) => Math.round((new Date(d + "T12:00:00") - new Date(recentStarts[i] + "T12:00:00")) / dayMs));
+  const cycleMin = cycleDiffs.length ? Math.min(...cycleDiffs) : null;
+  const cycleMax = cycleDiffs.length ? Math.max(...cycleDiffs) : null;
   const ovDay = avgLen ? avgLen - 14 : null;
   const fertileStart = lastStart && ovDay ? cicloAddDays(lastStart, ovDay - 5) : null;
   const fertileEnd = lastStart && ovDay ? cicloAddDays(lastStart, ovDay + 1) : null;
@@ -1215,14 +1293,17 @@ function Ciclo({ ciclo, onToggleDay, onUpdateReg, onDelReg }) {
             const k = dateKey(d);
             const isRegla = diasRegla.includes(k), isToday = k === todayKey, isFuture = k > todayKey;
             const hasReg = registros.some((r) => r.fecha === k);
+            const isProjected = projectedPeriodKeys.has(k);
+            const isProjectedStart = projectedStartKeys.has(k);
             return (
               <button key={k} onClick={() => !isFuture && onToggleDay(k)} className="navbtn" disabled={isFuture}
-                style={{ ...S.calCell, background: isRegla ? C.accent : isToday ? C.sparkSoft : "none",
-                  color: isRegla ? C.onPrimary : isFuture ? C.textMuted : isToday ? C.text : C.textSoft,
-                  border: isToday ? `1px solid ${C.spark}` : "1px solid transparent",
-                  fontWeight: isToday ? 700 : 400, cursor: isFuture ? "default" : "pointer", opacity: isFuture ? 0.25 : 1 }}>
+                style={{ ...S.calCell, background: isRegla ? C.accent : isProjected ? C.accentSoft : isToday ? C.sparkSoft : "none",
+                  color: isRegla ? C.onPrimary : isProjected ? C.text : isFuture ? C.textMuted : isToday ? C.text : C.textSoft,
+                  border: isProjectedStart ? `1px dashed ${C.accent}` : isToday ? `1px solid ${C.spark}` : "1px solid transparent",
+                  fontWeight: isToday || isProjectedStart ? 500 : 400, cursor: isFuture ? "default" : "pointer", opacity: isFuture && !isProjected ? 0.28 : 1 }}>
                 {d.getDate()}
                 {hasReg && <span style={{ position: "absolute", bottom: 1, right: 2, width: 4, height: 4, borderRadius: 4, background: isRegla ? "#fff8" : WHEEL_C.folicular }} />}
+                {isProjectedStart && <span style={{ position: "absolute", top: 2, right: 2, width: 5, height: 5, borderRadius: 5, background: C.accent }} />}
               </button>
             );
           })}
@@ -1252,15 +1333,15 @@ function Ciclo({ ciclo, onToggleDay, onUpdateReg, onDelReg }) {
           <div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 20, alignItems: "flex-start" }}>
               <div style={{ textAlign: "center", minWidth: 64 }}>
-                <div style={{ fontSize: 44, fontWeight: 700, color: phase.c, fontFamily: "'Spline Sans Mono', monospace", lineHeight: 1 }}>{cycleDay}</div>
-                <div style={{ fontSize: 10, color: C.textMuted, fontFamily: "'Spline Sans Mono', monospace", textTransform: "uppercase", letterSpacing: 1, marginTop: 3 }}>día del ciclo</div>
+                <div style={{ fontSize: 44, fontWeight: 700, color: phase.c, fontFamily: "'IBM Plex Mono', monospace", lineHeight: 1 }}>{cycleDay}</div>
+                <div style={{ fontSize: 10, color: C.textMuted, fontFamily: "'IBM Plex Mono', monospace", textTransform: "uppercase", letterSpacing: 1, marginTop: 3 }}>día del ciclo</div>
               </div>
               <div style={{ flex: 1, minWidth: 120 }}>
-                <div style={{ display: "inline-block", background: phase.c + "22", borderRadius: 6, padding: "2px 10px", fontSize: 11, fontWeight: 700, color: phase.c, fontFamily: "'Spline Sans Mono', monospace", textTransform: "uppercase", letterSpacing: 1, marginBottom: 5 }}>{phase.label}</div>
+                <div style={{ display: "inline-block", background: phase.c + "22", borderRadius: 6, padding: "2px 10px", fontSize: 11, fontWeight: 700, color: phase.c, fontFamily: "'IBM Plex Mono', monospace", textTransform: "uppercase", letterSpacing: 1, marginBottom: 5 }}>{phase.label}</div>
                 <div style={{ fontSize: 13, color: C.textSoft, lineHeight: 1.4 }}>{phase.desc}</div>
               </div>
               <div style={{ textAlign: "right", minWidth: 130 }}>
-                <div style={{ fontSize: 10, color: C.textMuted, fontFamily: "'Spline Sans Mono', monospace", textTransform: "uppercase", letterSpacing: 0.8 }}>próximo inicio est.</div>
+                <div style={{ fontSize: 10, color: C.textMuted, fontFamily: "'IBM Plex Mono', monospace", textTransform: "uppercase", letterSpacing: 0.8 }}>próximo inicio est.</div>
                 <div style={{ fontSize: 15, color: C.text, fontWeight: 600, marginTop: 3 }}>{nextStart ? fmtDate(nextStart) : "—"}</div>
                 {fertileStart && <div style={{ fontSize: 11, color: C.textMuted, marginTop: 7, lineHeight: 1.4 }}>ventana fértil est.<br />{fmtDate(fertileStart)} – {fmtDate(fertileEnd)}</div>}
               </div>
@@ -1275,6 +1356,8 @@ function Ciclo({ ciclo, onToggleDay, onUpdateReg, onDelReg }) {
           </div>
         )}
       </div>
+
+      {/* Las proyecciones ahora viven en el calendario para evitar duplicar información. */}
 
       {/* ── Rueda del ciclo ── */}
       <Section label="rueda del ciclo" accent={C.primary}>
@@ -1292,13 +1375,13 @@ function Ciclo({ ciclo, onToggleDay, onUpdateReg, onDelReg }) {
             {cycleDay ? (
               <>
                 <text x={CX} y={CY - 7} textAnchor="middle" dominantBaseline="middle"
-                  fontSize={30} fontWeight={700} fontFamily="'Spline Sans Mono', monospace" fill={phase?.c || "#888"}>{cycleDay}</text>
+                  fontSize={30} fontWeight={700} fontFamily="'IBM Plex Mono', monospace" fill={phase?.c || "#888"}>{cycleDay}</text>
                 <text x={CX} y={CY + 14} textAnchor="middle" dominantBaseline="middle"
-                  fontSize={9} fontFamily="'Spline Sans Mono', monospace" fill="#888">{(phase?.label || "").toUpperCase()}</text>
+                  fontSize={9} fontFamily="'IBM Plex Mono', monospace" fill="#888">{(phase?.label || "").toUpperCase()}</text>
               </>
             ) : (
               <text x={CX} y={CY} textAnchor="middle" dominantBaseline="middle"
-                fontSize={11} fontFamily="'Newsreader', serif" fill="#aaa">marca días de regla</text>
+                fontSize={11} fontFamily="'Bodoni Moda', Georgia, serif" fill="#aaa">marca días de regla</text>
             )}
           </svg>
         </div>
@@ -1317,43 +1400,43 @@ function Ciclo({ ciclo, onToggleDay, onUpdateReg, onDelReg }) {
       <Section label="registro del día" accent={C.tranquilo}>
         {editReg ? (
           <div style={S.finCard}>
-            <div style={{ fontSize: 11, color: C.textMuted, fontFamily: "'Spline Sans Mono', monospace", textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>
+            <div style={{ fontSize: 11, color: C.textMuted, fontFamily: "'IBM Plex Mono', monospace", textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>
               {new Date(editReg.fecha + "T12:00:00").toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" })}
             </div>
             <div style={{ marginBottom: 12 }}>
-              <div style={{ fontSize: 11, color: C.textSoft, fontFamily: "'Spline Sans Mono', monospace", marginBottom: 6 }}>Flujo</div>
+              <div style={{ fontSize: 11, color: C.textSoft, fontFamily: "'IBM Plex Mono', monospace", marginBottom: 6 }}>Flujo</div>
               <div style={S.chips}>{FLUJO_OPS.map((f) => (
                 <button key={f} onClick={() => setEditReg((r) => ({ ...r, flujo: r.flujo === f ? null : f }))} className="chip"
                   style={{ ...S.chip, ...(editReg.flujo === f ? { borderColor: C.accent, background: C.accentSoft, color: C.text } : {}) }}>{f}</button>
               ))}</div>
             </div>
             <div style={{ marginBottom: 12 }}>
-              <div style={{ fontSize: 11, color: C.textSoft, fontFamily: "'Spline Sans Mono', monospace", marginBottom: 6 }}>Síntomas</div>
+              <div style={{ fontSize: 11, color: C.textSoft, fontFamily: "'IBM Plex Mono', monospace", marginBottom: 6 }}>Síntomas</div>
               <div style={S.chips}>{SINTOMAS_OPS.map((s) => (
                 <button key={s} onClick={() => setEditReg((r) => ({ ...r, sintomas: r.sintomas.includes(s) ? r.sintomas.filter((x) => x !== s) : [...r.sintomas, s] }))} className="chip"
                   style={{ ...S.chip, ...(editReg.sintomas.includes(s) ? { borderColor: C.primary, background: C.primarySoft, color: C.text } : {}) }}>{s}</button>
               ))}</div>
             </div>
             <div style={{ marginBottom: 12 }}>
-              <div style={{ fontSize: 11, color: C.textSoft, fontFamily: "'Spline Sans Mono', monospace", marginBottom: 6 }}>Ánimo</div>
+              <div style={{ fontSize: 11, color: C.textSoft, fontFamily: "'IBM Plex Mono', monospace", marginBottom: 6 }}>Ánimo</div>
               <div style={{ display: "flex", gap: 5 }}>
                 {ANIMO_LABELS.map((l, i) => { const v = i + 1, sel = editReg.animo === v; return (
                   <button key={i} onClick={() => setEditReg((r) => ({ ...r, animo: r.animo === v ? null : v }))} className="navbtn"
                     style={{ flex: 1, padding: "5px 2px", textAlign: "center", fontSize: 10, lineHeight: 1.3, borderRadius: 8,
                       background: sel ? C.spark : C.surface, border: `1px solid ${sel ? C.spark : C.border}`,
-                      color: sel ? C.onSpark : C.textSoft, cursor: "pointer", fontFamily: "'Spline Sans Mono', monospace" }}>
+                      color: sel ? C.onSpark : C.textSoft, cursor: "pointer", fontFamily: "'IBM Plex Mono', monospace" }}>
                     {v}<br />{l}</button>
                 );})}
               </div>
             </div>
             <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: 11, color: C.textSoft, fontFamily: "'Spline Sans Mono', monospace", marginBottom: 6 }}>Energía</div>
+              <div style={{ fontSize: 11, color: C.textSoft, fontFamily: "'IBM Plex Mono', monospace", marginBottom: 6 }}>Energía</div>
               <div style={{ display: "flex", gap: 5 }}>
                 {ENERGIA_LABELS.map((l, i) => { const v = i + 1, sel = editReg.energia === v; return (
                   <button key={i} onClick={() => setEditReg((r) => ({ ...r, energia: r.energia === v ? null : v }))} className="navbtn"
                     style={{ flex: 1, padding: "5px 2px", textAlign: "center", fontSize: 10, lineHeight: 1.3, borderRadius: 8,
                       background: sel ? C.tranquilo : C.surface, border: `1px solid ${sel ? C.tranquilo : C.border}`,
-                      color: sel ? "#fff" : C.textSoft, cursor: "pointer", fontFamily: "'Spline Sans Mono', monospace" }}>
+                      color: sel ? "#fff" : C.textSoft, cursor: "pointer", fontFamily: "'IBM Plex Mono', monospace" }}>
                     {v}<br />{l}</button>
                 );})}
               </div>
@@ -1367,7 +1450,7 @@ function Ciclo({ ciclo, onToggleDay, onUpdateReg, onDelReg }) {
           <div style={S.finCard}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
               <div>
-                <div style={{ fontSize: 11, color: C.textMuted, fontFamily: "'Spline Sans Mono', monospace", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>hoy</div>
+                <div style={{ fontSize: 11, color: C.textMuted, fontFamily: "'IBM Plex Mono', monospace", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>hoy</div>
                 <div style={{ fontSize: 13, color: C.text, lineHeight: 1.6 }}>{fmtReg(regHoy)}</div>
               </div>
               <div style={{ display: "flex", gap: 6 }}>
@@ -1379,7 +1462,7 @@ function Ciclo({ ciclo, onToggleDay, onUpdateReg, onDelReg }) {
         ) : (
           <button onClick={newReg} className="navbtn"
             style={{ width: "100%", padding: "10px 14px", textAlign: "left", background: C.surface, border: `1px dashed ${C.border}`,
-              borderRadius: 10, color: C.textSoft, fontSize: 13, fontFamily: "'Newsreader', serif", cursor: "pointer" }}>
+              borderRadius: 10, color: C.textSoft, fontSize: 13, fontFamily: "'Bodoni Moda', Georgia, serif", cursor: "pointer" }}>
             + Agregar registro de hoy (flujo, síntomas, ánimo, energía)
           </button>
         )}
@@ -1387,7 +1470,7 @@ function Ciclo({ ciclo, onToggleDay, onUpdateReg, onDelReg }) {
           <div key={r.id} style={{ ...S.finCard, marginTop: 8 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 11, color: C.textMuted, fontFamily: "'Spline Sans Mono', monospace", marginBottom: 3 }}>
+                <div style={{ fontSize: 11, color: C.textMuted, fontFamily: "'IBM Plex Mono', monospace", marginBottom: 3 }}>
                   {new Date(r.fecha + "T12:00:00").toLocaleDateString("es-CL", { weekday: "short", day: "numeric", month: "short" })}
                 </div>
                 <div style={{ fontSize: 12, color: C.textSoft }}>{fmtReg(r)}</div>
@@ -1421,10 +1504,14 @@ function Ciclo({ ciclo, onToggleDay, onUpdateReg, onDelReg }) {
             <span style={{ width: 8, height: 8, borderRadius: 3, border: `1.5px solid ${C.spark}`, display: "inline-block" }} /> hoy
           </span>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+            <span style={{ width: 8, height: 8, borderRadius: 3, background: C.accentSoft, border: `1px dashed ${C.accent}`, display: "inline-block" }} /> proyección
+          </span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
             <span style={{ width: 5, height: 5, borderRadius: 5, background: WHEEL_C.folicular, display: "inline-block" }} /> con registro
           </span>
           <span style={{ color: C.textMuted }}>toca un día para marcarlo</span>
         </div>
+        {nextStart && <div style={{ marginTop: 9, textAlign: "center", fontSize: 11.5, color: C.textMuted }}>La zona suave marca los días proyectados del próximo periodo; el borde punteado señala el inicio estimado.</div>}
       </div>
 
       <div style={{ ...S.hint, marginTop: 14 }}>
@@ -1441,13 +1528,13 @@ function Ciclo({ ciclo, onToggleDay, onUpdateReg, onDelReg }) {
           ))}
         </div>
         <div style={S.finCard}>
-          <div style={{ fontSize: 10, fontFamily: "'Spline Sans Mono', monospace", color: C.textMuted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>
+          <div style={{ fontSize: 10, fontFamily: "'IBM Plex Mono', monospace", color: C.textMuted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>
             {datoHoy.cat} · {datoIdx + 1} / {datosFiltrados.length}
           </div>
-          <div style={{ fontSize: 14, color: C.text, lineHeight: 1.65, fontFamily: "'Newsreader', serif" }}>{datoHoy.texto}</div>
+          <div style={{ fontSize: 14, color: C.text, lineHeight: 1.65, fontFamily: "'Bodoni Moda', Georgia, serif" }}>{datoHoy.texto}</div>
         </div>
         <button onClick={() => setDatosOffset((o) => o + 1)} className="navbtn"
-          style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 10, color: C.textSoft, fontSize: 12, fontFamily: "'Spline Sans Mono', monospace", background: "none", border: "none", cursor: "pointer" }}>
+          style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 10, color: C.textSoft, fontSize: 12, fontFamily: "'IBM Plex Mono', monospace", background: "none", border: "none", cursor: "pointer" }}>
           <RefreshCw size={11} /> otro dato
         </button>
         <div style={{ ...S.hint, marginTop: 4 }}>Contenido educativo — no es consejo médico ni reemplaza a un profesional de salud.</div>
@@ -1457,8 +1544,82 @@ function Ciclo({ ciclo, onToggleDay, onUpdateReg, onDelReg }) {
   );
 }
 
+
+/* ───────────────────────── INICIO + SEMANA ───────────────────────── */
+function CuidadosCard({ habitsToday = [], onToggleHabit, compact = false }) {
+  return (
+    <div style={{ ...S.habitsCard, margin: 0, maxWidth: "none", height: "100%", padding: compact ? "15px 16px" : "16px 18px" }}>
+      <div style={{ ...S.habitsHead, justifyContent: "space-between", marginBottom: 10 }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}><Heart size={15} /> Cuidados de hoy</span>
+        <span style={S.habitsCount}>{habitsToday.length}/{HABITOS.length}</span>
+      </div>
+      <div style={{ ...S.habitsRow, justifyContent: "flex-start", gap: 6 }}>
+        {HABITOS.map((h) => {
+          const on = habitsToday.includes(h.id); const Ic = h.icon;
+          return (
+            <button key={h.id} onClick={() => onToggleHabit(h.id)} className="chip"
+              style={{ ...S.habitChip, padding: compact ? "7px 9px" : "8px 12px", fontSize: compact ? 12 : 13, ...(on ? S.habitChipOn : {}) }}>
+              {on ? <Check size={13} strokeWidth={3} /> : <Ic size={13} />} {h.label}
+            </button>
+          );
+        })}
+      </div>
+      <div style={{ ...S.habitsHint, textAlign: "left", marginTop: 9 }}>Pequeños gestos para tu cuerpo y tu ánimo. Se reinician cada día.</div>
+    </div>
+  );
+}
+
+function InicioSemanaResumen({ items, habitsToday, onToggleHabit, onGoRegistros }) {
+  const leyendo = (items || []).filter((it) => it.coll === "libros" && it.status === "Leyendo").slice(0, 2);
+  const viajes = (items || []).filter((it) => it.coll === "viajes" && it.status === "Hecho");
+  const recuerdo = viajes.length ? viajes[dayOfYear() % viajes.length] : null;
+  return (
+    <div className="fade" style={{ marginBottom: 26 }}>
+      <DailySpark />
+      <div className="homegrid">
+        <CuidadosCard habitsToday={habitsToday} onToggleHabit={onToggleHabit} compact />
+
+        <div style={{ ...S.homeCard, borderTop: `3px solid ${C.primary}` }}>
+          <div style={S.homeEyebrow}><BookOpen size={14} /> ahora leyendo</div>
+          {leyendo.length ? leyendo.map((b) => (
+            <div key={b.id} style={{ marginTop: 9, paddingTop: 9, borderTop: `1px solid ${C.border}` }}>
+              <div style={{ display: "flex", gap: 9, alignItems: "center" }}>
+                {b.imageUrl && <img src={b.imageUrl} alt="" style={{ width: 34, height: 48, borderRadius: 5, objectFit: "cover", border: `1px solid ${C.border}` }} />}
+                <div style={S.homeTitle}>{b.title}</div>
+              </div>
+              {b.meta && <div style={S.homeMeta}>{b.meta}</div>}
+              {b.note && <div style={S.homeQuote}>“{b.note.length > 110 ? b.note.slice(0, 110) + "…" : b.note}”</div>}
+            </div>
+          )) : <div style={S.homeEmpty}>No tienes libros marcados como “Leyendo”.</div>}
+          <button onClick={onGoRegistros} className="navbtn" style={S.homeLink}>ver biblioteca →</button>
+        </div>
+
+        <div style={{ ...S.homeCard, borderTop: `3px solid ${C.tranquilo}` }}>
+          <div style={S.homeEyebrow}><Plane size={14} /> recuerdo de viaje</div>
+          {recuerdo ? (
+            <>
+              {recuerdo.imageUrl && <img src={recuerdo.imageUrl} alt="" style={{ width: "100%", height: 110, objectFit: "cover", borderRadius: 10, marginTop: 10, border: `1px solid ${C.border}` }} />}
+              <div style={{ ...S.homeTitle, marginTop: 10 }}>{recuerdo.title}</div>
+              {recuerdo.meta && <div style={S.homeMeta}>{recuerdo.meta}</div>}
+              {recuerdo.note && <div style={S.homeQuote}>{recuerdo.note.length > 135 ? recuerdo.note.slice(0, 135) + "…" : recuerdo.note}</div>}
+            </>
+          ) : <div style={S.homeEmpty}>Cuando registres viajes realizados, aparecerá aquí un recuerdo al azar.</div>}
+          <button onClick={onGoRegistros} className="navbtn" style={S.homeLink}>ver viajes →</button>
+        </div>
+      </div>
+      <div style={S.homeSectionHead}>
+        <div>
+          <div style={S.homeKicker}>planificación</div>
+          <h2 style={S.homeH2}>Tu semana</h2>
+        </div>
+        <span style={S.homeSectionNote}>Personal, laboral o todo junto — tú eliges el foco.</span>
+      </div>
+    </div>
+  );
+}
+
 /* ───────────────────────── SEMANA ───────────────────────── */
-function Semana({ areas, tasks, onAdd, onToggle, onDel, onUpdate, notes, onAddNote, onDelNote, habitsToday, onToggleHabit }) {
+function Semana({ areas, tasks, onAdd, onToggle, onDel, onUpdate, notes, onAddNote, onDelNote, habitsToday, onToggleHabit, showCare = true }) {
   const [offset, setOffset] = useState(0);
   const [activeArea, setActiveArea] = useState(areas[0]?.id || "");
   const [drafts, setDrafts] = useState({});
@@ -1604,16 +1765,29 @@ function Semana({ areas, tasks, onAdd, onToggle, onDel, onUpdate, notes, onAddNo
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 13, lineHeight: 1.35, color: t.done ? C.textMuted : C.text, textDecoration: t.done ? "line-through" : "none", wordBreak: "break-word" }}>{t.text}</div>
                         {t.carriedFrom && !t.done && (
-                          <div style={{ fontSize: 10, color: C.atencion, fontFamily: "'Spline Sans Mono', monospace", marginTop: 1 }}>
+                          <div style={{ fontSize: 10, color: C.atencion, fontFamily: "'IBM Plex Mono', monospace", marginTop: 1 }}>
                             ↑ desde el {new Date(t.carriedFrom + "T12:00:00").toLocaleDateString("es-CL", { weekday: "short", day: "numeric", month: "short" })}
+                          </div>
+                        )}
+                        {t.movedFrom && !t.done && (
+                          <div style={{ fontSize: 10, color: C.textMuted, fontFamily: "'IBM Plex Mono', monospace", marginTop: 1 }}>
+                            ↪ movida desde {new Date(t.movedFrom + "T12:00:00").toLocaleDateString("es-CL", { weekday: "short", day: "numeric", month: "short" })}
                           </div>
                         )}
                       </div>
                     )}
-                    {!t.done && editTaskId !== t.id && (
-                      <button onClick={() => { setEditTaskId(t.id); setEditTaskText(t.text); }} className="del" style={{ ...S.del, padding: 2 }} aria-label="Editar tarea"><PenLine size={12} /></button>
-                    )}
-                    <button onClick={() => onDel(t.id)} className="del" style={{ ...S.del, padding: 2 }} aria-label="Borrar"><Trash2 size={12} /></button>
+                    <div className="task-actions">
+                      {!t.done && editTaskId !== t.id && (
+                        <>
+                          <label title="Mover tarea a otro día" className="del" style={{ ...S.del, padding: 2, cursor: "pointer", position: "relative" }}>
+                            <RefreshCw size={12} />
+                            <input type="date" value="" onChange={(e) => { const next = e.target.value; if (next && next !== t.day) onUpdate(t.id, { movedFrom: t.movedFrom || t.day, day: next, carriedFrom: null }); }} style={{ position: "absolute", inset: 0, opacity: 0, width: 16, cursor: "pointer" }} />
+                          </label>
+                          <button onClick={() => { setEditTaskId(t.id); setEditTaskText(t.text); }} className="del" style={{ ...S.del, padding: 2 }} aria-label="Editar tarea"><PenLine size={12} /></button>
+                        </>
+                      )}
+                      <button onClick={() => onDel(t.id)} className="del" style={{ ...S.del, padding: 2 }} aria-label="Borrar"><Trash2 size={12} /></button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1625,7 +1799,7 @@ function Semana({ areas, tasks, onAdd, onToggle, onDel, onUpdate, notes, onAddNo
           );
         })}
       </div>
-      <div style={S.hint}>Marca el círculo al completar: cuenta como energía de esa área y alimenta el Tablero.</div>
+      <div style={S.hint}>Marca el círculo al completar: cuenta como energía de esa área y alimenta Mis datos.</div>
 
       <div style={S.calWrap}>
         <div style={S.calHead}>
@@ -1665,46 +1839,56 @@ function Semana({ areas, tasks, onAdd, onToggle, onDel, onUpdate, notes, onAddNo
             </div>}
       </div>
 
-      <div style={S.habitsCard}>
-        <div style={S.habitsHead}>
-          <Heart size={15} /> <span>Cuidados de hoy</span>
-          <span style={S.habitsCount}>{habitsToday.length}/{HABITOS.length}</span>
-        </div>
-        <div style={S.habitsRow}>
-          {HABITOS.map((h) => {
-            const on = habitsToday.includes(h.id);
-            const Ic = h.icon;
-            return (
-              <button key={h.id} onClick={() => onToggleHabit(h.id)} className="chip"
-                style={{ ...S.habitChip, ...(on ? S.habitChipOn : {}) }}>
-                {on ? <Check size={14} strokeWidth={3} /> : <Ic size={14} />} {h.label}
-              </button>
-            );
-          })}
-        </div>
-        <div style={S.habitsHint}>Pequeños gestos para tu cuerpo y tu ánimo. Se reinician cada día.</div>
-      </div>
+      {showCare && <CuidadosCard habitsToday={habitsToday} onToggleHabit={onToggleHabit} />}
     </div>
   );
 }
 
 /* ───────────────────────── REGISTROS (colecciones) ───────────────────────── */
+
+async function imageFileToDataUrl(file) {
+  if (!file) return "";
+  if (!file.type?.startsWith("image/")) throw new Error("El archivo debe ser una imagen.");
+  const raw = await new Promise((resolve, reject) => {
+    const r = new FileReader(); r.onload = () => resolve(r.result); r.onerror = reject; r.readAsDataURL(file);
+  });
+  const img = await new Promise((resolve, reject) => {
+    const im = new Image(); im.onload = () => resolve(im); im.onerror = reject; im.src = raw;
+  });
+  const max = 1100;
+  const scale = Math.min(1, max / Math.max(img.width, img.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(img.width * scale));
+  canvas.height = Math.max(1, Math.round(img.height * scale));
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL("image/jpeg", 0.78);
+}
+
 function Registros({ items, onAdd, onUpdate, onDel }) {
   const [collId, setCollId] = useState("libros");
   const [title, setTitle] = useState("");
   const [meta, setMeta] = useState("");
   const [body, setBody] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [filter, setFilter] = useState("__all__");
   const [cIdx, setCIdx] = useState(dayOfYear() % CONSIGNAS.length);
   const [editingId, setEditingId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
   const [editMeta, setEditMeta] = useState("");
   const [editBody, setEditBody] = useState("");
+  const [editImageUrl, setEditImageUrl] = useState("");
+  const [imageMsg, setImageMsg] = useState("");
   const coll = COLL[collId];
   const Ic = coll.icon;
   const esCuaderno = collId === "cuaderno";
+  const librosTotal = items.filter((it) => it.coll === "libros").length;
+  const librosLeidos = items.filter((it) => it.coll === "libros" && it.status === "Leído").length;
+  const leyendoAhora = items.filter((it) => it.coll === "libros" && it.status === "Leyendo").length;
+  const viajesHechos = items.filter((it) => it.coll === "viajes" && it.status === "Hecho").length;
+  const peliculasVistas = items.filter((it) => it.coll === "peliculas" && it.status === "Vista").length;
 
-  useEffect(() => { setFilter("__all__"); setTitle(""); setMeta(""); setBody(""); setEditingId(null); }, [collId]);
+  useEffect(() => { setFilter("__all__"); setTitle(""); setMeta(""); setBody(""); setImageUrl(""); setImageMsg(""); setEditingId(null); }, [collId]);
 
   const list = useMemo(() => items
     .filter((it) => it.coll === collId)
@@ -1718,8 +1902,8 @@ function Registros({ items, onAdd, onUpdate, onDel }) {
       setTitle(""); setBody("");
     } else {
       if (!title.trim()) return;
-      onAdd(collId, title, coll.statuses[0] || null, meta);
-      setTitle(""); setMeta("");
+      onAdd(collId, title, coll.statuses[0] || null, meta, "", { imageUrl });
+      setTitle(""); setMeta(""); setImageUrl("");
     }
   };
   const otraConsigna = () => { let n = cIdx; while (n === cIdx && CONSIGNAS.length > 1) n = Math.floor(Math.random() * CONSIGNAS.length); setCIdx(n); };
@@ -1740,6 +1924,11 @@ function Registros({ items, onAdd, onUpdate, onDel }) {
 
   return (
     <div className="fade">
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 14, alignItems: "center", marginBottom: 18, color: C.textMuted, fontSize: 11.5 }}>
+        <span>{librosTotal} libros · {librosLeidos} leídos · {leyendoAhora} leyendo</span>
+        <span>{peliculasVistas} películas vistas</span>
+        <span>{viajesHechos} viajes</span>
+      </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 20 }}>
         {COLLECTIONS.map((c) => {
           const CI = c.icon;
@@ -1756,7 +1945,7 @@ function Registros({ items, onAdd, onUpdate, onDel }) {
         {esCuaderno && (
           <div style={{ ...S.finCard, background: C.primarySoft, borderColor: C.primary + "44", marginBottom: 14 }}>
             <div style={{ ...S.smallLabel, marginBottom: 6 }}>una consigna, por si quieres</div>
-            <div style={{ fontFamily: "'Newsreader', serif", fontSize: 15.5, color: C.text, lineHeight: 1.4 }}>{CONSIGNAS[cIdx]}</div>
+            <div style={{ fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 15.5, color: C.text, lineHeight: 1.4 }}>{CONSIGNAS[cIdx]}</div>
             <button onClick={otraConsigna} className="link" style={{ ...S.linkBtn, marginTop: 8 }}>otra consigna</button>
           </div>
         )}
@@ -1776,6 +1965,20 @@ function Registros({ items, onAdd, onUpdate, onDel }) {
             {coll.meta && (
               <input value={meta} onChange={(e) => setMeta(e.target.value)} placeholder={coll.meta} style={{ ...S.input, marginTop: 8 }}
                 onKeyDown={(e) => { if (e.key === "Enter") submit(); }} />
+            )}
+            {(collId === "libros" || collId === "viajes") && (
+              <div style={{ marginTop: 10 }}>
+                <label style={{ display: "inline-flex", alignItems: "center", gap: 7, border: `1px solid ${C.border}`, borderRadius: 8, padding: "8px 11px", background: C.surface, color: C.textSoft, fontSize: 12.5, cursor: "pointer" }}>
+                  <ImageIcon size={14} /> Elegir imagen
+                  <input type="file" accept="image/*" style={{ display: "none" }} onChange={async (e) => {
+                    const f = e.target.files?.[0]; if (!f) return;
+                    try { setImageMsg("preparando imagen…"); setImageUrl(await imageFileToDataUrl(f)); setImageMsg("imagen lista"); }
+                    catch { setImageMsg("no pude leer esa imagen"); }
+                  }} />
+                </label>
+                <input value={imageUrl.startsWith("data:") ? "" : imageUrl} onChange={(e) => { setImageUrl(e.target.value); setImageMsg(""); }} placeholder="o pega una URL directa de imagen" style={{ ...S.input, marginTop: 8 }} />
+                {(imageUrl || imageMsg) && <div style={{ marginTop: 7, fontSize: 11.5, color: C.textMuted }}>{imageUrl.startsWith("data:") ? "✓ imagen cargada desde tu equipo" : imageMsg}</div>}
+              </div>
             )}
             <button onClick={submit} disabled={!title.trim()} className="primary"
               style={{ ...S.primary, opacity: title.trim() ? 1 : 0.45 }}>
@@ -1803,7 +2006,7 @@ function Registros({ items, onAdd, onUpdate, onDel }) {
               if (editingId === it.id) {
                 return (
                   <div key={it.id} style={{ ...S.entry, borderLeft: `3px solid ${C.spark}`, flexDirection: "column", alignItems: "stretch" }}>
-                    <div style={{ fontFamily: "'Spline Sans Mono', monospace", fontSize: 11, color: C.textMuted, marginBottom: 8 }}>Editando…</div>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: C.textMuted, marginBottom: 8 }}>Editando…</div>
                     {esCuaderno ? (
                       <>
                         <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} placeholder="Título (opcional)" style={S.input} />
@@ -1814,12 +2017,21 @@ function Registros({ items, onAdd, onUpdate, onDel }) {
                       <>
                         <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} placeholder={coll.ph} style={S.input} />
                         {coll.meta && <input value={editMeta} onChange={(e) => setEditMeta(e.target.value)} placeholder={coll.meta} style={{ ...S.input, marginTop: 8 }} />}
+                        {(collId === "libros" || collId === "viajes") && (
+                          <div style={{ marginTop: 8 }}>
+                            <label style={{ display: "inline-flex", alignItems: "center", gap: 7, border: `1px solid ${C.border}`, borderRadius: 8, padding: "8px 11px", background: C.surface, color: C.textSoft, fontSize: 12.5, cursor: "pointer" }}>
+                              <ImageIcon size={14} /> Cambiar imagen
+                              <input type="file" accept="image/*" style={{ display: "none" }} onChange={async (e) => { const f = e.target.files?.[0]; if (f) try { setEditImageUrl(await imageFileToDataUrl(f)); } catch {} }} />
+                            </label>
+                            <input value={editImageUrl.startsWith("data:") ? "" : editImageUrl} onChange={(e) => setEditImageUrl(e.target.value)} placeholder="o pega una URL directa de imagen" style={{ ...S.input, marginTop: 8 }} />
+                          </div>
+                        )}
                       </>
                     )}
                     <div style={{ display: "flex", gap: 8, marginTop: 10, alignItems: "center" }}>
                       <button onClick={() => {
                         if (esCuaderno) onUpdate(it.id, { title: editTitle, note: editBody });
-                        else onUpdate(it.id, { title: editTitle, meta: editMeta });
+                        else onUpdate(it.id, { title: editTitle, meta: editMeta, imageUrl: editImageUrl });
                         setEditingId(null);
                       }} className="primary" style={{ ...S.primary, padding: "7px 16px", fontSize: 13 }}>
                         <Check size={14} /> Guardar
@@ -1831,12 +2043,12 @@ function Registros({ items, onAdd, onUpdate, onDel }) {
               }
               return (
                 <div key={it.id} className="entry" style={{ ...S.entry, borderLeft: `3px solid ${C.accent}` }}>
-                  <Ic size={15} color={C.accent} strokeWidth={1.9} style={{ flexShrink: 0, marginTop: 3 }} />
+                  {it.imageUrl ? <img src={it.imageUrl} alt={it.title || "imagen del registro"} onError={(e) => { e.currentTarget.style.opacity = ".18"; }} style={{ width: collId === "libros" ? 58 : 86, height: collId === "libros" ? 82 : 64, borderRadius: 6, objectFit: "cover", flexShrink: 0, border: `1px solid ${C.border}`, background: C.surfaceAlt }} /> : <Ic size={15} color={C.accent} strokeWidth={1.7} style={{ flexShrink: 0, marginTop: 3 }} />}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ color: C.text, fontSize: 14.5, lineHeight: 1.35, fontFamily: "'Newsreader', serif", fontWeight: 500 }}>
+                    <div style={{ color: C.text, fontSize: 16, lineHeight: 1.3, fontFamily: "'Bodoni Moda', Georgia, serif", fontWeight: 400 }}>
                       {it.title || (esCuaderno ? `Entrada del ${dt.toLocaleDateString("es-CL", { day: "numeric", month: "long" })}` : "")}
                     </div>
-                    {it.meta && <div style={{ color: C.textSoft, fontSize: 12.5, marginTop: 2, fontStyle: esCuaderno ? "italic" : "normal" }}>{esCuaderno ? `✎ ${it.meta}` : it.meta}</div>}
+                    {it.meta && <div style={{ color: C.textSoft, fontSize: 12.5, marginTop: 2, fontStyle: esCuaderno ? "italic" : "normal", fontWeight: 400 }}>{esCuaderno ? `✎ ${it.meta}` : it.meta}</div>}
                     <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 6, flexWrap: "wrap" }}>
                       {coll.statuses.length > 0 && (
                         <button onClick={() => cycleStatus(it)} className="navbtn"
@@ -1873,7 +2085,7 @@ function Registros({ items, onAdd, onUpdate, onDel }) {
                       <NoteField value={it.note} placeholder={coll.note} onSave={(v) => onUpdate(it.id, { note: v })} />
                     )}
                   </div>
-                  <button onClick={() => { setEditingId(it.id); setEditTitle(it.title || ""); setEditMeta(it.meta || ""); setEditBody(it.note || ""); }}
+                  <button onClick={() => { setEditingId(it.id); setEditTitle(it.title || ""); setEditMeta(it.meta || ""); setEditBody(it.note || ""); setEditImageUrl(it.imageUrl || ""); }}
                     className="del" style={{ ...S.del, marginRight: 2 }} aria-label="Editar"><PenLine size={14} /></button>
                   <button onClick={() => onDel(it.id)} className="del" style={S.del} aria-label="Borrar"><Trash2 size={14} /></button>
                 </div>
@@ -1926,28 +2138,77 @@ function Decor() {
   );
 }
 
-function LeftRail() {
+function Sidebar({ tab, setTab, pal, setPal, onLogout }) {
+  const nav = [
+    ["semana", "Inicio · Semana", Home],
+    ["registros", "Registros", BookOpen],
+    ["finanzas", "Finanzas", Coins],
+    ["ciclo", "Ciclo", Activity],
+    ["metas", "Metas", Sprout],
+    ["tablero", "Mis datos", Network],
+  ];
+  const sideText = C.onPrimary || "#FFFFFF";
+  const muted = "rgba(255,255,255,.70)";
   return (
-    <div className="leftrail" aria-hidden="true" style={{ flexShrink: 0, width: 64, display: "flex", alignItems: "stretch", justifyContent: "flex-end" }}>
-      <div style={{ display: "flex", gap: 4 }}>
-        <div style={{ width: 11, background: C.spark, borderRadius: 4 }} />
-        <div style={{ width: 7, background: C.primary, borderRadius: 4 }} />
+    <aside className="sidebar" style={{ width: 204, flexShrink: 0, alignSelf: "stretch", background: C.primary, color: sideText, padding: "22px 14px 16px", display: "flex", flexDirection: "column", minHeight: "100vh", boxSizing: "border-box", position: "sticky", top: 0, height: "100vh" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 7px 18px" }}>
+        <span style={{ ...S.logo, width: 36, height: 36, borderRadius: 10, background: `linear-gradient(140deg, ${C.accent}, ${C.spark})`, boxShadow: "0 8px 20px rgba(0,0,0,.12)" }}>
+          <Library size={19} color={sideText} strokeWidth={1.8} />
+        </span>
+        <div>
+          <div style={{ fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 23, fontWeight: 400, lineHeight: 1, color: sideText }}>Bitácora</div>
+          <div style={{ fontSize: 10.5, marginTop: 4, color: muted, letterSpacing: ".03em" }}>tu vida, a tu manera</div>
+        </div>
       </div>
-    </div>
+
+      <div style={{ height: 1, background: "rgba(255,255,255,.13)", margin: "0 4px 13px" }} />
+
+      <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        {nav.map(([k, label, Icon]) => {
+          const active = tab === k;
+          return (
+            <button key={k} onClick={() => setTab(k)} className="sidebtn" style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", border: "none", borderRadius: 10, padding: "9px 10px", cursor: "pointer", fontFamily: "inherit", fontSize: 13.5, fontWeight: active ? 700 : 500, textAlign: "left", background: active ? "rgba(255,255,255,.14)" : "transparent", color: active ? sideText : muted, transition: "all .16s ease" }}>
+              <Icon size={16} strokeWidth={active ? 2.1 : 1.7} />
+              <span>{label}</span>
+            </button>
+          );
+        })}
+      </nav>
+
+      <div style={{ height: 1, background: "rgba(255,255,255,.13)", margin: "14px 4px 10px" }} />
+      <button onClick={() => setTab("areas")} className="sidebtn" style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", border: "1px solid rgba(255,255,255,.18)", borderRadius: 12, padding: "10px 10px", cursor: "pointer", fontFamily: "inherit", fontSize: 13.5, fontWeight: tab === "areas" ? 700 : 600, textAlign: "left", background: tab === "areas" ? "rgba(255,255,255,.18)" : "rgba(255,255,255,.07)", color: tab === "areas" ? sideText : muted }}>
+        <span style={{ width: 28, height: 28, borderRadius: 8, border: "1px solid rgba(255,255,255,.22)", display: "inline-flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,.08)" }}><SlidersHorizontal size={15} strokeWidth={1.8} /></span>
+        <span><span style={{ display: "block" }}>Áreas</span><span style={{ display: "block", fontSize: 9.5, marginTop: 2, opacity: .72, fontWeight: 500 }}>estructura transversal</span></span>
+      </button>
+
+      <div style={{ marginTop: "auto", paddingTop: 18 }}>
+        <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".11em", color: "rgba(255,255,255,.52)", padding: "0 9px 7px" }}>Paleta</div>
+        <button onClick={() => setPal(PAL_ORDER[(PAL_ORDER.indexOf(pal) + 1) % PAL_ORDER.length])} className="sidebtn" title="Cambiar paleta" style={{ width: "100%", display: "flex", alignItems: "center", gap: 8, border: "1px solid rgba(255,255,255,.15)", borderRadius: 10, padding: "9px 10px", background: "rgba(255,255,255,.08)", color: sideText, cursor: "pointer", fontFamily: "inherit", fontSize: 12.5 }}>
+          <span style={{ display: "flex", alignItems: "center" }}>
+            {[C.accent, C.spark, C.tranquilo].map((x, i) => <span key={i} style={{ width: 12, height: 12, borderRadius: 12, background: x, border: "1px solid rgba(255,255,255,.45)", marginLeft: i ? -3 : 0 }} />)}
+          </span>
+          <span style={{ flex: 1, textAlign: "left" }}>{PALETTES[pal]?.name}</span>
+          <ChevronRight size={13} opacity={0.75} />
+        </button>
+        <button onClick={onLogout} className="sidebtn" style={{ marginTop: 8, width: "100%", display: "flex", alignItems: "center", gap: 9, border: "none", borderRadius: 9, padding: "8px 10px", background: "transparent", color: "rgba(255,255,255,.62)", cursor: "pointer", fontFamily: "inherit", fontSize: 12 }}>
+          <Upload size={14} style={{ transform: "rotate(90deg)" }} /> cerrar sesión
+        </button>
+      </div>
+    </aside>
   );
 }
 
-const PALETA = [
-  ["Navy", "#0C2C47"], ["Verde", "#2E5749"], ["Mint", "#C2E0E1"], ["Mauve", "#D6C9C5"],
-  ["Amarillo", "#DA9B2B"], ["Naranja", "#BF512C"], ["Blanco", "#FFFFFF"],
-];
 function Paleta() {
+  const swatches = [
+    ["Principal", C.primary], ["Fondo", C.bg], ["Acento", C.accent],
+    ["Secundario", C.tranquilo], ["Destacado", C.spark], ["Tarjetas", C.surface],
+  ];
   return (
     <div style={S.paleta}>
-      <span style={S.paletaLabel}>la paleta</span>
+      <span style={S.paletaLabel}>{PALETTES[PAL_KEY]?.name || "Paleta"}</span>
       <div style={{ display: "flex", gap: 6 }}>
-        {PALETA.map(([n, hex]) => (
-          <span key={n} title={`${n} · ${hex}`} style={{ width: 19, height: 19, borderRadius: 5, background: hex, border: `1px solid ${C.border}` }} />
+        {swatches.map(([n, hex]) => (
+          <span key={n} title={`${n} · ${hex}`} style={{ width: 19, height: 19, borderRadius: 999, background: hex, border: `1px solid ${C.border}`, boxShadow: "0 1px 2px rgba(20,35,45,.08)" }} />
         ))}
       </div>
     </div>
@@ -1955,12 +2216,15 @@ function Paleta() {
 }
 
 /* ───────────────────────── TABLERO ───────────────────────── */
-function Tablero({ areas, lastByArea, weekActivity: weekActivityAll, attention: attentionAll, finance, savings, goals, tasks, items, logros, plantStart }) {
+function Tablero({ areas, lastByArea, weekActivity: weekActivityAll, attention: attentionAll, finance, savings, goals, tasks, items, logros, plantStart, habits }) {
   const [focus, setFocus] = useState("vida");
   const [mOffset, setMOffset] = useState(0);
-  const work = focus === "trabajo";
-  const inFocus = (areaId) => { const a = areas.find((x) => x.id === areaId); const k = a?.kind || "vida"; return work ? k === "trabajo" : k !== "trabajo"; };
-  const areasF = areas.filter((a) => work ? a.kind === "trabajo" : a.kind !== "trabajo");
+  const inFocus = (areaId) => {
+    const a = areas.find((x) => x.id === areaId); const k = a?.kind || "vida";
+    if (focus === "todo") return true;
+    return focus === "trabajo" ? k === "trabajo" : k !== "trabajo";
+  };
+  const areasF = areas.filter((a) => focus === "todo" ? true : focus === "trabajo" ? a.kind === "trabajo" : a.kind !== "trabajo");
   const weekActivity = Object.fromEntries(Object.entries(weekActivityAll).filter(([id]) => inFocus(id)));
   const attention = attentionAll.filter((x) => inFocus(x.area.id));
   const esperando = (goals || []).filter(goalDue).filter((g) => inFocus(g.areaId)).sort((a, b) => (daysBetween(goalRef(b)) || 0) - (daysBetween(goalRef(a)) || 0));
@@ -2001,25 +2265,79 @@ function Tablero({ areas, lastByArea, weekActivity: weekActivityAll, attention: 
     .sort((a, b) => b.total - a.total);
   const maxTasks = Math.max(1, ...sortedByTasks.map((x) => x.total));
 
+  const last30Keys = Array.from({ length: 30 }, (_, i) => { const d = now(); d.setDate(d.getDate() - i); return dateKey(d); });
+  const careCounts = last30Keys.map((k) => (habits?.[k] || []).length);
+  const careDays = careCounts.filter((n) => n > 0).length;
+  const careActions = careCounts.reduce((a, n) => a + n, 0);
+  let careStreak = 0;
+  for (const k of last30Keys) { if ((habits?.[k] || []).length > 0) careStreak++; else break; }
+  const movedTasks = (tasks || []).filter((t) => t.movedFrom).length;
+  const carriedTasks = (tasks || []).filter((t) => t.carriedFrom).length;
+  const readingDone = (items || []).filter((it) => it.coll === "libros" && it.status === "Leído").length;
+  const tripsDone = (items || []).filter((it) => it.coll === "viajes" && it.status === "Hecho").length;
+  const savingsRows = ["depositos", "afp", "apv"].flatMap((k) => (sv[k] || []).map((r) => ({ ...r, bucket: k })));
+  const savingsDated = savingsRows.filter((r) => r.createdAt);
+  const savingsRecent = savingsDated.filter((r) => new Date(r.createdAt).getTime() >= now() - 90 * dayMs).reduce((a, r) => a + (Number(r.monto) || 0), 0);
+
   return (
     <div className="fade">
-      <div style={{ textAlign: "center", marginBottom: 20 }}>
-        <h2 style={{ fontFamily: "'Newsreader', serif", fontSize: 23, fontWeight: 500, color: C.text, margin: 0, letterSpacing: "-.01em" }}>Tu tablero</h2>
-        <div style={{ ...S.subtitle, fontStyle: "italic", marginTop: 3 }}>El reflejo de lo que registras y cumples.</div>
-        <div style={{ width: 38, height: 2, background: C.accent, borderRadius: 2, margin: "13px auto 0" }} />
+      <div style={{ marginBottom: 18 }}>
+        <div style={{ ...S.homeKicker, marginBottom: 4 }}>panorama personal</div>
+        <div style={{ ...S.subtitle, fontStyle: "normal", marginTop: 0 }}>Patrones útiles construidos a partir de lo que registras, cumples y cuidas.</div>
       </div>
       {hasWork && (
         <div style={{ ...S.segment, marginBottom: 18 }}>
-          {[["vida", "Vida personal"], ["trabajo", "Trabajo"]].map(([k, l]) => (
+          {[["vida", "Vida personal"], ["trabajo", "Trabajo"], ["todo", "Todo"]].map(([k, l]) => (
             <button key={k} onClick={() => setFocus(k)} className="navbtn" style={{ ...S.segBtn, ...(focus === k ? S.segBtnOn : {}) }}>{l}</button>
           ))}
         </div>
       )}
-      <div style={S.summaryRow}>
-        <Stat big={String(tasksDone)} unit={tasksDone === 1 ? "tarea hecha" : "tareas hechas"} label="esta semana" bg={C.primarySoft} />
-        <Stat big={String(itemsW)} unit={itemsW === 1 ? "registro" : "registros"} label="esta semana" bg={C.sparkSoft} />
-        <Stat big={String(attention.length)} unit={attention.length === 1 ? "área pide atención" : "áreas piden atención"}
-          label="ahora mismo" accent={attention.length ? C.urgente : C.tranquilo} bg={attention.length ? C.accentSoft : "#D7E6DF"} />
+      <div className="data-kpis">
+        <Stat big={String(tasksDone)} unit={tasksDone === 1 ? "tarea hecha" : "tareas hechas"} label="últimos 7 días" bg={C.primarySoft} />
+        <Stat big={String(careStreak)} unit={careStreak === 1 ? "día" : "días"} label="racha de autocuidado" bg={C.sparkSoft} />
+        <Stat big={String(careDays)} unit="de 30 días" label={`${careActions} acciones de cuidado`} bg={C.surfaceAlt} />
+        <Stat big={String(attention.length)} unit={attention.length === 1 ? "área" : "áreas"} label="piden atención" accent={attention.length ? C.urgente : C.tranquilo} bg={attention.length ? C.accentSoft : "#D7E6DF"} />
+      </div>
+
+      <div style={{ ...S.finCard, marginBottom: 26, background: C.surface }}>
+        <div style={{ ...S.homeEyebrow, marginBottom: 10 }}><Sparkles size={14} /> lo que cuentan tus registros</div>
+        <div style={{ display: "grid", gap: 8 }}>
+          <div style={S.insightLine}>• Esta semana completaste <strong>{tasksDone}</strong> tareas y sumaste <strong>{itemsW}</strong> registros en esta vista.</div>
+          {sorted[0] && weekActivity[sorted[0].id] ? <div style={S.insightLine}>• <strong>{sorted[0].name}</strong> es el área donde más actividad registraste en los últimos 7 días.</div> : <div style={S.insightLine}>• Aún no hay suficiente actividad esta semana para detectar un área predominante.</div>}
+          {attention[0] ? <div style={S.insightLine}>• <strong>{attention[0].area.name}</strong> es la primera área que conviene volver a mirar según su importancia y tiempo sin actividad.</div> : <div style={S.insightLine}>• Tus áreas están al día según los registros disponibles.</div>}
+        </div>
+      </div>
+
+      <div className="data-grid" style={{ marginBottom: 26 }}>
+        <div style={S.finCard}>
+          <div style={{ ...S.homeEyebrow, marginBottom: 12 }}><Heart size={14} /> autocuidado · últimos 30 días</div>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 4, height: 64 }}>
+            {[...careCounts].reverse().map((v, i) => <span key={i} title={`${v} acciones`} style={{ flex: 1, minWidth: 3, height: `${Math.max(5, Math.min(100, v * 20))}%`, background: v ? C.tranquilo : C.border, borderRadius: "4px 4px 2px 2px", opacity: v ? .82 : .55 }} />)}
+          </div>
+          <div style={{ ...S.entryMeta, marginTop: 9 }}>{careDays} días con al menos un gesto de cuidado. Racha actual: {careStreak}.</div>
+        </div>
+        <div style={S.finCard}>
+          <div style={{ ...S.homeEyebrow, marginBottom: 12 }}><Coins size={14} /> ahorro</div>
+          <div style={{ fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 28, color: C.text }}>{fmtCLP(patrimonio)}</div>
+          <div style={{ fontSize: 12.5, color: C.textSoft, marginTop: 4 }}>patrimonio registrado</div>
+          <div style={{ ...S.entryMeta, marginTop: 9 }}>{savingsDated.length ? `${fmtCLP(savingsRecent)} registrados en los últimos 90 días.` : "Los nuevos movimientos de ahorro quedarán fechados para construir tendencia."}</div>
+        </div>
+        <div style={S.finCard}>
+          <div style={{ ...S.homeEyebrow, marginBottom: 12 }}><RefreshCw size={14} /> movimiento de tareas</div>
+          <div style={{ display: "flex", gap: 22, alignItems: "baseline" }}>
+            <div><strong style={{ fontSize: 25, color: C.text }}>{movedTasks}</strong><div style={S.entryMeta}>movidas manualmente</div></div>
+            <div><strong style={{ fontSize: 25, color: C.text }}>{carriedTasks}</strong><div style={S.entryMeta}>arrastradas pendientes</div></div>
+          </div>
+          <div style={{ ...S.entryMeta, marginTop: 9 }}>Sirve para ver cuánto estás reprogramando y ajustar la carga semanal.</div>
+        </div>
+        <div style={S.finCard}>
+          <div style={{ ...S.homeEyebrow, marginBottom: 12 }}><BookOpen size={14} /> memoria personal</div>
+          <div style={{ display: "flex", gap: 22, alignItems: "baseline" }}>
+            <div><strong style={{ fontSize: 25, color: C.text }}>{readingDone}</strong><div style={S.entryMeta}>libros leídos</div></div>
+            <div><strong style={{ fontSize: 25, color: C.text }}>{tripsDone}</strong><div style={S.entryMeta}>viajes realizados</div></div>
+          </div>
+          <div style={{ ...S.entryMeta, marginTop: 9 }}>Tus registros culturales y de viaje también forman parte de tus patrones.</div>
+        </div>
       </div>
 
       <Section label="Cómo van tus áreas" accent={C.accent}>
@@ -2035,7 +2353,7 @@ function Tablero({ areas, lastByArea, weekActivity: weekActivityAll, attention: 
                     <div style={{ flex: 1, height: 9, background: "#E9EEED", borderRadius: 6, overflow: "hidden" }}>
                       <div style={{ width: `${fill * 100}%`, height: "100%", background: st.color, borderRadius: 6, transition: "width .5s ease" }} />
                     </div>
-                    <span style={{ width: 62, flexShrink: 0, textAlign: "right", fontSize: 11.5, fontFamily: "'Spline Sans Mono', monospace", color: st.color }}>{lbl}</span>
+                    <span style={{ width: 62, flexShrink: 0, textAlign: "right", fontSize: 11.5, fontFamily: "'IBM Plex Mono', monospace", color: st.color }}>{lbl}</span>
                   </div>
                 );
               })}
@@ -2094,7 +2412,7 @@ function Tablero({ areas, lastByArea, weekActivity: weekActivityAll, attention: 
         </Section>
       )}
 
-      {focus === "vida" && (finHay || patrimonio > 0) && (
+      {focus !== "trabajo" && (finHay || patrimonio > 0) && (
         <Section label="Finanzas" accent={C.accent}>
           <div style={S.summaryRow}>
             {finHay && <Stat big={fmtCLP(finSaldo)} unit="" label="saldo de este mes" accent={finSaldo >= 0 ? C.primary : C.urgente} bg={C.primarySoft} />}
@@ -2156,7 +2474,7 @@ function Tablero({ areas, lastByArea, weekActivity: weekActivityAll, attention: 
             <div style={{ ...S.finCard, display: "flex", alignItems: "center", justifyContent: "center", gap: 18, flexWrap: "wrap" }}>
               <Planta stage={stg} />
               <div style={{ textAlign: "center", maxWidth: 250 }}>
-                <div style={{ fontFamily: "'Newsreader', serif", fontSize: 16, fontStyle: "italic", color: C.text, lineHeight: 1.45 }}>«{cita.t}»</div>
+                <div style={{ fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 16, fontStyle: "italic", color: C.text, lineHeight: 1.45 }}>«{cita.t}»</div>
                 <div style={{ ...S.entryMeta, marginTop: 6 }}>— {cita.f}</div>
                 <div style={{ ...S.entryMeta, marginTop: 10 }}>{STAGE_WORDS[stg]} · {months === 0 ? "primer mes" : `${months} ${months === 1 ? "mes" : "meses"} juntas`}</div>
               </div>
@@ -2199,6 +2517,12 @@ function Finanzas({ finance, onSetMonth, savings, onSavAdd, onSavEdit, onSavDel 
   };
   const label = base.toLocaleDateString("es-CL", { month: "long", year: "numeric" });
   const empty = !(m.ingresos || []).length && !(m.egresos || []).length && !(m.deudas || []).length;
+  const gastoBreakdown = Object.entries((m.egresos || []).reduce((acc, r) => {
+    const k = (r.concepto || "Otros").trim() || "Otros";
+    acc[k] = (acc[k] || 0) + (Number(r.monto) || 0);
+    return acc;
+  }, {})).map(([label, value]) => ({ label, value })).filter((x) => x.value > 0).sort((a, b) => b.value - a.value);
+  const maxGasto = Math.max(1, ...gastoBreakdown.map((x) => x.value));
 
   return (
     <div className="fade">
@@ -2219,15 +2543,30 @@ function Finanzas({ finance, onSetMonth, savings, onSavAdd, onSavEdit, onSavDel 
             <button className="iconbtn" style={S.iconBtn} onClick={() => setOffset(offset + 1)} aria-label="Mes siguiente"><ChevronRight size={18} /></button>
           </div>
 
-          <div style={{ ...S.balCard, marginBottom: 22 }}>
-            <div style={S.finBigLabel}>saldo del mes</div>
-            <div style={{ fontFamily: "'Newsreader', serif", fontSize: 38, fontWeight: 600, lineHeight: 1, color: saldo >= 0 ? C.primary : C.urgente }}>{fmtCLP(saldo)}</div>
-            <div style={{ display: "flex", gap: 16, marginTop: 12, flexWrap: "wrap", fontSize: 13, color: C.textSoft }}>
-              <span>Ingresos <b style={{ color: C.text }}>{fmtCLP(totIng)}</b></span>
-              <span>Egresos <b style={{ color: C.text }}>−{fmtCLP(totEgr)}</b></span>
-              <span>Pagos deuda <b style={{ color: C.text }}>−{fmtCLP(totPago)}</b></span>
-            </div>
+          <div className="fin-kpis">
+            <Stat big={fmtCLP(totIng)} unit="" label="ingresos" bg={C.primarySoft} />
+            <Stat big={fmtCLP(totEgr)} unit="" label="gastos" bg={C.accentSoft} />
+            <Stat big={fmtCLP(totPago)} unit="" label="pago de deuda" bg={C.sparkSoft} />
+            <Stat big={fmtCLP(saldo)} unit="" label="balance del mes" accent={saldo >= 0 ? C.tranquilo : C.urgente} bg={saldo >= 0 ? C.surface : C.accentSoft} />
           </div>
+
+          {gastoBreakdown.length > 0 && (
+            <div style={{ ...S.finCard, marginBottom: 22 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "baseline", marginBottom: 12 }}>
+                <div style={{ fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 16, fontWeight: 600 }}>En qué se fue el gasto</div>
+                <div style={{ ...S.entryMeta, marginTop: 0 }}>lectura rápida del mes</div>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+                {gastoBreakdown.slice(0, 6).map((g) => (
+                  <div key={g.label} style={{ display: "grid", gridTemplateColumns: "minmax(90px, 150px) 1fr auto", gap: 10, alignItems: "center" }}>
+                    <span style={{ fontSize: 12.5, color: C.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{g.label}</span>
+                    <div style={{ height: 8, background: C.surfaceAlt, borderRadius: 999, overflow: "hidden" }}><div style={{ width: `${(g.value / maxGasto) * 100}%`, height: "100%", background: C.accent, borderRadius: 999 }} /></div>
+                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11.5, color: C.textSoft }}>{fmtCLP(g.value)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {empty && (
             <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
@@ -2317,7 +2656,7 @@ function Evolucion({ finance }) {
                   <div title={`Ingresos ${fmtCLP(d.ing)}`} style={{ width: 12, height: `${Math.max(2, (d.ing / max) * 100)}%`, background: C.primary, borderRadius: "3px 3px 0 0", transition: "height .5s ease" }} />
                   <div title={`Gastos ${fmtCLP(d.gas)}`} style={{ width: 12, height: `${Math.max(2, (d.gas / max) * 100)}%`, background: C.accent, borderRadius: "3px 3px 0 0", transition: "height .5s ease" }} />
                 </div>
-                <span style={{ fontSize: 10.5, color: C.textMuted, fontFamily: "'Spline Sans Mono', monospace", textTransform: "capitalize" }}>{mLabel(d.k)}</span>
+                <span style={{ fontSize: 10.5, color: C.textMuted, fontFamily: "'IBM Plex Mono', monospace", textTransform: "capitalize" }}>{mLabel(d.k)}</span>
               </div>
             ))}
           </div>
@@ -2332,7 +2671,7 @@ function Evolucion({ finance }) {
           {data.map((d) => (
             <div key={d.k} style={S.finRow}>
               <span style={{ flex: 1, fontSize: 13.5, color: C.text, textTransform: "capitalize" }}>{mLabel(d.k)}</span>
-              <span style={{ fontFamily: "'Spline Sans Mono', monospace", fontSize: 13.5, fontWeight: 600, color: d.saldo >= 0 ? C.primary : C.urgente }}>{fmtCLP(d.saldo)}</span>
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13.5, fontWeight: 600, color: d.saldo >= 0 ? C.primary : C.urgente }}>{fmtCLP(d.saldo)}</span>
             </div>
           ))}
         </div>
@@ -2356,7 +2695,7 @@ function Evolucion({ finance }) {
                   );
                 })}
                 {months.map((k, i) => (
-                  <text key={k} x={xAt(i)} y={CH - 8} fontSize="10" fill={C.textMuted} textAnchor="middle" style={{ fontFamily: "'Spline Sans Mono', monospace" }}>{mLabel(k)}</text>
+                  <text key={k} x={xAt(i)} y={CH - 8} fontSize="10" fill={C.textMuted} textAnchor="middle" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{mLabel(k)}</text>
                 ))}
               </svg>
             </div>
@@ -2383,7 +2722,7 @@ function Ahorros({ savings, onAdd, onEdit, onDel }) {
     <div className="fade">
       <div style={{ ...S.balCard, marginBottom: 22 }}>
         <div style={S.finBigLabel}>patrimonio ahorrado</div>
-        <div style={{ fontFamily: "'Newsreader', serif", fontSize: 38, fontWeight: 600, lineHeight: 1, color: C.primary }}>{fmtCLP(patrimonio)}</div>
+        <div style={{ fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 38, fontWeight: 600, lineHeight: 1, color: C.primary }}>{fmtCLP(patrimonio)}</div>
         <div style={{ display: "flex", gap: 16, marginTop: 12, flexWrap: "wrap", fontSize: 13, color: C.textSoft }}>
           <span>Depósitos <b style={{ color: C.text }}>{fmtCLP(totDep)}</b></span>
           <span>AFP <b style={{ color: C.text }}>{fmtCLP(totAfp)}</b></span>
@@ -2391,13 +2730,13 @@ function Ahorros({ savings, onAdd, onEdit, onDel }) {
         </div>
       </div>
       <FinSection title="Depósitos a plazo" total={totDep} color={C.primary}
-        rows={savings.depositos || []} cols={[["concepto", "Banco / detalle", "text"], ["venc", "vence", "text", "narrow"], ["monto", "Monto", "num"]]}
+        rows={savings.depositos || []} cols={[["concepto", "Banco / detalle", "text"], ["fecha", "fecha", "text", "narrow"], ["venc", "vence", "text", "narrow"], ["monto", "Monto", "num"]]}
         onAdd={(r) => onAdd("depositos", r)} onEdit={(id, p) => onEdit("depositos", id, p)} onDel={(id) => onDel("depositos", id)} />
       <FinSection title="AFP · pensión" total={totAfp} color={C.primary}
-        rows={savings.afp || []} cols={[["concepto", "Fondo", "text"], ["monto", "Monto", "num"]]}
+        rows={savings.afp || []} cols={[["concepto", "Fondo", "text"], ["fecha", "fecha", "text", "narrow"], ["monto", "Monto", "num"]]}
         onAdd={(r) => onAdd("afp", r)} onEdit={(id, p) => onEdit("afp", id, p)} onDel={(id) => onDel("afp", id)} />
       <FinSection title="APV · aporte voluntario" total={totApv} color={C.primary}
-        rows={savings.apv || []} cols={[["concepto", "Fondo", "text"], ["monto", "Monto", "num"]]}
+        rows={savings.apv || []} cols={[["concepto", "Fondo", "text"], ["fecha", "fecha", "text", "narrow"], ["monto", "Monto", "num"]]}
         onAdd={(r) => onAdd("apv", r)} onEdit={(id, p) => onEdit("apv", id, p)} onDel={(id) => onDel("apv", id)} />
     </div>
   );
@@ -2420,7 +2759,7 @@ function FinSection({ title, total, totalLabel, extraTotal, color, rows, cols, o
         {rows.map((r) => (
           <div key={r.id} style={S.finRow}>
             {cols.map(([f, ph, t, w], i) => {
-              const st = i === 0 ? { flex: 2 } : w === "narrow" ? { width: 46, flex: "none", textAlign: "center", fontFamily: "'Spline Sans Mono', monospace" } : { flex: 1, textAlign: "right", fontFamily: "'Spline Sans Mono', monospace" };
+              const st = i === 0 ? { flex: 2 } : w === "narrow" ? { width: 46, flex: "none", textAlign: "center", fontFamily: "'IBM Plex Mono', monospace" } : { flex: 1, textAlign: "right", fontFamily: "'IBM Plex Mono', monospace" };
               return <EditField key={f} value={r[f]} type={t} placeholder={ph} onSave={(val) => onEdit(r.id, { [f]: val })} style={{ ...S.finField, ...st }} />;
             })}
             <button onClick={() => onDel(r.id)} className="del" style={S.del} aria-label="Borrar"><Trash2 size={14} /></button>
@@ -2438,12 +2777,12 @@ function FinSection({ title, total, totalLabel, extraTotal, color, rows, cols, o
         </div>
         <div style={S.finTotal}>
           <span>{totalLabel || "Total"}</span>
-          <span style={{ fontFamily: "'Spline Sans Mono', monospace", color, fontWeight: 600 }}>{fmtCLP(total)}</span>
+          <span style={{ fontFamily: "'IBM Plex Mono', monospace", color, fontWeight: 600 }}>{fmtCLP(total)}</span>
         </div>
         {extraTotal && (
           <div style={{ ...S.finTotal, borderTop: "none", paddingTop: 2 }}>
             <span>{extraTotal.label}</span>
-            <span style={{ fontFamily: "'Spline Sans Mono', monospace", color: C.text, fontWeight: 600 }}>{fmtCLP(extraTotal.value)}</span>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", color: C.text, fontWeight: 600 }}>{fmtCLP(extraTotal.value)}</span>
           </div>
         )}
       </div>
@@ -2474,6 +2813,7 @@ function Metas({ goals, areas, onAdd, onPush, onDone, onDel }) {
   const esperando = activas.filter(goalDue).sort((a, b) => (daysBetween(goalRef(b)) || 0) - (daysBetween(goalRef(a)) || 0));
   const enMarcha = activas.filter((g) => !goalDue(g));
   const logradas = goals.filter((g) => g.done);
+  const gardenStage = plantStage(logradas.length);
 
   const pushLabel = (g) => {
     const d = daysBetween(g.lastPush);
@@ -2486,7 +2826,7 @@ function Metas({ goals, areas, onAdd, onPush, onDone, onDel }) {
     return (
       <div style={{ ...S.entry, borderLeft: `3px solid ${tint(g.areaId)}`, background: esp ? soft(g.areaId) + "66" : C.surface, alignItems: "flex-start" }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ color: g.done ? C.textMuted : C.text, fontSize: 14.5, fontFamily: "'Newsreader', serif", fontWeight: 500, textDecoration: g.done ? "line-through" : "none" }}>{g.title}</div>
+          <div style={{ color: g.done ? C.textMuted : C.text, fontSize: 14.5, fontFamily: "'Bodoni Moda', Georgia, serif", fontWeight: 500, textDecoration: g.done ? "line-through" : "none" }}>{g.title}</div>
           <div style={S.entryMeta}>{a?.name || "—"} · recordar {cadLabel(g.cadence)}{!g.done && ` · ${pushLabel(g)}`}</div>
           {!g.done && (
             <div style={{ display: "flex", gap: 8, marginTop: 9, flexWrap: "wrap" }}>
@@ -2505,6 +2845,18 @@ function Metas({ goals, areas, onAdd, onPush, onDone, onDel }) {
 
   return (
     <div className="fade">
+      <div style={{ ...S.homeSectionHead, marginTop: 0, marginBottom: 14 }}>
+        <div><div style={S.homeKicker}>crecimiento</div><h2 style={S.homeH2}>Metas que se cultivan</h2></div>
+        <span style={S.homeSectionNote}>Avanzar cuenta más que hacerlo perfecto. Cada meta lograda hace crecer tu jardín.</span>
+      </div>
+      <div style={{ ...S.finCard, display: "flex", alignItems: "center", gap: 18, marginBottom: 24, background: C.surface, flexWrap: "wrap" }}>
+        <Planta stage={gardenStage} />
+        <div style={{ flex: 1, minWidth: 220 }}>
+          <div style={{ fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 19, color: C.text, fontWeight: 600 }}>{STAGE_WORDS[gardenStage]}</div>
+          <div style={{ fontSize: 13, color: C.textSoft, lineHeight: 1.5, marginTop: 4 }}>{logradas.length} {logradas.length === 1 ? "meta lograda" : "metas logradas"} · {activas.length} en curso.</div>
+          <div style={{ ...S.entryMeta, marginTop: 8 }}>El jardín es simbólico: crece con tus logros, no con la velocidad.</div>
+        </div>
+      </div>
       <Section label="Metas de largo plazo" accent={C.accent}>
         <div style={S.intro}>Lo que quieres hacer y el día a día te posterga. Acá viven, y la Bitácora te las trae de vuelta cada cierto tiempo —sin fecha que se venza, sin culpa.</div>
         <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Retomar el francés, planear viaje a…" style={S.input}
@@ -2555,7 +2907,7 @@ function AreasCfg({ areas, onImp, onKind, onAdd, onDel }) {
   return (
     <div className="fade">
       <Section label="Tus áreas" accent={C.accent}>
-        <div style={S.intro}>La importancia define el semáforo. El tipo (vida o trabajo) decide qué se silencia en el foco "Vida personal" y alimenta el balance del Tablero.</div>
+        <div style={S.intro}>La importancia define el semáforo. El tipo (vida o trabajo) decide qué se silencia en el foco "Vida personal" y alimenta la lectura de Mis datos.</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {areas.map((a) => {
             const Icon = iconFor(a.id);
@@ -2604,12 +2956,12 @@ function DailySpark() {
         <span style={{ width: 26, height: 26, borderRadius: 7, background: c.color + "22", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
           <Ic size={15} color={c.color} strokeWidth={1.9} />
         </span>
-        <span style={{ fontFamily: "'Spline Sans Mono', monospace", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: c.color }}>{c.label}</span>
-        <span style={{ marginLeft: "auto", fontFamily: "'Spline Sans Mono', monospace", fontSize: 10.5, color: C.textMuted, letterSpacing: ".06em" }}>dato del día</span>
+        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: c.color }}>{c.label}</span>
+        <span style={{ marginLeft: "auto", fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, color: C.textMuted, letterSpacing: ".06em" }}>dato del día</span>
       </div>
-      <p style={{ fontFamily: "'Newsreader', serif", fontSize: 17, lineHeight: 1.5, color: C.text, margin: 0, fontWeight: 400 }}>{d.t}</p>
+      <p style={{ fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 17, lineHeight: 1.5, color: C.text, margin: 0, fontWeight: 400 }}>{d.t}</p>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 10, gap: 10 }}>
-        <span style={{ fontSize: 12.5, color: C.textSoft, fontStyle: "italic", fontFamily: "'Newsreader', serif" }}>{d.f || ""}</span>
+        <span style={{ fontSize: 12.5, color: C.textSoft, fontStyle: "italic", fontFamily: "'Bodoni Moda', Georgia, serif" }}>{d.f || ""}</span>
         <button onClick={otro} className="navbtn" style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: c.color, fontSize: 12, cursor: "pointer", fontFamily: "inherit", flexShrink: 0, padding: 0 }}>
           <RefreshCw size={12} /> otro
         </button>
@@ -2640,86 +2992,86 @@ function Importance({ value }) {
   );
 }
 function Fonts() {
-  return <style>{`@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Hanken+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap');`}</style>;
+  return <style>{`@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Manrope:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap');`}</style>;
 }
 
 /* ───────────────────────── estilos ───────────────────────── */
 const makeS = (C) => ({
-  root: { background: C.bg, minHeight: "100vh", width: "100%", color: C.text, fontFamily: "'Hanken Grotesk', system-ui, sans-serif", WebkitFontSmoothing: "antialiased" },
-  wrap: { maxWidth: 980, margin: "0 auto", padding: "28px 18px 48px", position: "relative", zIndex: 1 },
-  header: { display: "flex", alignItems: "center", gap: 12, marginBottom: 22 },
+  root: { background: C.bg, minHeight: "100vh", width: "100%", color: C.text, fontFamily: "'Manrope', system-ui, sans-serif", WebkitFontSmoothing: "antialiased" },
+  wrap: { flex: 1, width: "calc(100% - 204px)", maxWidth: 1320, margin: "0 auto", padding: "38px 42px 64px", position: "relative", zIndex: 1, boxSizing: "border-box", minWidth: 0 },
+  header: { display: "flex", alignItems: "center", gap: 12, marginBottom: 18 },
   logo: { width: 42, height: 42, borderRadius: 12, background: `linear-gradient(140deg, ${C.tranquilo}, ${C.bgDeep})`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
-  title: { fontFamily: "'Newsreader', serif", fontSize: 28, fontWeight: 600, margin: 0, letterSpacing: "-.01em", lineHeight: 1, color: C.onBg },
-  subtitle: { color: C.onBgDim, fontSize: 13.5, marginTop: 3, fontStyle: "italic", fontFamily: "'Newsreader', serif" },
-  nav: { display: "flex", gap: 4, marginBottom: 24, borderBottom: `1px solid ${C.border}`, flexWrap: "wrap", justifyContent: "center" },
-  navBtn: { background: "none", border: "none", color: C.textSoft, fontSize: 14, fontWeight: 500, padding: "9px 14px", cursor: "pointer", borderBottom: "2px solid transparent", marginBottom: -1, fontFamily: "inherit" },
-  navBtnOn: { color: C.text, borderBottom: `2px solid ${C.spark}` },
+  title: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 38, fontWeight: 400, margin: 0, letterSpacing: "-.01em", lineHeight: 1, color: C.onBg },
+  subtitle: { color: C.onBgDim, fontSize: 12.5, marginTop: 5, fontFamily: "'Manrope', system-ui, sans-serif", fontWeight: 400 },
+  nav: { display: "flex", gap: 4, marginBottom: 26, border: `1px solid ${C.border}`, background: C.surface + "CC", borderRadius: 14, padding: 4, flexWrap: "wrap", justifyContent: "center", boxShadow: "0 8px 26px rgba(30,45,55,.05)" },
+  navBtn: { background: "none", border: "none", color: C.textSoft, fontSize: 14, fontWeight: 600, padding: "9px 14px", cursor: "pointer", borderRadius: 10, fontFamily: "inherit", transition: "all .18s ease" },
+  navBtnOn: { color: C.onPrimary, background: C.primary, boxShadow: "0 5px 14px rgba(20,40,55,.12)" },
 
   weekNav: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 },
-  weekRange: { fontFamily: "'Newsreader', serif", fontSize: 18, fontWeight: 600, color: C.onBg },
+  weekRange: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 19, fontWeight: 400, color: C.onBg },
   linkBtn: { background: "none", border: "none", color: C.onBgDim, fontSize: 12, cursor: "pointer", fontFamily: "inherit", padding: "2px 0", textDecoration: "underline" },
   iconBtn: { background: C.surface, border: `1px solid ${C.border}`, color: C.textSoft, borderRadius: 8, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
   weekGrid: { display: "grid", gridTemplateColumns: "repeat(7, minmax(118px, 1fr))", gap: 8, overflowX: "auto", paddingBottom: 2 },
-  dayCol: { background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 10, padding: 10, minHeight: 120, display: "flex", flexDirection: "column" },
+  dayCol: { background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: 11, minHeight: 128, display: "flex", flexDirection: "column", boxShadow: "0 5px 16px rgba(30,45,55,.045)" },
   dayHead: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8, paddingBottom: 6, borderBottom: `1px solid ${C.border}` },
-  dayName: { fontFamily: "'Newsreader', serif", fontSize: 14, fontWeight: 600, color: C.text, textTransform: "capitalize" },
-  dayDate: { fontFamily: "'Spline Sans Mono', monospace", fontSize: 12, color: C.textMuted },
+  dayName: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 14.5, fontWeight: 400, color: C.text, textTransform: "capitalize" },
+  dayDate: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: C.textMuted },
   dayEmpty: { color: C.textMuted, fontSize: 13, padding: "2px 0" },
   task: { display: "flex", alignItems: "flex-start", gap: 7, padding: "3px 2px" },
   check: { width: 16, height: 16, borderRadius: 16, border: "2px solid", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, marginTop: 1, padding: 0 },
   taskText: { fontSize: 13, lineHeight: 1.35, color: C.text, flex: 1, minWidth: 0, wordBreak: "break-word" },
   dayInput: { width: "100%", marginTop: "auto", background: "#FFFFFFAA", border: "1px solid", borderRadius: 7, color: C.text, padding: "7px 9px", fontSize: 13, fontFamily: "inherit", outline: "none", boxSizing: "border-box" },
-  hint: { marginTop: 14, color: C.onBgDim, fontSize: 12.5, fontStyle: "italic", fontFamily: "'Newsreader', serif" },
+  hint: { marginTop: 14, color: C.onBgDim, fontSize: 12.5, fontStyle: "italic", fontFamily: "'Bodoni Moda', Georgia, serif" },
 
   calWrap: { margin: "24px auto 0", maxWidth: 720 },
   calMonthsRow: { display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 18 },
   calMonth: { flex: "1 1 200px", maxWidth: 232, minWidth: 162, boxSizing: "border-box", border: `1px solid ${C.border}`, borderRadius: 12, padding: 11 },
   calMonthCur: { background: "#FFFFFF", borderColor: C.spark },
   calMonthOther: { background: C.primarySoft },
-  calMonthTitle: { textAlign: "center", fontFamily: "'Newsreader', serif", fontSize: 13, color: C.text, textTransform: "capitalize", fontWeight: 600, marginBottom: 6 },
+  calMonthTitle: { textAlign: "center", fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 13, color: C.text, textTransform: "capitalize", fontWeight: 600, marginBottom: 6 },
   calHead: { display: "flex", alignItems: "center", justifyContent: "center", gap: 22, marginBottom: 12 },
-  calTitle: { fontFamily: "'Newsreader', serif", fontSize: 13.5, color: C.text, textTransform: "capitalize", fontWeight: 600 },
+  calTitle: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 13.5, color: C.text, textTransform: "capitalize", fontWeight: 600 },
   calGrid: { display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 2, minWidth: 0 },
-  calDow: { textAlign: "center", fontSize: 9.5, color: C.textMuted, fontFamily: "'Spline Sans Mono', monospace", paddingBottom: 2 },
-  calCell: { position: "relative", aspectRatio: "1 / 1", minWidth: 0, boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center", background: "none", border: "1px solid transparent", borderRadius: 7, color: C.textSoft, fontSize: 11, fontFamily: "'Spline Sans Mono', monospace", cursor: "pointer" },
+  calDow: { textAlign: "center", fontSize: 9.5, color: C.textMuted, fontFamily: "'IBM Plex Mono', monospace", paddingBottom: 2 },
+  calCell: { position: "relative", aspectRatio: "1 / 1", minWidth: 0, boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center", background: "none", border: "1px solid transparent", borderRadius: 7, color: C.textSoft, fontSize: 11, fontFamily: "'IBM Plex Mono', monospace", cursor: "pointer" },
   calCellWeek: { background: C.surfaceAlt, borderColor: C.border },
   calCellToday: { borderColor: C.spark, color: C.text, fontWeight: 700 },
   calDot: { position: "absolute", bottom: 2.5, left: "50%", transform: "translateX(-50%)", width: 4.5, height: 4.5, borderRadius: 5 },
-  calLegend: { display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "5px 12px", marginTop: 9, fontSize: 10, color: C.textSoft, fontFamily: "'Spline Sans Mono', monospace" },
+  calLegend: { display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "5px 12px", marginTop: 9, fontSize: 10, color: C.textSoft, fontFamily: "'IBM Plex Mono', monospace" },
 
   habitsCard: { margin: "22px auto 0", maxWidth: 720, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "16px 18px" },
-  habitsHead: { display: "flex", alignItems: "center", justifyContent: "center", gap: 9, marginBottom: 12, color: C.text, fontFamily: "'Newsreader', serif", fontSize: 15, fontWeight: 600 },
-  habitsCount: { fontFamily: "'Spline Sans Mono', monospace", fontSize: 12.5, color: C.textSoft, fontWeight: 400 },
+  habitsHead: { display: "flex", alignItems: "center", justifyContent: "center", gap: 9, marginBottom: 12, color: C.text, fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 15, fontWeight: 600 },
+  habitsCount: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 12.5, color: C.textSoft, fontWeight: 400 },
   habitsRow: { display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8 },
   habitChip: { display: "inline-flex", alignItems: "center", gap: 6, background: C.surfaceAlt, border: `1px solid ${C.border}`, color: C.textSoft, borderRadius: 9, padding: "8px 12px", fontSize: 13, cursor: "pointer", fontFamily: "inherit", transition: "all .15s" },
   habitChipOn: { background: C.sparkSoft, borderColor: C.spark, color: C.text },
-  habitsHint: { marginTop: 12, textAlign: "center", color: C.onBgDim, fontSize: 12, fontStyle: "italic", fontFamily: "'Newsreader', serif" },
+  habitsHint: { marginTop: 12, textAlign: "center", color: C.onBgDim, fontSize: 12, fontStyle: "italic", fontFamily: "'Bodoni Moda', Georgia, serif" },
 
   notesWrap: { margin: "22px auto 0", maxWidth: 720, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "16px 18px" },
-  notesHead: { display: "flex", alignItems: "center", gap: 7, marginBottom: 10, color: C.text, fontFamily: "'Newsreader', serif", fontSize: 15, fontWeight: 600 },
-  notesInput: { flex: 1, minWidth: 0, background: "#FFFFFFAA", border: `1px solid ${C.border}`, borderRadius: 9, color: C.text, padding: "10px 14px", fontSize: 14, fontFamily: "'Newsreader', serif", outline: "none", boxSizing: "border-box" },
+  notesHead: { display: "flex", alignItems: "center", gap: 7, marginBottom: 10, color: C.text, fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 15, fontWeight: 600 },
+  notesInput: { flex: 1, minWidth: 0, background: "#FFFFFFAA", border: `1px solid ${C.border}`, borderRadius: 9, color: C.text, padding: "10px 14px", fontSize: 14, fontFamily: "'Bodoni Moda', Georgia, serif", outline: "none", boxSizing: "border-box" },
   notesAdd: { display: "inline-flex", alignItems: "center", gap: 5, background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 9, color: C.text, padding: "0 14px", fontSize: 13, fontFamily: "inherit", cursor: "pointer", whiteSpace: "nowrap" },
-  notesEmpty: { color: C.onBgDim, fontSize: 13, fontStyle: "italic", fontFamily: "'Newsreader', serif" },
-  noteRow: { display: "flex", alignItems: "flex-start", gap: 8, background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 9, padding: "9px 11px", fontSize: 14, color: C.text, fontFamily: "'Newsreader', serif" },
+  notesEmpty: { color: C.onBgDim, fontSize: 13, fontStyle: "italic", fontFamily: "'Bodoni Moda', Georgia, serif" },
+  noteRow: { display: "flex", alignItems: "flex-start", gap: 8, background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 9, padding: "9px 11px", fontSize: 14, color: C.text, fontFamily: "'Bodoni Moda', Georgia, serif" },
 
   summaryRow: { display: "flex", gap: 12, marginBottom: 26, flexWrap: "wrap" },
   stat: { flex: 1, minWidth: 140, border: `1px solid ${C.border}`, borderRadius: 10, padding: "16px 18px" },
-  statBig: { fontFamily: "'Newsreader', serif", fontSize: 34, fontWeight: 600, lineHeight: 1 },
+  statBig: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 34, fontWeight: 600, lineHeight: 1 },
   statUnit: { color: C.textSoft, fontSize: 13 },
   statLabel: { color: C.textSoft, fontSize: 11.5, marginTop: 6, textTransform: "lowercase" },
 
-  sectionLabel: { fontFamily: "'Spline Sans Mono', monospace", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", marginBottom: 12, textAlign: "center" },
-  dateInput: { border: `1px solid ${C.border}`, borderRadius: 6, padding: "3px 7px", fontSize: 12, fontFamily: "'Spline Sans Mono', monospace", color: C.text, background: C.surfaceAlt, cursor: "pointer" },
+  sectionLabel: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", marginBottom: 12, textAlign: "center" },
+  dateInput: { border: `1px solid ${C.border}`, borderRadius: 6, padding: "3px 7px", fontSize: 12, fontFamily: "'IBM Plex Mono', monospace", color: C.text, background: C.surfaceAlt, cursor: "pointer" },
   areasBtn: { display: "inline-flex", alignItems: "center", gap: 6, flexShrink: 0, background: C.surface, border: `1px solid ${C.border}`, color: C.textSoft, borderRadius: 999, padding: "8px 14px", fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: "inherit" },
   areasBtnOn: { borderColor: C.spark, color: C.text, background: C.sparkSoft },
   intro: { color: C.onBgDim, fontSize: 13, marginBottom: 16, lineHeight: 1.5 },
 
   grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 12 },
-  panel: { border: `1px solid ${C.border}`, borderRadius: 12, padding: 16, transition: "box-shadow .2s, transform .2s" },
+  panel: { border: `1px solid ${C.border}`, borderRadius: 12, padding: 18, transition: "box-shadow .2s, transform .2s", boxShadow: "0 2px 12px rgba(30,45,55,.025)" },
   areaIcon: { width: 26, height: 26, borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
-  panelName: { fontFamily: "'Newsreader', serif", fontSize: 17, fontWeight: 500, color: C.text },
+  panelName: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 17, fontWeight: 400, color: C.text },
   panelMeta: { fontSize: 13, marginTop: 6 },
-  statusPill: { display: "inline-block", fontSize: 11, fontFamily: "'Spline Sans Mono', monospace", border: "1px solid", borderRadius: 5, padding: "2px 7px" },
+  statusPill: { display: "inline-block", fontSize: 11, fontFamily: "'IBM Plex Mono', monospace", border: "1px solid", borderRadius: 5, padding: "2px 7px" },
 
   suggest: { display: "flex", gap: 10, alignItems: "baseline", border: "1px solid", borderRadius: 8, padding: "11px 13px", fontSize: 14, lineHeight: 1.45 },
   b: { color: C.accent, fontWeight: 600 },
@@ -2727,7 +3079,7 @@ const makeS = (C) => ({
 
   barLabel: { width: 84, fontSize: 13, color: C.onBg, flexShrink: 0, textAlign: "right", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
   barTrack: { flex: 1, height: 9, background: C.surfaceAlt, borderRadius: 4, overflow: "hidden" },
-  barVal: { width: 28, fontSize: 12, color: C.onBg, fontFamily: "'Spline Sans Mono', monospace", flexShrink: 0, textAlign: "right" },
+  barVal: { width: 28, fontSize: 12, color: C.onBg, fontFamily: "'IBM Plex Mono', monospace", flexShrink: 0, textAlign: "right" },
 
   chips: { display: "flex", flexWrap: "wrap", gap: 7 },
   chip: { background: C.surface, border: `1px solid ${C.border}`, color: C.textSoft, borderRadius: 7, padding: "7px 12px", fontSize: 13, cursor: "pointer", fontFamily: "inherit", transition: "all .15s" },
@@ -2735,18 +3087,18 @@ const makeS = (C) => ({
   kindBtnOn: { background: C.accentSoft, borderColor: C.accent, color: C.urgente },
   textarea: { width: "100%", marginTop: 12, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 9, color: C.text, padding: "12px 14px", fontSize: 14.5, fontFamily: "inherit", resize: "vertical", lineHeight: 1.5, boxSizing: "border-box", outline: "none" },
   input: { flex: 1, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 9, color: C.text, padding: "11px 14px", fontSize: 14, fontFamily: "inherit", outline: "none", boxSizing: "border-box" },
-  smallLabel: { fontSize: 11.5, color: C.onBgDim, marginBottom: 7, fontFamily: "'Spline Sans Mono', monospace", textTransform: "lowercase" },
+  smallLabel: { fontSize: 11.5, color: C.onBgDim, marginBottom: 7, fontFamily: "'IBM Plex Mono', monospace", textTransform: "lowercase" },
   primary: { display: "flex", alignItems: "center", justifyContent: "center", gap: 7, marginTop: 16, width: "100%", background: C.primaryDark, color: C.onPrimary, border: "none", borderRadius: 9, padding: "12px", fontSize: 14.5, fontWeight: 600, fontFamily: "inherit", cursor: "pointer" },
 
   entry: { display: "flex", gap: 10, alignItems: "flex-start", border: `1px solid ${C.border}`, borderRadius: 9, padding: "11px 13px" },
   kindTag: { display: "flex", alignItems: "center", marginTop: 2, flexShrink: 0 },
-  entryMeta: { fontSize: 11.5, color: C.textSoft, marginTop: 4, fontFamily: "'Spline Sans Mono', monospace" },
-  noteField: { width: "100%", marginTop: 8, background: "#FFFFFFAA", border: `1px solid ${C.border}`, borderRadius: 7, color: C.textSoft, padding: "7px 10px", fontSize: 13, fontFamily: "'Newsreader', serif", fontStyle: "italic", resize: "vertical", lineHeight: 1.45, boxSizing: "border-box", outline: "none" },
-  finCard: { background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "12px 16px" },
+  entryMeta: { fontSize: 11.5, color: C.textSoft, marginTop: 4, fontFamily: "'IBM Plex Mono', monospace" },
+  noteField: { width: "100%", marginTop: 8, background: "#FFFFFFAA", border: `1px solid ${C.border}`, borderRadius: 7, color: C.textSoft, padding: "7px 10px", fontSize: 13, fontFamily: "'Bodoni Moda', Georgia, serif", fontStyle: "italic", resize: "vertical", lineHeight: 1.45, boxSizing: "border-box", outline: "none" },
+  finCard: { background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: "15px 17px", boxShadow: "0 5px 18px rgba(30,45,55,.04)" },
   finRow: { display: "flex", alignItems: "center", gap: 8, padding: "5px 0", borderBottom: `1px solid ${C.border}` },
   finField: { background: "transparent", border: "none", borderBottom: `1px solid transparent`, color: C.text, padding: "5px 4px", fontSize: 13.5, fontFamily: "inherit", outline: "none", minWidth: 0, boxSizing: "border-box" },
   finTotal: { display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: `1px solid ${C.border}`, marginTop: 8, paddingTop: 8, fontSize: 13, color: C.textSoft, fontWeight: 500 },
-  finBigLabel: { fontSize: 11.5, color: C.textMuted, marginBottom: 6, fontFamily: "'Spline Sans Mono', monospace", textTransform: "lowercase", letterSpacing: ".04em" },
+  finBigLabel: { fontSize: 11.5, color: C.textMuted, marginBottom: 6, fontFamily: "'IBM Plex Mono', monospace", textTransform: "lowercase", letterSpacing: ".04em" },
   learnRow: { display: "flex", gap: 10, alignItems: "flex-start", border: `1px solid ${C.border}`, borderRadius: 9, padding: "11px 13px" },
   del: { background: "none", border: "none", color: C.textMuted, cursor: "pointer", padding: 5, borderRadius: 6, flexShrink: 0, display: "flex", transition: "color .15s" },
   pushBtn: { background: C.sparkSoft, border: `1px solid ${C.spark}`, color: C.onSpark, borderRadius: 999, padding: "5px 13px", fontSize: 12.5, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" },
@@ -2757,39 +3109,94 @@ const makeS = (C) => ({
   segment: { display: "inline-flex", background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8, padding: 2 },
   segBtn: { background: "none", border: "none", color: C.textSoft, fontSize: 13, fontWeight: 500, padding: "6px 12px", cursor: "pointer", fontFamily: "inherit", borderRadius: 6 },
   segBtnOn: { background: C.spark, color: C.onSpark },
-  focusNote: { fontSize: 12, color: C.onBgDim, fontStyle: "italic", fontFamily: "'Newsreader', serif" },
+  focusNote: { fontSize: 12, color: C.onBgDim, fontStyle: "italic", fontFamily: "'Bodoni Moda', Georgia, serif" },
   kindSeg: { display: "inline-flex", background: "#FFFFFF99", border: `1px solid ${C.border}`, borderRadius: 7, padding: 2, flexShrink: 0 },
   kindSegBtn: { background: "none", border: "none", color: C.textMuted, fontSize: 11.5, fontWeight: 500, padding: "3px 9px", cursor: "pointer", fontFamily: "inherit", borderRadius: 5 },
   kindSegBtnOn: { background: C.primary, color: C.onPrimary },
   balCard: { background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: "16px 18px" },
   balBar: { display: "flex", height: 14, borderRadius: 7, overflow: "hidden", background: C.surfaceAlt },
   balLegend: { display: "flex", gap: 18, marginTop: 12, fontSize: 13, color: C.textSoft },
-  balMsg: { marginTop: 10, fontSize: 13.5, color: C.text, fontFamily: "'Newsreader', serif", fontStyle: "italic", lineHeight: 1.45 },
-  footer: { color: C.onBgDim, fontSize: 11.5, textAlign: "center", marginTop: 12, fontFamily: "'Spline Sans Mono', monospace" },
+  balMsg: { marginTop: 10, fontSize: 13.5, color: C.text, fontFamily: "'Bodoni Moda', Georgia, serif", fontStyle: "italic", lineHeight: 1.45 },
+  footer: { color: C.onBgDim, fontSize: 11.5, textAlign: "center", marginTop: 12, fontFamily: "'IBM Plex Mono', monospace" },
   paleta: { display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginTop: 30 },
-  paletaLabel: { fontSize: 10.5, color: C.onBgDim, fontFamily: "'Spline Sans Mono', monospace", letterSpacing: ".14em", textTransform: "uppercase" },
+  paletaLabel: { fontSize: 10.5, color: C.onBgDim, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: ".14em", textTransform: "uppercase" },
+
+  homeCard: { background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "18px 19px", boxShadow: "0 2px 14px rgba(30,45,55,.025)", minWidth: 0 },
+  homeEyebrow: { display: "flex", alignItems: "center", gap: 7, fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, letterSpacing: ".08em", textTransform: "uppercase", color: C.textSoft },
+  homeTitle: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 17, fontWeight: 400, color: C.text, lineHeight: 1.25 },
+  homeMeta: { fontSize: 12, color: C.textSoft, marginTop: 2 },
+  homeQuote: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 12.5, lineHeight: 1.45, color: C.textSoft, fontStyle: "italic", marginTop: 5 },
+  homeEmpty: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 13, lineHeight: 1.45, color: C.textMuted, fontStyle: "italic", marginTop: 10 },
+  homeLink: { marginTop: 10, padding: 0, background: "none", border: "none", color: C.primary, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" },
+  homeSectionHead: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, margin: "28px 0 14px", flexWrap: "wrap" },
+  homeKicker: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".12em", color: C.textMuted, marginBottom: 3 },
+  homeH2: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 30, fontWeight: 400, lineHeight: 1, color: C.text, margin: 0, letterSpacing: "-.02em" },
+  homeSectionNote: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 13, color: C.textSoft, fontStyle: "italic", maxWidth: 420 },
+  insightLine: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 14, color: C.text, lineHeight: 1.5 },
 });
 
 const makeCSS = (C) => `
   * { box-sizing: border-box; }
   .fade { animation: fade .35s ease; }
   @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-  .panel:hover { box-shadow: 0 8px 22px -8px rgba(49,60,68,.22); transform: translateY(-1px); }
+  body { margin: 0; }
+  strong, b { font-weight: 500; }
+  .entry, .entry input, .entry textarea { font-weight: 400; }
+  .entry button { font-weight: 400; }
+  .panel:hover { box-shadow: 0 5px 16px -9px rgba(49,60,68,.18); transform: translateY(-1px); }
   .chip:hover { color: ${C.text}; } .navbtn:hover { opacity: .85; }
   .del:hover { color: ${C.urgente}; }
   .dot:hover, .iconbtn:hover { border-color: ${C.primary}; }
   .primary:hover { filter: brightness(1.08); }
+  .task { position: relative; min-width: 0; }
+  .task > div:not(.task-actions) { min-width: 0; }
+  .task-actions { display: flex; align-items: center; gap: 2px; flex: 0 0 auto; margin-left: 2px; }
   .task .del { opacity: 0; transition: opacity .15s; }
-  .task:hover .del { opacity: 1; }
+  .task:hover .del, .task:focus-within .del { opacity: 1; }
   textarea:focus, input:focus { border-color: ${C.primary} !important; }
   button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid ${C.primary}; outline-offset: 2px; }
   ::placeholder { color: ${C.textMuted}; }
-  .weekgrid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; padding-bottom: 2px; }
-  .weekgrid .daycol { grid-column: span 2; min-width: 0; box-sizing: border-box; }
-  .weekgrid .daycol.sat { grid-column: 4 / span 2; }
-  .weekgrid .daycol.sun { grid-column: 6 / span 2; }
-  @media (max-width: 640px) { .weekgrid { grid-template-columns: 1fr; } .weekgrid .daycol, .weekgrid .daycol.sat, .weekgrid .daycol.sun { grid-column: auto; } }
-  @media (max-width: 720px) { .leftrail { display: none !important; } }
+  .weekgrid { display: grid; grid-template-columns: repeat(7, minmax(150px, 1fr)); gap: 10px; padding-bottom: 4px; overflow-x: auto; scrollbar-width: thin; scroll-snap-type: x proximity; }
+  .weekgrid .daycol { min-width: 150px; box-sizing: border-box; scroll-snap-align: start; }
+  .weekgrid .daycol.sat, .weekgrid .daycol.sun { grid-column: auto; }
+  .weekgrid .task { align-items: flex-start; }
+  .weekgrid .task > div:not(.task-actions) { overflow-wrap: anywhere; word-break: normal; hyphens: auto; }
+  .homegrid { display: grid; grid-template-columns: 1.35fr .9fr .9fr; gap: 12px; align-items: stretch; }
+  .recordstats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .fin-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+  .data-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+  .data-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 1180px) {
+    .weekgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); overflow-x: visible; }
+    .weekgrid .daycol { min-width: 0; }
+    .task-actions { opacity: 1; }
+    .task .del { opacity: .72; }
+  }
+  @media (max-width: 900px) { .homegrid { grid-template-columns: 1fr 1fr; } .homegrid > :first-child { grid-column: 1 / -1; } .fin-kpis, .data-kpis, .data-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) {
+    .weekgrid { grid-template-columns: 1fr; gap: 10px; }
+    .weekgrid .daycol, .weekgrid .daycol.sat, .weekgrid .daycol.sun { grid-column: auto; min-height: auto !important; }
+    .weekgrid .task { padding: 7px 0 !important; border-bottom: 1px solid ${C.border}; }
+    .weekgrid .task:last-child { border-bottom: 0; }
+    .weekgrid .task > div:not(.task-actions) > div:first-child { font-size: 14px !important; line-height: 1.45 !important; }
+    .task-actions { gap: 6px; }
+    .task .del { opacity: .78; }
+    .homegrid, .recordstats, .fin-kpis, .data-kpis, .data-grid { grid-template-columns: 1fr; }
+    .homegrid > :first-child { grid-column: auto; }
+  }
+  .sidebtn:hover { background: rgba(255,255,255,.11) !important; color: #fff !important; }
+  @media (max-width: 820px) {
+    .app-shell { display: block !important; }
+    .sidebar { position: relative !important; width: 100% !important; min-height: auto !important; height: auto !important; padding: 12px 14px !important; flex-direction: row !important; align-items: center !important; gap: 8px !important; overflow-x: auto; }
+    .sidebar > div:first-child { padding: 0 8px 0 0 !important; flex-shrink: 0; }
+    .sidebar > div:first-child > div { display: none; }
+    .sidebar > div:nth-child(2), .sidebar > div:nth-last-child(2) { display: none !important; }
+    .sidebar nav { flex-direction: row !important; flex-shrink: 0; }
+    .sidebar nav .sidebtn, .sidebar > .sidebtn { width: auto !important; white-space: nowrap; }
+    .sidebar > div:last-child { margin-top: 0 !important; padding-top: 0 !important; display: none; }
+    .content-head { margin-bottom: 18px !important; }
+    .mobile-theme { display: block !important; }
+  }
   @media (prefers-reduced-motion: reduce) { .fade { animation: none; } .panel { transition: none; } * { transition-duration: .01ms !important; } }
 `;
 
@@ -2831,7 +3238,7 @@ function Login() {
         <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 18 }}>
           <div style={S.logo}><Library size={22} color={C.onPrimary} strokeWidth={1.8} /></div>
           <div>
-            <div style={{ fontFamily: "'Newsreader', serif", fontSize: 22, color: C.text, fontWeight: 600 }}>Bitácora</div>
+            <div style={{ fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 22, color: C.text, fontWeight: 600 }}>Bitácora</div>
             <div style={{ fontSize: 12.5, color: C.textSoft }}>{mode === "up" ? "Crea tu cuenta" : "Inicia sesión"}</div>
           </div>
         </div>
@@ -2870,7 +3277,7 @@ function Root() {
   if (session === undefined) {
     return (
       <div style={{ ...S.root, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Fonts /><div style={{ color: C.textSoft, fontFamily: "'Hanken Grotesk', sans-serif" }}>Cargando…</div>
+        <Fonts /><div style={{ color: C.textSoft, fontFamily: "'DM Sans', sans-serif" }}>Cargando…</div>
       </div>
     );
   }
