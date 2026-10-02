@@ -1744,7 +1744,7 @@ function Semana({ areas, tasks, onAdd, onToggle, onDel, onUpdate, notes, onAddNo
                 <span style={{ ...S.dayName, ...(isToday ? { color: C.text } : {}) }}>{DAY_NAMES[i]}</span>
                 <span style={S.dayDate}>{d.getDate()}</span>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 6 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 6, flex: 1, minHeight: 0, overflowY: "auto", overflowX: "hidden", paddingRight: 3 }}>
                 {list.length === 0 && <div style={S.dayEmpty}>—</div>}
                 {list.map((t) => (
                   <div key={t.id} className="task" style={S.task}>
@@ -3157,7 +3157,7 @@ const makeCSS = (C) => `
   button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid ${C.primary}; outline-offset: 2px; }
   ::placeholder { color: ${C.textMuted}; }
   .weekgrid { display: grid; grid-template-columns: repeat(7, minmax(150px, 1fr)); gap: 10px; padding-bottom: 4px; overflow-x: auto; scrollbar-width: thin; scroll-snap-type: x proximity; }
-  .weekgrid .daycol { min-width: 150px; box-sizing: border-box; scroll-snap-align: start; }
+  .weekgrid .daycol { min-width: 150px; height: 430px; max-height: 430px; box-sizing: border-box; scroll-snap-align: start; }
   .weekgrid .daycol.sat, .weekgrid .daycol.sun { grid-column: auto; }
   .weekgrid .task { align-items: flex-start; }
   .weekgrid .task > div:not(.task-actions) { overflow-wrap: anywhere; word-break: normal; hyphens: auto; }
