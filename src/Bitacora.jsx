@@ -3156,7 +3156,7 @@ const makeCSS = (C) => `
   textarea:focus, input:focus { border-color: ${C.primary} !important; }
   button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid ${C.primary}; outline-offset: 2px; }
   ::placeholder { color: ${C.textMuted}; }
-  .weekgrid { display: grid; grid-template-columns: repeat(7, minmax(150px, 1fr)); gap: 10px; padding-bottom: 4px; overflow-x: auto; scrollbar-width: thin; scroll-snap-type: x proximity; }
+  .weekgrid { display: grid; grid-template-columns: repeat(2, minmax(0px, 1fr)); gap: 10px; padding-bottom: 4px; overflow-x: auto; scrollbar-width: thin; scroll-snap-type: x proximity; }
   .weekgrid .daycol { min-width: 150px; height: 430px; max-height: 430px; box-sizing: border-box; scroll-snap-align: start; }
   .weekgrid .daycol.sat, .weekgrid .daycol.sun { grid-column: auto; }
   .weekgrid .task { align-items: flex-start; }
