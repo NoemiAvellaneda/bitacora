@@ -2998,7 +2998,7 @@ function Fonts() {
 /* ───────────────────────── estilos ───────────────────────── */
 const makeS = (C) => ({
   root: { background: C.bg, minHeight: "100vh", width: "100%", color: C.text, fontFamily: "'Manrope', system-ui, sans-serif", WebkitFontSmoothing: "antialiased" },
-  wrap: { flex: 1, width: "calc(100% - 204px)", maxWidth: 1320, margin: "0 auto", padding: "38px 42px 64px", position: "relative", zIndex: 1, boxSizing: "border-box", minWidth: 0 },
+  wrap: { flex: 1, width: "calc(100% - 204px)", maxWidth: 1580, margin: "0 auto", padding: "38px 42px 64px", position: "relative", zIndex: 1, boxSizing: "border-box", minWidth: 0 },
   header: { display: "flex", alignItems: "center", gap: 12, marginBottom: 18 },
   logo: { width: 42, height: 42, borderRadius: 12, background: `linear-gradient(140deg, ${C.tranquilo}, ${C.bgDeep})`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
   title: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 38, fontWeight: 400, margin: 0, letterSpacing: "-.01em", lineHeight: 1, color: C.onBg },
