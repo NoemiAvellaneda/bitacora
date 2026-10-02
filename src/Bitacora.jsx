@@ -3011,7 +3011,7 @@ const makeS = (C) => ({
   weekRange: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 19, fontWeight: 400, color: C.onBg },
   linkBtn: { background: "none", border: "none", color: C.onBgDim, fontSize: 12, cursor: "pointer", fontFamily: "inherit", padding: "2px 0", textDecoration: "underline" },
   iconBtn: { background: C.surface, border: `1px solid ${C.border}`, color: C.textSoft, borderRadius: 8, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
-  weekGrid: { display: "grid", gridTemplateColumns: "repeat(7, minmax(118px, 1fr))", gap: 8, overflowX: "auto", paddingBottom: 2 },
+  weekGrid: { display: "grid", gridTemplateColumns: "repeat(2, minmax(0px, 1fr))", gap: 8, overflowX: "auto", paddingBottom: 2 },
   dayCol: { background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: 11, minHeight: 128, display: "flex", flexDirection: "column", boxShadow: "0 5px 16px rgba(30,45,55,.045)" },
   dayHead: { display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8, paddingBottom: 6, borderBottom: `1px solid ${C.border}` },
   dayName: { fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 14.5, fontWeight: 400, color: C.text, textTransform: "capitalize" },
