@@ -393,22 +393,10 @@ const DATOS = [
 const dayOfYear = (d = new Date()) => Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000);
 
 const CONSIGNAS = [
-  "Describe un objeto de tu infancia en cinco líneas.",
-  "Anota una conversación que escuchaste hoy en la calle o el transporte.",
-  "Escribe sobre un lugar de tu ciudad como si se lo contaras a alguien que nunca estuvo.",
-  "Empieza con «Nadie sabe que…» y sigue.",
-  "Describe el último sueño que recuerdes, aunque sea solo un fragmento.",
-  "Haz el retrato de alguien sin decir su nombre ni cómo se ve.",
-  "¿Qué olor te devuelve a otra época? Escríbelo.",
-  "Cuenta un día cualquiera como si fuera el último de algo.",
-  "Escribe una carta que no vas a enviar.",
-  "Toma una noticia de hoy y cuéntala desde alguien que aparece al fondo.",
-  "Anota tres cosas que viste hoy y que casi nadie habría mirado.",
-  "Empieza con «Cuando dejé de…» y deja que avance.",
-  "Escribe sobre el mar sin usar la palabra mar.",
-  "Recuerda una comida y a quién tenías al lado.",
-  "Describe a un desconocido que se te haya quedado en la memoria.",
-  "Escribe el comienzo de una crónica sobre tu barrio.",
+  `El sonido de tu escritura: Escribe un párrafo por página de texto narrativo para leer en voz alta. Utiliza recursos como onomatopeyas, aliteraciones, repeticiones, ritmos o palabras inventadas, pero evita la rima y la métrica estricta. El objetivo es dejar que los sonidos y los ritmos guíen el texto.`,
+  `La "castidad" (eliminación de adjetivos y adverbios): Escribe una página entera de prosa sin utilizar adjetivos ni adverbios innecesarios (o eliminando todos los adverbios terminados en -mente y modificadores superfluos) para obligar a los sustantivos y verbos a sostener todo el peso de la imagen.`,
+  `Cambio de persona y tiempo (versión uno y versión dos): Escribe una escena corta eligiendo una persona gramatical (primera o tercera) y un tiempo verbal (pasado o presente). Luego, vuelve a escribir la misma historia cambiando por completo la persona del verbo y el tiempo (sin hacer un simple reemplazo automático de pronombres, sino reescribiéndola desde cero) para observar cómo cambia la distancia con el lector.`,
+  `Saltos y concentración (Leaping and crowding): Toma un texto de entre 400 y 1.000 palabras y redúcelo a la mitad omitiendo lo obvio, dejando que los espacios en blanco y la imaginación del lector completen lo que no se dice, pero conservando el impacto sensorial y la estructura.`,
 ];
 
 const FRASES = [
@@ -1944,7 +1932,7 @@ function Registros({ items, onAdd, onUpdate, onDel }) {
       <Section label={coll.name} accent={C.accent}>
         {esCuaderno && (
           <div style={{ ...S.finCard, background: C.primarySoft, borderColor: C.primary + "44", marginBottom: 14 }}>
-            <div style={{ ...S.smallLabel, marginBottom: 6 }}>una consigna, por si quieres</div>
+            <div style={{ ...S.smallLabel, marginBottom: 6 }}>ejercicios de escritura · Ursula K. Le Guin</div>
             <div style={{ fontFamily: "'Bodoni Moda', Georgia, serif", fontSize: 15.5, color: C.text, lineHeight: 1.4 }}>{CONSIGNAS[cIdx]}</div>
             <button onClick={otraConsigna} className="link" style={{ ...S.linkBtn, marginTop: 8 }}>otra consigna</button>
           </div>
