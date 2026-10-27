@@ -1169,7 +1169,7 @@ function BitacoraApp() {
       <Fonts /><style>{CSS}</style>
       <div className="app-shell" style={{ display: "flex", width: "100%", maxWidth: 1450, margin: "0 auto", alignItems: "stretch", position: "relative", zIndex: 1, background: C.bg }}>
         <Sidebar tab={tab} setTab={setTab} pal={pal} setPal={setPal} onLogout={() => supabase.auth.signOut()} />
-        <main style={S.wrap}>
+        <main className="main-content" style={S.wrap}>
           <header className="content-head" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, marginBottom: 22 }}>
             <div>
               <h1 style={{ ...S.title, fontSize: 30 }}>{({ semana: "Tu semana", registros: "Tus registros", finanzas: "Finanzas", ciclo: "Tu ciclo", metas: "Metas y proyectos", tablero: "Mis datos", areas: "Tus áreas" })[tab]}</h1>
@@ -1744,7 +1744,7 @@ function Semana({ areas, tasks, onAdd, onToggle, onDel, onUpdate, notes, onAddNo
                 <span style={{ ...S.dayName, ...(isToday ? { color: C.text } : {}) }}>{DAY_NAMES[i]}</span>
                 <span style={S.dayDate}>{d.getDate()}</span>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 6, flex: 1, minHeight: 0, overflowY: "auto", overflowX: "hidden", paddingRight: 3 }}>
+              <div className="day-tasks" style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 6, flex: 1, minHeight: 0, overflowY: "auto", overflowX: "hidden", paddingRight: 3 }}>
                 {list.length === 0 && <div style={S.dayEmpty}>—</div>}
                 {list.map((t) => (
                   <div key={t.id} className="task" style={S.task}>
@@ -1779,9 +1779,9 @@ function Semana({ areas, tasks, onAdd, onToggle, onDel, onUpdate, notes, onAddNo
                     <div className="task-actions">
                       {!t.done && editTaskId !== t.id && (
                         <>
-                          <label title="Mover tarea a otro día" className="del" style={{ ...S.del, padding: 2, cursor: "pointer", position: "relative" }}>
+                          <label title="Mover tarea a otro día" className="del move-task" style={{ ...S.del, padding: 2, cursor: "pointer", position: "relative" }}>
                             <RefreshCw size={12} />
-                            <input type="date" value="" onChange={(e) => { const next = e.target.value; if (next && next !== t.day) onUpdate(t.id, { movedFrom: t.movedFrom || t.day, day: next, carriedFrom: null }); }} style={{ position: "absolute", inset: 0, opacity: 0, width: 16, cursor: "pointer" }} />
+                            <input type="date" aria-label="Mover tarea a otro día" value="" onChange={(e) => { const next = e.target.value; if (next && next !== t.day) onUpdate(t.id, { movedFrom: t.movedFrom || t.day, day: next, carriedFrom: null }); }} style={{ position: "absolute", inset: 0, opacity: 0, width: "100%", height: "100%", cursor: "pointer" }} />
                           </label>
                           <button onClick={() => { setEditTaskId(t.id); setEditTaskText(t.text); }} className="del" style={{ ...S.del, padding: 2 }} aria-label="Editar tarea"><PenLine size={12} /></button>
                         </>
@@ -1791,9 +1791,9 @@ function Semana({ areas, tasks, onAdd, onToggle, onDel, onUpdate, notes, onAddNo
                   </div>
                 ))}
               </div>
-              <input value={drafts[key] || ""} onChange={(ev) => setDrafts((p) => ({ ...p, [key]: ev.target.value }))}
+              <div className="day-add"><input aria-label={`Nueva tarea para ${DAY_NAMES[i]}`} value={drafts[key] || ""} onChange={(ev) => setDrafts((p) => ({ ...p, [key]: ev.target.value }))}
                 onKeyDown={(ev) => { if (ev.key === "Enter") commit(key); }}
-                placeholder="+ tarea" style={{ ...S.dayInput, borderColor: effArea ? tint(effArea) + "66" : C.border }} />
+                placeholder="+ tarea" style={{ ...S.dayInput, borderColor: effArea ? tint(effArea) + "66" : C.border }} /><button type="button" className="day-add-button" onClick={() => commit(key)} aria-label={`Agregar tarea para ${DAY_NAMES[i]}`} disabled={!effArea || !(drafts[key] || "").trim()}><Plus size={18} /></button></div>
             </div>
             </React.Fragment>
           );
@@ -2181,6 +2181,7 @@ function Sidebar({ tab, setTab, pal, setPal, onLogout }) {
         <span><span style={{ display: "block" }}>Áreas</span><span style={{ display: "block", fontSize: 9.5, marginTop: 2, opacity: .72, fontWeight: 500 }}>estructura transversal</span></span>
       </button>
 
+      <button onClick={onLogout} className="mobile-logout sidebtn">Cerrar sesión</button>
       <div style={{ marginTop: "auto", paddingTop: 18 }}>
         <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".11em", color: "rgba(255,255,255,.52)", padding: "0 9px 7px" }}>Paleta</div>
         <button onClick={() => setPal(PAL_ORDER[(PAL_ORDER.indexOf(pal) + 1) % PAL_ORDER.length])} className="sidebtn" title="Cambiar paleta" style={{ width: "100%", display: "flex", alignItems: "center", gap: 8, border: "1px solid rgba(255,255,255,.15)", borderRadius: 10, padding: "9px 10px", background: "rgba(255,255,255,.08)", color: sideText, cursor: "pointer", fontFamily: "inherit", fontSize: 12.5 }}>
@@ -2757,21 +2758,21 @@ function FinSection({ title, total, totalLabel, extraTotal, color, rows, cols, o
       <div style={S.finCard}>
         {rows.length === 0 && <div style={{ color: C.textMuted, fontSize: 13, paddingBottom: 8 }}>Sin registros este mes.</div>}
         {rows.map((r) => (
-          <div key={r.id} style={S.finRow}>
+          <div key={r.id} className="finance-edit-row" style={S.finRow}>
             {cols.map(([f, ph, t, w], i) => {
               const st = i === 0 ? { flex: 2 } : w === "narrow" ? { width: 46, flex: "none", textAlign: "center", fontFamily: "'IBM Plex Mono', monospace" } : { flex: 1, textAlign: "right", fontFamily: "'IBM Plex Mono', monospace" };
-              return <EditField key={f} value={r[f]} type={t} placeholder={ph} onSave={(val) => onEdit(r.id, { [f]: val })} style={{ ...S.finField, ...st }} />;
+              return <label className="finance-field" key={f}><span>{ph}</span><EditField value={r[f]} type={t} placeholder={ph} onSave={(val) => onEdit(r.id, { [f]: val })} style={{ ...S.finField, ...st }} /></label>;
             })}
             <button onClick={() => onDel(r.id)} className="del" style={S.del} aria-label="Borrar"><Trash2 size={14} /></button>
           </div>
         ))}
-        <div style={{ ...S.finRow, borderBottom: "none", marginTop: 2 }}>
+        <div className="finance-edit-row" style={{ ...S.finRow, borderBottom: "none", marginTop: 2 }}>
           {cols.map(([f, ph, t, w], i) => {
             const st = i === 0 ? { flex: 2 } : w === "narrow" ? { width: 46, flex: "none", textAlign: "center" } : { flex: 1, textAlign: "right" };
-            return <input key={f} value={draft[f] || ""} placeholder={ph} inputMode={t === "num" ? "numeric" : "text"}
+            return <label className="finance-field" key={f}><span>{ph}</span><input value={draft[f] || ""} placeholder={ph} inputMode={t === "num" ? "numeric" : "text"}
               onChange={(e) => setDraft((d) => ({ ...d, [f]: e.target.value }))}
               onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
-              style={{ ...S.finField, ...st }} />;
+              style={{ ...S.finField, ...st }} /></label>;
           })}
           <button onClick={submit} className="iconbtn" style={{ ...S.iconBtn, width: 30, height: 30, flexShrink: 0 }} aria-label="Agregar"><Plus size={15} /></button>
         </div>
@@ -3137,6 +3138,9 @@ const makeS = (C) => ({
 
 const makeCSS = (C) => `
   * { box-sizing: border-box; }
+  .mobile-logout, .day-add-button, .finance-field > span { display: none; }
+  .finance-field { display: contents; }
+  .day-add { display: flex; align-items: center; gap: 8px; margin-top: auto; }
   .fade { animation: fade .35s ease; }
   @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
   body { margin: 0; }
@@ -3175,7 +3179,22 @@ const makeCSS = (C) => `
   @media (max-width: 900px) { .homegrid { grid-template-columns: 1fr 1fr; } .homegrid > :first-child { grid-column: 1 / -1; } .fin-kpis, .data-kpis, .data-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 640px) {
     .weekgrid { grid-template-columns: 1fr; gap: 10px; }
-    .weekgrid .daycol, .weekgrid .daycol.sat, .weekgrid .daycol.sun { grid-column: auto; min-height: auto !important; }
+    .weekgrid .daycol, .weekgrid .daycol.sat, .weekgrid .daycol.sun { grid-column: auto; min-height: 0 !important; height: auto; max-height: none; }
+    .day-tasks { overflow: visible !important; flex: initial !important; }
+    .day-add-button { display: flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border: 1px solid ${C.border}; border-radius: 8px; background: ${C.surface}; color: ${C.primary}; }
+    .day-add-button:disabled { opacity: .45; }
+    .day-add input { min-width: 0; margin-top: 0 !important; }
+    .weekgrid .check { width: 44px !important; height: 44px !important; margin: 0 !important; border: 0 !important; background: transparent !important; position: relative; }
+    .weekgrid .check::before { content: ""; width: 16px; height: 16px; border: 2px solid ${C.primary}; border-radius: 50%; position: absolute; }
+    .weekgrid .check svg { position: relative; z-index: 1; color: ${C.primary}; }
+    .task-actions { gap: 0 !important; }
+    .task-actions .del { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 44px; }
+    .finance-edit-row { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end !important; gap: 8px !important; padding: 12px 0 !important; }
+    .finance-field { display: flex; flex-direction: column; min-width: 0; gap: 3px; }
+    .finance-field > span { display: block; font-size: 12px; color: ${C.textSoft}; }
+    .finance-field input { width: 100% !important; min-width: 0; text-align: left !important; border: 1px solid ${C.border} !important; border-radius: 7px; padding: 8px !important; }
+    .finance-edit-row > button { min-width: 44px; min-height: 44px; }
+    input, textarea, select { font-size: 16px !important; }
     .weekgrid .task { padding: 7px 0 !important; border-bottom: 1px solid ${C.border}; }
     .weekgrid .task:last-child { border-bottom: 0; }
     .weekgrid .task > div:not(.task-actions) > div:first-child { font-size: 14px !important; line-height: 1.45 !important; }
@@ -3187,13 +3206,15 @@ const makeCSS = (C) => `
   .sidebtn:hover { background: rgba(255,255,255,.11) !important; color: #fff !important; }
   @media (max-width: 820px) {
     .app-shell { display: block !important; }
-    .sidebar { position: relative !important; width: 100% !important; min-height: auto !important; height: auto !important; padding: 12px 14px !important; flex-direction: row !important; align-items: center !important; gap: 8px !important; overflow-x: auto; }
+    .main-content { width: 100% !important; padding: 24px 16px 48px !important; }
+    .sidebar { position: relative !important; width: 100% !important; min-height: auto !important; height: auto !important; padding: 12px 14px !important; flex-direction: row !important; align-items: center !important; gap: 8px !important; flex-wrap: wrap; }
     .sidebar > div:first-child { padding: 0 8px 0 0 !important; flex-shrink: 0; }
     .sidebar > div:first-child > div { display: none; }
     .sidebar > div:nth-child(2), .sidebar > div:nth-last-child(2) { display: none !important; }
-    .sidebar nav { flex-direction: row !important; flex-shrink: 0; }
+    .sidebar nav { flex-direction: row !important; flex-wrap: wrap; flex: 1 1 100%; }
     .sidebar nav .sidebtn, .sidebar > .sidebtn { width: auto !important; white-space: nowrap; }
     .sidebar > div:last-child { margin-top: 0 !important; padding-top: 0 !important; display: none; }
+    .mobile-logout { display: block; border: 1px solid rgba(255,255,255,.3); border-radius: 8px; padding: 10px; background: transparent; color: #fff; cursor: pointer; }
     .content-head { margin-bottom: 18px !important; }
     .mobile-theme { display: block !important; }
   }
