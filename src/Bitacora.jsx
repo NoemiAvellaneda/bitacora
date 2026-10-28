@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { supabase } from "./supabase.js";
+import { createStateStore, createSaveController, stateKey, validateState, StateConflict, StateProtectionError } from "./statePersistence.js";
+import { createLocalBackups, exportIsDue } from "./localBackups.js";
 import {
   User, Briefcase, Heart, Home, Users, Dumbbell, BookOpen,
   Library, Plus, Trash2, Check, Circle, ChevronLeft, ChevronRight, PenLine,
@@ -681,25 +683,13 @@ function statusOf(lastIso, imp) {
 }
 
 /* ───────────────────────── storage (Supabase, por usuario) ───────────────────────── */
-async function loadState() {
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (authError) throw authError;
-  if (!user) throw new Error("No hay una sesión activa para cargar tus datos.");
-  const { data, error } = await supabase.from("app_state").select("data").eq("user_id", user.id).maybeSingle();
-  if (error) throw error;
-  if (!data) return null;
-  if (!data.data || typeof data.data !== "object" || Array.isArray(data.data)) {
-    throw new Error("Los datos guardados no tienen el formato esperado.");
-  }
-  return data.data;
-}
-async function saveState(s) {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { error } = await supabase.from("app_state").upsert({ user_id: user.id, data: s, updated_at: new Date().toISOString() });
-    if (error) console.error(error);
-  } catch (e) { console.error("No se pudo guardar", e); }
+function downloadState(state, filename) {
+  const blob = new Blob([JSON.stringify({ ...state, _v: 1 }, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 /* ───────────────────────── plantita ───────────────────────── */
@@ -990,6 +980,19 @@ const cicloPhase = (cycleDay, avgLen, lastPeriodLen) => {
 function BitacoraApp() {
   const [ready, setReady] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [saveStatus, setSaveStatus] = useState("saved");
+  const [saveError, setSaveError] = useState("");
+  const [backupWarning, setBackupWarning] = useState(false);
+  const [backupRows, setBackupRows] = useState([]);
+  const [exportDue, setExportDue] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
+  const backupsRef = useRef(null);
+  if (!backupsRef.current) backupsRef.current = createLocalBackups();
+  const storageRef = useRef(null);
+  const writerRef = useRef(null);
+  const confirmedRef = useRef("");
+  const latestRef = useRef(null);
+  const unsavedRef = useRef(false);
   const [areas, setAreas] = useState(DEFAULT_AREAS);
   const [items, setItems] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -1006,42 +1009,108 @@ function BitacoraApp() {
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      const s = await loadState();
-      if (cancelled) return;
-      if (s) {
-        const ar = (s.areas || DEFAULT_AREAS).map((a) => ({ ...a, kind: a.kind || (a.id === "laboral" ? "trabajo" : "vida") }));
-        setAreas(ar);
-        let it = s.items;
-        if (!it) {
-          const old = s.notes || s.entries || [];
-          it = old.map((n) => ({ id: n.id || rid(), coll: "notas", title: n.text || "", meta: "", note: "", status: null, date: n.date || new Date().toISOString() }));
-        }
-        setItems(it);
-        const today = dateKey(now());
-        setTasks((s.tasks || []).map((t) =>
-          (!t.done && t.day < today)
-            ? { ...t, carriedFrom: t.carriedFrom || t.day, day: today }
-            : t
-        ));
-        setFinance(s.finance || {});
-        setSavings(s.savings || { depositos: [], afp: [], apv: [] });
-        setGoals(s.goals || []);
-        setLogros(s.logros || 0);
-        setHabits(s.habits || {});
-        setPal(s.pal || "mint");
-        setPlantStart(s.plantStart || new Date().toISOString());
-        setCiclo(s.ciclo || { diasRegla: [] });
-      }
-      setReady(true);
-    })().catch((error) => {
-      console.error("No se pudo cargar Bitácora. El guardado permanece bloqueado.", error);
-      if (!cancelled) setLoadError(true);
+    const store = createStateStore(supabase, backupsRef.current);
+    storageRef.current = store;
+    const refreshCopies = () => backupsRef.current.list(store.userId).then(rows => {
+      if (!cancelled) setBackupRows(rows);
+    }).catch(() => { if (!cancelled) setBackupWarning(true); });
+    const writer = createSaveController(store, {
+      onStatus: status => { if (!cancelled) setSaveStatus(status); },
+      onSaved: snapshot => {
+        if (cancelled) return;
+        confirmedRef.current = stateKey(snapshot);
+        unsavedRef.current = stateKey(latestRef.current) !== confirmedRef.current;
+        setLastSaved(new Date());
+        setSaveError("");
+        setBackupWarning(store.backupWarning);
+        void refreshCopies();
+      },
+      onFailure: (error) => {
+        if (cancelled) return;
+        setSaveStatus(error instanceof StateConflict ? "conflict" : "error");
+        setSaveError(error instanceof StateConflict || error instanceof StateProtectionError ? error.message : "No pudimos guardar tus cambios. Permanecen en esta pantalla: descarga un respaldo y reintenta.");
+      },
     });
-    return () => { cancelled = true; };
+    writerRef.current = writer;
+    (async () => {
+      const s = await store.load();
+      if (cancelled) return;
+      const ar = (s?.areas || DEFAULT_AREAS).map(a => ({ ...a, kind: a.kind || (a.id === "laboral" ? "trabajo" : "vida") }));
+      const old = s?.notes || s?.entries || [];
+      const it = s?.items || old.map(n => ({ id: n.id || rid(), coll: "notas", title: n.text || "", meta: "", note: "", status: null, date: n.date || new Date().toISOString() }));
+      const today = dateKey(now());
+      const loadedTasks = (s?.tasks || []).map(t => (!t.done && t.day < today) ? { ...t, carriedFrom: t.carriedFrom || t.day, day: today } : t);
+      const loadedGoals = s?.goals || [];
+      const initial = {
+        areas: ar, items: it, tasks: loadedTasks, finance: s?.finance || {},
+        savings: s?.savings || { depositos: [], afp: [], apv: [] }, goals: loadedGoals,
+        logros: Math.max(s?.logros || 0, loadedTasks.filter(t => t.done).length + loadedGoals.filter(g => g.done).length),
+        habits: s?.habits || {}, pal: s?.pal || "mint", plantStart: s?.plantStart || plantStart,
+        ciclo: s?.ciclo || { diasRegla: [] },
+      };
+      setAreas(initial.areas); setItems(initial.items); setTasks(initial.tasks);
+      setFinance(initial.finance); setSavings(initial.savings); setGoals(initial.goals);
+      setLogros(initial.logros); setHabits(initial.habits); setPal(initial.pal);
+      setPlantStart(initial.plantStart); setCiclo(initial.ciclo);
+      latestRef.current = initial;
+      confirmedRef.current = stateKey(initial);
+      unsavedRef.current = false;
+      setBackupWarning(store.backupWarning);
+      try { setExportDue(exportIsDue(localStorage.getItem(`bitacora-export:${store.userId}`))); }
+      catch { setExportDue(true); }
+      void refreshCopies();
+      setReady(true);
+    })().catch(error => {
+      console.error("No se pudo cargar Bitácora. El guardado permanece bloqueado.", error);
+      if (!cancelled) { setLoadError(true); void refreshCopies(); }
+    });
+    return () => { cancelled = true; writer.close(); };
   }, []);
 
-  useEffect(() => { if (ready) saveState({ areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, ciclo }); }, [areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, ciclo, ready]);
+  useEffect(() => {
+    if (!ready) return;
+    const snapshot = { areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, ciclo };
+    latestRef.current = snapshot;
+    if (stateKey(snapshot) === confirmedRef.current && !unsavedRef.current) return;
+    unsavedRef.current = true;
+    // Keep an unconfirmed draft separately; it never replaces a confirmed daily copy.
+    void backupsRef.current.draft(storageRef.current.userId, snapshot).catch(() => setBackupWarning(true));
+    writerRef.current.enqueue(snapshot);
+  }, [areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, ciclo, ready]);
+
+  useEffect(() => {
+    const warn = event => { if (unsavedRef.current) { event.preventDefault(); event.returnValue = ""; } };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    const refresh = () => {
+      try { setExportDue(exportIsDue(localStorage.getItem(`bitacora-export:${storageRef.current.userId}`))); }
+      catch { setExportDue(true); }
+    };
+    const timer = window.setInterval(refresh, 60 * 60 * 1000);
+    window.addEventListener("focus", refresh);
+    return () => { window.clearInterval(timer); window.removeEventListener("focus", refresh); };
+  }, [ready]);
+
+  const backupPanel = (
+    <details style={{ margin: "12px 0 20px", color: C.textSoft, fontSize: 13 }} onToggle={event => {
+      if (event.currentTarget.open && storageRef.current?.userId) {
+        backupsRef.current.list(storageRef.current.userId).then(setBackupRows).catch(() => setBackupWarning(true));
+      }
+    }}>
+      <summary style={{ cursor: "pointer", padding: "10px 0" }}>Copias de seguridad en este dispositivo</summary>
+      <p>Se conserva una copia al día de tus datos confirmados, hasta 14 días de uso, y la última versión. Solo existen en este navegador y pueden perderse al borrar sus datos. Descarga también un respaldo semanal y guárdalo fuera del dispositivo.</p>
+      {backupWarning && <p role="status">No pudimos actualizar las copias locales. Descarga un respaldo para conservar tus datos.</p>}
+      {backupRows.length === 0 && <p>Todavía no hay copias locales disponibles.</p>}
+      {backupRows.map(row => <div key={row.id} style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap", margin: "6px 0" }}>
+        <span>{row.kind === "daily" ? "Copia diaria" : row.kind === "draft" ? "Borrador sin confirmar" : row.kind === "recovery" ? "Borrador de una sesión anterior" : "Última versión confirmada"} · {new Date(row.savedAt).toLocaleString("es-CL")}</span>
+        <button type="button" style={S.linkBtn} onClick={() => downloadState(row.data, `bitacora-${row.kind}-${row.savedAt.slice(0,10)}.json`)}>Descargar copia</button>
+      </div>)}
+    </details>
+  );
 
   const doneCount = useMemo(() => tasks.filter((t) => t.done).length + goals.filter((g) => g.done).length, [tasks, goals]);
   useEffect(() => { if (ready) setLogros((prev) => Math.max(prev, doneCount)); }, [doneCount, ready]);
@@ -1119,12 +1188,10 @@ function BitacoraApp() {
 
   const fileRef = useRef(null);
   const exportData = () => {
-    const data = { areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, ciclo, _v: 1 };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = `bitacora-respaldo-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    const data = latestRef.current || { areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, ciclo };
+    downloadState(data, `bitacora-respaldo-${new Date().toISOString().slice(0, 10)}.json`);
+    try { localStorage.setItem(`bitacora-export:${storageRef.current.userId}`, new Date().toISOString()); } catch { /* Download still works without local metadata. */ }
+    setExportDue(false);
   };
   const importData = (file) => {
     if (!file) return;
@@ -1132,7 +1199,10 @@ function BitacoraApp() {
     reader.onload = () => {
       try {
         const s = JSON.parse(reader.result);
-        if (!s || !s.areas) throw new Error("formato");
+        validateState(s, { importing: true });
+        if (saveStatus === "conflict") throw new Error("Resuelve el conflicto antes de importar.");
+        if (!window.confirm("Importar reemplazará los datos actuales. Primero se descargará una copia de lo que tienes en pantalla. ¿Continuar?")) return;
+        exportData();
         setAreas(s.areas);
         setItems(s.items || []);
         setTasks(s.tasks || []);
@@ -1144,9 +1214,10 @@ function BitacoraApp() {
         if (s.pal) setPal(s.pal);
         if (s.plantStart) setPlantStart(s.plantStart);
         if (s.ciclo) setCiclo(s.ciclo);
-        alert("Respaldo importado correctamente. ✔");
-      } catch (e) { alert("No se pudo leer el archivo. ¿Es un respaldo de la Bitácora?"); }
+        alert("Respaldo cargado en pantalla. Espera a ver ‘Guardado’ antes de cerrar.");
+      } catch (e) { alert(`No se importó el archivo: ${e.message}`); }
     };
+    reader.onerror = () => alert("No se pudo abrir el archivo. Tus datos no se han cambiado.");
     reader.readAsText(file);
   };
 
@@ -1160,6 +1231,7 @@ function BitacoraApp() {
           <h1 style={{ ...S.title, fontSize: 26 }}>No pudimos cargar tu Bitácora</h1>
           <p style={{ lineHeight: 1.6 }}>El guardado está detenido para proteger tus datos. Revisa tu conexión y vuelve a intentarlo.</p>
           <button className="primary" style={S.primary} onClick={() => window.location.reload()}>Reintentar</button>
+          {backupPanel}
         </div>
       </div>
     );
@@ -1177,7 +1249,10 @@ function BitacoraApp() {
     <div style={S.root}>
       <Fonts /><style>{CSS}</style>
       <div className="app-shell" style={{ display: "flex", width: "100%", maxWidth: 1450, margin: "0 auto", alignItems: "stretch", position: "relative", zIndex: 1, background: C.bg }}>
-        <Sidebar tab={tab} setTab={setTab} pal={pal} setPal={setPal} onLogout={() => supabase.auth.signOut()} />
+        <Sidebar tab={tab} setTab={setTab} pal={pal} setPal={setPal} onLogout={() => {
+          if (unsavedRef.current) { alert("Hay cambios pendientes. Descarga un respaldo o espera a que se guarden antes de cerrar sesión."); return; }
+          supabase.auth.signOut();
+        }} />
         <main className="main-content" style={S.wrap}>
           <header className="content-head" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, marginBottom: 22 }}>
             <div>
@@ -1188,6 +1263,20 @@ function BitacoraApp() {
               <button onClick={() => setPal(PAL_ORDER[(PAL_ORDER.indexOf(pal) + 1) % PAL_ORDER.length])} className="navbtn" style={{ ...S.areasBtn, padding: "8px 11px" }}>{PALETTES[pal]?.name}</button>
             </div>
           </header>
+          <div role="status" aria-live="polite" style={{ fontSize: 13, marginBottom: 12, color: C.textSoft }}>
+            {saveStatus === "saved" ? (lastSaved ? `Guardado · ${lastSaved.toLocaleTimeString("es-CL")}` : "Datos cargados") : saveStatus === "saving" ? "Guardando…" : saveStatus === "pending" ? "Cambios pendientes de guardar…" : "Guardado detenido"}
+          </div>
+          {(saveStatus === "error" || saveStatus === "conflict") && <div role="alert" style={{ ...S.finCard, marginBottom: 16 }}>
+            <p>{saveError}</p>
+            <button style={S.linkBtn} onClick={exportData}>Descargar mis cambios</button>
+            {saveStatus === "error" && <button style={{ ...S.linkBtn, marginLeft: 16 }} onClick={() => writerRef.current.retry()}>Reintentar guardado</button>}
+            {saveStatus === "conflict" && <p>Después de descargar tus cambios, recarga para ver la versión del otro dispositivo. Importar un archivo reemplaza todo; compara ambas copias antes.</p>}
+          </div>}
+          {backupWarning && <p role="status" style={{ color: C.textSoft }}>Las copias locales no están disponibles. Descarga un respaldo para conservar tus datos.</p>}
+          {exportDue && <div style={{ ...S.finCard, marginBottom: 16 }}>
+            <span>Cuida tu historial: descarga un respaldo al menos una vez por semana. </span>
+            <button style={S.linkBtn} onClick={exportData}>Descargar respaldo</button>
+          </div>}
 
         {tab === "semana" && <>
           <InicioSemanaResumen items={items} habitsToday={habits[dateKey(now())] || []} onToggleHabit={toggleHabit} onGoRegistros={() => setTab("registros")} />
@@ -1196,7 +1285,7 @@ function BitacoraApp() {
         {tab === "registros" && <Registros items={items} onAdd={addItem} onUpdate={updateItem} onDel={delItem} />}
         {tab === "tablero" && <Tablero areas={areas} lastByArea={lastByArea} weekActivity={weekActivity}
           attention={attention} finance={finance} savings={savings} goals={goals} tasks={tasks} items={items} logros={logros} plantStart={plantStart} habits={habits} />}
-        {tab === "finanzas" && <Finanzas finance={finance} onSetMonth={setFinanceMonth} savings={savings} onSavAdd={savAdd} onSavEdit={savEdit} onSavDel={savDel} />}
+        {tab === "finanzas" && <Finanzas finance={finance} onSetMonth={setFinanceMonth} savings={savings} onSavAdd={savAdd} onSavEdit={savEdit} onSavDel={savDel} onBeforeReplace={exportData} />}
         {tab === "metas" && <Metas goals={goals} areas={areas} onAdd={addGoal} onPush={pushGoal} onDone={doneGoal} onDel={delGoal} />}
         {tab === "ciclo" && <Ciclo ciclo={ciclo} onToggleDay={toggleCicloDay} onUpdateReg={updateCicloReg} onDelReg={delCicloReg} />}
         {tab === "areas" && <AreasCfg areas={areas} onImp={setImportance} onKind={setAreaKind} onAdd={addArea} onDel={delArea} />}
@@ -1221,6 +1310,7 @@ function BitacoraApp() {
           <input ref={fileRef} type="file" accept="application/json,.json" style={{ display: "none" }}
             onChange={(e) => { importData(e.target.files[0]); e.target.value = ""; }} />
         </div>
+        {backupPanel}
         </main>
       </div>
     </div>
@@ -2498,7 +2588,7 @@ function Tablero({ areas, lastByArea, weekActivity: weekActivityAll, attention: 
 }
 
 /* ───────────────────────── FINANZAS ───────────────────────── */
-function Finanzas({ finance, onSetMonth, savings, onSavAdd, onSavEdit, onSavDel }) {
+function Finanzas({ finance, onSetMonth, savings, onSavAdd, onSavEdit, onSavDel, onBeforeReplace }) {
   const [view, setView] = useState("mes");
   const [offset, setOffset] = useState(0);
   const base = addMonths(new Date(new Date().getFullYear(), new Date().getMonth(), 1), offset);
@@ -2518,10 +2608,18 @@ function Finanzas({ finance, onSetMonth, savings, onSavAdd, onSavEdit, onSavDel 
   const delRow = (k, id) => update({ [k]: (m[k] || []).filter((r) => r.id !== id) });
   const copyPrev = () => {
     const pm = finance[prevKey]; if (!pm) return;
+    if (["ingresos", "egresos", "deudas"].some(k => m[k]?.length)) {
+      if (!window.confirm("Copiar el mes anterior reemplazará los movimientos de este mes. Se descargará un respaldo antes de continuar. ¿Continuar?")) return;
+      onBeforeReplace();
+    }
     const clone = (arr) => (arr || []).map((r) => ({ ...r, id: rid() }));
     update({ ingresos: clone(pm.ingresos), egresos: clone(pm.egresos), deudas: clone(pm.deudas) });
   };
   const loadTemplate = () => {
+    if (["ingresos", "egresos", "deudas"].some(k => m[k]?.length)) {
+      if (!window.confirm("Cargar la plantilla reemplazará los movimientos de este mes. Se descargará un respaldo antes de continuar. ¿Continuar?")) return;
+      onBeforeReplace();
+    }
     const mk = (arr) => arr.map((r) => ({ id: rid(), concepto: r.concepto, dia: r.dia || "", monto: 0, saldo: 0, pago: 0 }));
     update({ ingresos: mk(PLANTILLA_FIN.ingresos), egresos: mk(PLANTILLA_FIN.egresos), deudas: mk(PLANTILLA_FIN.deudas) });
   };
