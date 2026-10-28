@@ -682,13 +682,16 @@ function statusOf(lastIso, imp) {
 
 /* ───────────────────────── storage (Supabase, por usuario) ───────────────────────── */
 async function loadState() {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
-    const { data, error } = await supabase.from("app_state").select("data").eq("user_id", user.id).maybeSingle();
-    if (error) { console.error(error); return null; }
-    return data ? data.data : null;
-  } catch (e) { console.error(e); return null; }
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError) throw authError;
+  if (!user) throw new Error("No hay una sesión activa para cargar tus datos.");
+  const { data, error } = await supabase.from("app_state").select("data").eq("user_id", user.id).maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  if (!data.data || typeof data.data !== "object" || Array.isArray(data.data)) {
+    throw new Error("Los datos guardados no tienen el formato esperado.");
+  }
+  return data.data;
 }
 async function saveState(s) {
   try {
@@ -986,6 +989,7 @@ const cicloPhase = (cycleDay, avgLen, lastPeriodLen) => {
 /* ───────────────────────── app ───────────────────────── */
 function BitacoraApp() {
   const [ready, setReady] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [areas, setAreas] = useState(DEFAULT_AREAS);
   const [items, setItems] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -1001,8 +1005,10 @@ function BitacoraApp() {
   applyPalette(pal);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       const s = await loadState();
+      if (cancelled) return;
       if (s) {
         const ar = (s.areas || DEFAULT_AREAS).map((a) => ({ ...a, kind: a.kind || (a.id === "laboral" ? "trabajo" : "vida") }));
         setAreas(ar);
@@ -1026,11 +1032,13 @@ function BitacoraApp() {
         setPal(s.pal || "mint");
         setPlantStart(s.plantStart || new Date().toISOString());
         setCiclo(s.ciclo || { diasRegla: [] });
-      } else {
-        await saveState({ areas: DEFAULT_AREAS, items: [], tasks: [], finance: {}, savings: { depositos: [], afp: [], apv: [] }, goals: [], logros: 0, pal: "mint", plantStart: new Date().toISOString() });
       }
       setReady(true);
-    })();
+    })().catch((error) => {
+      console.error("No se pudo cargar Bitácora. El guardado permanece bloqueado.", error);
+      if (!cancelled) setLoadError(true);
+    });
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => { if (ready) saveState({ areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, ciclo }); }, [areas, items, tasks, finance, savings, goals, logros, habits, pal, plantStart, ciclo, ready]);
@@ -1143,6 +1151,19 @@ function BitacoraApp() {
   };
 
   areas.forEach((a) => { if (a.color) AREA_DYN[a.id] = { color: a.color, soft: a.soft }; });
+
+  if (loadError) {
+    return (
+      <div style={{ ...S.root, display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", padding: 24 }}>
+        <Fonts />
+        <div role="alert" style={{ ...S.finCard, maxWidth: 460 }}>
+          <h1 style={{ ...S.title, fontSize: 26 }}>No pudimos cargar tu Bitácora</h1>
+          <p style={{ lineHeight: 1.6 }}>El guardado está detenido para proteger tus datos. Revisa tu conexión y vuelve a intentarlo.</p>
+          <button className="primary" style={S.primary} onClick={() => window.location.reload()}>Reintentar</button>
+        </div>
+      </div>
+    );
+  }
 
   if (!ready) {
     return (
